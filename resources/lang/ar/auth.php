@@ -60,6 +60,8 @@ return [
     'stay_signed_in' => 'البقاء مسجل الدخول',
     'remember_this_device' => 'تذكر هذا الجهاز',
     'auto_login' => 'تسجيل الدخول التلقائي في المرة القادمة',
+    'preferred_language' => 'اللغة المفضلة',
+    'select_language' => 'اختيار اللغة',
     
     // Links and Actions
     'forgot_password' => 'نسيت كلمة المرور؟',

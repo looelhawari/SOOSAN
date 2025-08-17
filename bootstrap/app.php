@@ -20,7 +20,13 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
             'employee.permission' => \App\Http\Middleware\EmployeePermissionMiddleware::class,
+            'secure.session' => \App\Http\Middleware\SecureSession::class,
+            'prevent.back.history' => \App\Http\Middleware\PreventBackHistory::class,
+            'prevent.back.after.logout' => \App\Http\Middleware\PreventBackAfterLogout::class,
         ]);
+        
+        // Configure authentication redirects
+        $middleware->redirectGuestsTo('/admin/login');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

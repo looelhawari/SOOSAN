@@ -60,6 +60,8 @@ return [
     'stay_signed_in' => 'Stay signed in',
     'remember_this_device' => 'Remember this device',
     'auto_login' => 'Auto login next time',
+    'preferred_language' => 'Preferred Language',
+    'select_language' => 'Select Language',
     
     // Links and Actions
     'forgot_password' => 'Forgot password?',

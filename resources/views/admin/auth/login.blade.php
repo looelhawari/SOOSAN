@@ -80,6 +80,15 @@
                                 </label>
                             </div>
 
+                            <!-- Language Selection -->
+                            <div class="mb-3">
+                                <label for="language" class="form-label">{{ __('auth.preferred_language') }}</label>
+                                <select class="form-select" id="language" name="language">
+                                    <option value="en">English</option>
+                                    <option value="ar">العربية</option>
+                                </select>
+                            </div>
+
                             <!-- Submit Button -->
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-admin-primary btn-lg" id="adminLoginBtn">
@@ -113,6 +122,53 @@
     </div>
 
     <script>
+        // Prevent Back Button to Protected Pages - Enhanced Version
+        (function() {
+            if (window.history && window.history.pushState) {
+                // Replace current state instead of pushing new one
+                window.history.replaceState(null, null, window.location.href);
+
+                window.addEventListener('popstate', function(event) {
+                    // Force stay on login page
+                    window.history.replaceState(null, null, window.location.href);
+                });
+            }
+
+            // Clear browser cache on page load and handle back button scenarios
+            if (performance.navigation.type === 2) { // Returned via back button
+                // Clear any admin session data and reload login page
+                sessionStorage.clear();
+                localStorage.removeItem('adminPreferences');
+                window.location.replace(window.location.href);
+            }
+
+            // Clear any cached admin data when login page loads
+            sessionStorage.clear();
+        })();
+
+        // User Preferences Manager
+        const UserPreferences = {
+            load: function() {
+                const preferences = localStorage.getItem('adminPreferences');
+                return preferences ? JSON.parse(preferences) : {};
+            },
+
+            save: function(key, value) {
+                const preferences = this.load();
+                preferences[key] = value;
+                localStorage.setItem('adminPreferences', JSON.stringify(preferences));
+            },
+
+            get: function(key, defaultValue = null) {
+                const preferences = this.load();
+                return preferences[key] || defaultValue;
+            },
+
+            clear: function() {
+                localStorage.removeItem('adminPreferences');
+            }
+        };
+
         function toggleAdminPassword() {
             const passwordInput = document.getElementById('password');
             const passwordEye = document.getElementById('admin-password-eye');
@@ -134,7 +190,33 @@
             const submitButton = document.getElementById('adminLoginBtn');
             const originalText = submitButton.innerHTML;
 
+            // Apply saved preferences on page load
+            const savedLanguage = UserPreferences.get('language', 'en');
+            const languageSelect = document.getElementById('language');
+            if (languageSelect) {
+                languageSelect.value = savedLanguage;
+            }
+
+            // Restore remember me preference
+            const rememberMe = UserPreferences.get('rememberMe', false);
+            const rememberCheckbox = document.getElementById('remember');
+            if (rememberCheckbox) {
+                rememberCheckbox.checked = rememberMe;
+            }
+
             form.addEventListener('submit', function() {
+                // Save preferences when form is submitted
+                const languageSelect = document.getElementById('language');
+                const rememberCheckbox = document.getElementById('remember');
+
+                if (languageSelect) {
+                    UserPreferences.save('language', languageSelect.value);
+                }
+
+                if (rememberCheckbox) {
+                    UserPreferences.save('rememberMe', rememberCheckbox.checked);
+                }
+
                 submitButton.disabled = true;
                 submitButton.innerHTML =
                     '<i class="fas fa-spinner fa-spin me-2"></i>{{ __('auth.processing') }}';

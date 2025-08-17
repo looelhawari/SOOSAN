@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\ContactMessageController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DeletedItemsController;
 use App\Http\Controllers\Admin\OwnerController;
 use App\Http\Controllers\Admin\PendingChangeController;
 use App\Http\Controllers\Admin\ProductCategoryController;
@@ -14,7 +15,7 @@ use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 // Admin prefix routes
-Route::prefix('admin')->name('admin.')->middleware(['web'])->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['web', 'prevent.back.after.logout'])->group(function () {
 
     // --- Authentication Routes ---
     // Routes for guests (not logged in). The 'guest' middleware redirects them if they are already logged in.
@@ -25,6 +26,12 @@ Route::prefix('admin')->name('admin.')->middleware(['web'])->group(function () {
 
     // Logout route for authenticated users
     Route::post('logout', [AdminController::class, 'logout'])->name('logout');
+    
+    // Session management routes
+    Route::middleware(['auth:web'])->group(function () {
+        Route::get('session/check', [AdminController::class, 'checkSession'])->name('session.check');
+        Route::post('session/extend', [AdminController::class, 'extendSession'])->name('session.extend');
+    });
     // --- End Authentication Routes ---
 
 
@@ -33,7 +40,7 @@ Route::prefix('admin')->name('admin.')->middleware(['web'])->group(function () {
 
     // --- Protected Admin Routes ---
     // All routes in this group require the user to be authenticated and have the correct permissions.
-    Route::middleware(['auth:web', 'employee.permission'])->group(function () {
+    Route::middleware(['auth:web', 'secure.session', 'prevent.back.history', 'employee.permission'])->group(function () {
         // Dashboard
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/dashboard/realtime', [DashboardController::class, 'getRealTimeData'])->name('dashboard.realtime');
@@ -76,6 +83,19 @@ Route::prefix('admin')->name('admin.')->middleware(['web'])->group(function () {
         Route::get('audit-logs/realtime', [AuditLogController::class, 'realtime'])->name('audit-logs.realtime');
         Route::get('audit-logs/export', [AuditLogController::class, 'export'])->name('audit-logs.export');
         Route::resource('audit-logs', AuditLogController::class);
+
+        // Deleted Items management
+        Route::prefix('deleted-items')->name('deleted-items.')->group(function () {
+            Route::get('/', [DeletedItemsController::class, 'index'])->name('index');
+            Route::post('/restore/{type}/{id}', [DeletedItemsController::class, 'restore'])->name('restore');
+            Route::delete('/force-delete/{type}/{id}', [DeletedItemsController::class, 'forceDelete'])->name('force-delete');
+            Route::post('/bulk-restore', [DeletedItemsController::class, 'bulkRestore'])->name('bulk-restore');
+            Route::post('/bulk-delete', [DeletedItemsController::class, 'bulkDelete'])->name('bulk-delete');
+            Route::post('/bulk-force-delete', [DeletedItemsController::class, 'bulkForceDelete'])->name('bulk-force-delete');
+            Route::post('/restore-all', [DeletedItemsController::class, 'restoreAll'])->name('restore-all');
+            Route::delete('/clean-old', [DeletedItemsController::class, 'cleanOldItems'])->name('clean-old');
+            Route::delete('/empty-trash', [DeletedItemsController::class, 'emptyTrash'])->name('empty-trash');
+        });
 
         // Reports management (Admin/CEO only)
         Route::prefix('reports')->name('reports.')->group(function () {

@@ -921,6 +921,13 @@
                         </div>
                     </div>
 
+                    <!-- Deleted Items - admin only -->
+                    <a href="{{ route('admin.deleted-items.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.deleted-items.*') ? 'active' : '' }}">
+                        <i class="fas fa-trash-restore"></i>
+                        {{ __('deleted_items.management') }}
+                    </a>
+
                     <!-- Reports - admin/CEO only -->
                     @if (auth()->user()->canAccessReports())
                         <a href="{{ route('admin.reports.index') }}"
@@ -1281,6 +1288,126 @@
             });
         });
     </script>
+
+    <!-- Session Management Script -->
+    @auth
+        <script>
+            // Prevent Back Button After Logout - Enhanced Version
+            (function() {
+                // Clear browser history to prevent back button access
+                if (window.history && window.history.pushState) {
+                    window.history.pushState(null, null, window.location.href);
+
+                    window.addEventListener('popstate', function(event) {
+                        // Immediately redirect to login on back button press
+                        window.location.replace('{{ route('admin.login') }}');
+                    });
+
+                    // Also handle browser refresh/reload scenarios
+                    window.addEventListener('beforeunload', function() {
+                        // Clear any cached data
+                        sessionStorage.clear();
+                    });
+                }
+
+                // Prevent caching of admin pages
+                if (window.performance && window.performance.navigation.type === 2) {
+                    // User came back via back button, redirect to login
+                    window.location.replace('{{ route('admin.login') }}');
+                }
+            })
+            ();
+
+            // Session Management
+            const SessionManager = {
+                checkInterval: null,
+                warningShown: false,
+
+                init: function() {
+                    this.startSessionCheck();
+                    this.bindEvents();
+                },
+
+                startSessionCheck: function() {
+                    this.checkInterval = setInterval(() => {
+                        this.checkSession();
+                    }, 300000); // Check every 5 minutes
+                },
+
+                checkSession: function() {
+                    fetch('{{ route('admin.session.check') }}', {
+                            method: 'GET',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (!data.valid) {
+                                this.handleSessionExpired();
+                            } else if (data.warning && !this.warningShown) {
+                                this.showSessionWarning(data.remaining);
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Session check failed:', error);
+                        });
+                },
+
+                handleSessionExpired: function() {
+                    clearInterval(this.checkInterval);
+                    alert('Your session has expired. You will be redirected to the login page.');
+                    window.location.href = '{{ route('admin.login') }}';
+                },
+
+                showSessionWarning: function(remainingMinutes) {
+                    this.warningShown = true;
+                    const extend = confirm(
+                        `Your session will expire in ${remainingMinutes} minutes. Do you want to extend it?`);
+
+                    if (extend) {
+                        this.extendSession();
+                    }
+                },
+
+                extendSession: function() {
+                    fetch('{{ route('admin.session.extend') }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                    'content')
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                this.warningShown = false;
+                                console.log('Session extended successfully');
+                            }
+                        });
+                },
+
+                bindEvents: function() {
+                    // Reset warning flag on user activity
+                    ['click', 'keypress', 'scroll'].forEach(event => {
+                        document.addEventListener(event, () => {
+                            if (this.warningShown) {
+                                this.warningShown = false;
+                            }
+                        });
+                    });
+                }
+            };
+
+            // Initialize session manager when DOM is ready
+            document.addEventListener('DOMContentLoaded', function() {
+                SessionManager.init();
+            });
+        </script>
+    @endauth
 
     <!-- Real-time notifications -->
     <script src="{{ asset('js/notifications.js') }}"></script>
