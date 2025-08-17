@@ -255,4 +255,12 @@ return [
     'key_features' => 'Key Features',
     'applications' => 'Applications',
     'explore_more' => 'Explore More',
+    
+    // Search Validation Messages
+    'search_required' => 'Please enter a search term',
+    'serial_required' => 'Please enter a serial number',
+    'search_validation_message' => 'Please enter a search term to find products',
+    'serial_validation_message' => 'Please enter a valid serial number (e.g., SB70-12345)',
+    'search_validation_title' => 'Please enter a product name, model, or specification to search',
+    'serial_validation_title' => 'Please enter your equipment serial number to check warranty',
 ];

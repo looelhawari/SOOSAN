@@ -921,13 +921,6 @@
                         </div>
                     </div>
 
-                    <!-- Deleted Items - admin only -->
-                    <a href="{{ route('admin.deleted-items.index') }}"
-                        class="nav-link {{ request()->routeIs('admin.deleted-items.*') ? 'active' : '' }}">
-                        <i class="fas fa-trash-restore"></i>
-                        {{ __('deleted_items.management') }}
-                    </a>
-
                     <!-- Reports - admin/CEO only -->
                     @if (auth()->user()->canAccessReports())
                         <a href="{{ route('admin.reports.index') }}"
@@ -936,6 +929,13 @@
                             {{ __('reports.reports') }}
                         </a>
                     @endif
+
+                    <!-- Deleted Items Management -->
+                    <a href="{{ route('admin.deleted-items.index') }}"
+                        class="nav-link {{ request()->routeIs('admin.deleted-items.*') ? 'active' : '' }}">
+                        <i class="fas fa-trash-restore"></i>
+                        {{ __('admin.deleted_items') }}                 
+                    </a>
                 @endif
 
                 <hr class="border-secondary mx-3 my-3">
@@ -1287,127 +1287,254 @@
                 });
             });
         });
-    </script>
 
-    <!-- Session Management Script -->
-    @auth
-        <script>
-            // Prevent Back Button After Logout - Enhanced Version
-            (function() {
-                // Clear browser history to prevent back button access
-                if (window.history && window.history.pushState) {
-                    window.history.pushState(null, null, window.location.href);
-
-                    window.addEventListener('popstate', function(event) {
-                        // Immediately redirect to login on back button press
-                        window.location.replace('{{ route('admin.login') }}');
-                    });
-
-                    // Also handle browser refresh/reload scenarios
-                    window.addEventListener('beforeunload', function() {
-                        // Clear any cached data
-                        sessionStorage.clear();
-                    });
-                }
-
-                // Prevent caching of admin pages
-                if (window.performance && window.performance.navigation.type === 2) {
-                    // User came back via back button, redirect to login
-                    window.location.replace('{{ route('admin.login') }}');
-                }
-            })
-            ();
-
-            // Session Management
-            const SessionManager = {
-                checkInterval: null,
-                warningShown: false,
-
-                init: function() {
-                    this.startSessionCheck();
-                    this.bindEvents();
-                },
-
-                startSessionCheck: function() {
-                    this.checkInterval = setInterval(() => {
-                        this.checkSession();
-                    }, 300000); // Check every 5 minutes
-                },
-
-                checkSession: function() {
-                    fetch('{{ route('admin.session.check') }}', {
-                            method: 'GET',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                    'content')
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (!data.valid) {
-                                this.handleSessionExpired();
-                            } else if (data.warning && !this.warningShown) {
-                                this.showSessionWarning(data.remaining);
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Session check failed:', error);
-                        });
-                },
-
-                handleSessionExpired: function() {
-                    clearInterval(this.checkInterval);
-                    alert('Your session has expired. You will be redirected to the login page.');
-                    window.location.href = '{{ route('admin.login') }}';
-                },
-
-                showSessionWarning: function(remainingMinutes) {
-                    this.warningShown = true;
-                    const extend = confirm(
-                        `Your session will expire in ${remainingMinutes} minutes. Do you want to extend it?`);
-
-                    if (extend) {
-                        this.extendSession();
+        // Session Management and Security
+        const SessionManager = {
+            checkInterval: null,
+            warningShown: false,
+            
+            init: function() {
+                // Start session monitoring
+                this.startSessionCheck();
+                
+                // Handle logout cleanup
+                this.handleLogoutCleanup();
+                
+                // Handle browser close/refresh
+                this.handleBeforeUnload();
+                
+                // Check for session warnings
+                this.checkSessionWarnings();
+            },
+            
+            startSessionCheck: function() {
+                // Check session every 2 minutes
+                this.checkInterval = setInterval(() => {
+                    this.checkSession();
+                }, 120000);
+            },
+            
+            checkSession: function() {
+                fetch('{{ route('admin.session.check') }}', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'Accept': 'application/json',
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.authenticated) {
+                        this.handleSessionExpired();
+                    } else {
+                        // Update session data in localStorage
+                        this.updateSessionData(data);
+                        
+                        // Show warning if session is about to expire
+                        if (data.session_remaining && data.session_remaining <= 5 && !this.warningShown) {
+                            this.showSessionWarning(data.session_remaining);
+                        }
                     }
-                },
-
-                extendSession: function() {
-                    fetch('{{ route('admin.session.extend') }}', {
-                            method: 'POST',
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest',
-                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                    'content')
-                            }
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            if (data.success) {
-                                this.warningShown = false;
-                                console.log('Session extended successfully');
-                            }
-                        });
-                },
-
-                bindEvents: function() {
-                    // Reset warning flag on user activity
-                    ['click', 'keypress', 'scroll'].forEach(event => {
-                        document.addEventListener(event, () => {
-                            if (this.warningShown) {
-                                this.warningShown = false;
-                            }
-                        });
-                    });
+                })
+                .catch(error => {
+                    console.error('Session check failed:', error);
+                });
+            },
+            
+            updateSessionData: function(data) {
+                try {
+                    localStorage.setItem('admin_session_data', JSON.stringify({
+                        user: data.user,
+                        last_check: new Date().getTime(),
+                        session_remaining: data.session_remaining
+                    }));
+                } catch (e) {
+                    console.log('Error updating session data:', e);
                 }
-            };
+            },
+            
+            showSessionWarning: function(minutesRemaining) {
+                this.warningShown = true;
+                
+                const warningModal = document.createElement('div');
+                warningModal.className = 'modal fade';
+                warningModal.id = 'sessionWarningModal';
+                warningModal.setAttribute('data-bs-backdrop', 'static');
+                warningModal.innerHTML = `
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header bg-warning text-white">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-exclamation-triangle me-2"></i>
+                                    Session Expiring Soon
+                                </h5>
+                            </div>
+                            <div class="modal-body">
+                                <p>Your session will expire in approximately <strong>${minutesRemaining} minutes</strong>.</p>
+                                <p>Would you like to extend your session?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="SessionManager.logout()">
+                                    Logout Now
+                                </button>
+                                <button type="button" class="btn btn-primary" onclick="SessionManager.extendSession()">
+                                    Extend Session
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(warningModal);
+                const modal = new bootstrap.Modal(warningModal);
+                modal.show();
+            },
+            
+            extendSession: function() {
+                // Make a simple request to extend session
+                fetch('{{ route('admin.dashboard') }}', {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(() => {
+                    // Close modal and reset warning
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('sessionWarningModal'));
+                    if (modal) {
+                        modal.hide();
+                    }
+                    this.warningShown = false;
+                    
+                    // Show success message
+                    this.showAlert('Session extended successfully!', 'success');
+                })
+                .catch(error => {
+                    console.error('Failed to extend session:', error);
+                    this.handleSessionExpired();
+                });
+            },
+            
+            handleSessionExpired: function() {
+                // Clear intervals
+                if (this.checkInterval) {
+                    clearInterval(this.checkInterval);
+                }
+                
+                // Clear local storage
+                this.clearSessionData();
+                
+                // Show expiry message and redirect
+                this.showAlert('Your session has expired. Please login again.', 'danger');
+                
+                setTimeout(() => {
+                    window.location.href = '{{ route('admin.login') }}';
+                }, 2000);
+            },
+            
+            logout: function() {
+                // Clear intervals
+                if (this.checkInterval) {
+                    clearInterval(this.checkInterval);
+                }
+                
+                // Submit logout form
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '{{ route('admin.logout') }}';
+                
+                const csrfToken = document.createElement('input');
+                csrfToken.type = 'hidden';
+                csrfToken.name = '_token';
+                csrfToken.value = '{{ csrf_token() }}';
+                form.appendChild(csrfToken);
+                
+                // Mark for local storage cleanup
+                sessionStorage.setItem('clear_local_storage', 'true');
+                
+                document.body.appendChild(form);
+                form.submit();
+            },
+            
+            clearSessionData: function() {
+                try {
+                    localStorage.removeItem('admin_session_data');
+                    // Don't clear remember me preferences unless explicitly logging out
+                } catch (e) {
+                    console.log('Error clearing session data:', e);
+                }
+            },
+            
+            handleLogoutCleanup: function() {
+                // Check for logout cleanup flags
+                if (sessionStorage.getItem('clear_local_storage')) {
+                    try {
+                        localStorage.removeItem('admin_remember_me');
+                        localStorage.removeItem('admin_email');
+                        localStorage.removeItem('admin_language');
+                        localStorage.removeItem('admin_session_data');
+                        sessionStorage.removeItem('clear_local_storage');
+                    } catch (e) {
+                        console.log('Error during logout cleanup:', e);
+                    }
+                }
+            },
+            
+            handleBeforeUnload: function() {
+                window.addEventListener('beforeunload', () => {
+                    // Update last activity time
+                    try {
+                        const sessionData = JSON.parse(localStorage.getItem('admin_session_data') || '{}');
+                        sessionData.last_activity = new Date().getTime();
+                        localStorage.setItem('admin_session_data', JSON.stringify(sessionData));
+                    } catch (e) {
+                        console.log('Error updating last activity:', e);
+                    }
+                });
+            },
+            
+            checkSessionWarnings: function() {
+                // Check for session warnings from server
+                @if(session('session_warning'))
+                    const remaining = {{ session('session_remaining', 5) }};
+                    if (!this.warningShown) {
+                        this.showSessionWarning(remaining);
+                    }
+                @endif
+            },
+            
+            showAlert: function(message, type = 'info') {
+                const alert = document.createElement('div');
+                alert.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+                alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+                alert.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                document.body.appendChild(alert);
+                
+                // Auto remove after 5 seconds
+                setTimeout(() => {
+                    if (alert.parentElement) {
+                        alert.remove();
+                    }
+                }, 5000);
+            }
+        };
 
-            // Initialize session manager when DOM is ready
-            document.addEventListener('DOMContentLoaded', function() {
-                SessionManager.init();
+        // Initialize session manager
+        SessionManager.init();
+
+        // Enhanced logout button handling
+        document.querySelectorAll('form[action*="logout"]').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                sessionStorage.setItem('clear_local_storage', 'true');
             });
-        </script>
-    @endauth
+        });
+    </script>
 
     <!-- Real-time notifications -->
     <script src="{{ asset('js/notifications.js') }}"></script>

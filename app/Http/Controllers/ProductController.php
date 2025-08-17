@@ -25,7 +25,7 @@ class ProductController extends Controller
 
         // Validate and sanitize input
         $validated = $request->validate([
-            'search' => 'nullable|string|max:100',
+            'search' => 'nullable|string|min:1|max:100',
             'line' => 'array',
             'line.*' => 'string|max:20',
             'type' => 'array',
@@ -38,6 +38,13 @@ class ProductController extends Controller
             'applicable_carrier.*' => 'string|max:20',
             'unit' => 'nullable|in:si,imperial',
         ]);
+
+        // If search is provided but empty after trim, redirect back with error
+        if ($request->filled('search') && !trim($request->search)) {
+            return redirect()->back()->withErrors([
+                'search' => __('common.search_required')
+            ])->withInput();
+        }
 
         $query = Product::with('category'); // Eager load category
         // Search by model_name (case-insensitive, sanitized)

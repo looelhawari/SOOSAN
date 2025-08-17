@@ -24,9 +24,6 @@ return Application::configure(basePath: dirname(__DIR__))
             'prevent.back.history' => \App\Http\Middleware\PreventBackHistory::class,
             'prevent.back.after.logout' => \App\Http\Middleware\PreventBackAfterLogout::class,
         ]);
-        
-        // Configure authentication redirects
-        $middleware->redirectGuestsTo('/admin/login');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

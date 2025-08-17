@@ -3,12 +3,17 @@
 @php use Illuminate\Support\Str; @endphp
 
 @section('title', 'SOOSAN - Leading Drilling Equipment & Hydraulic Breakers in Egypt')
-@section('description', 'Discover premium drilling equipment, hydraulic breakers, and construction machinery from SoosanEgypt. Leading supplier in Egypt for mining, construction, and industrial applications. Get expert solutions and reliable equipment.')
-@section('keywords', 'drilling equipment, hydraulic breakers, construction machinery, mining equipment, Soosan, Egypt, industrial solutions, construction tools, demolition equipment, rock breakers')
+@section('description',
+    'Discover premium drilling equipment, hydraulic breakers, and construction machinery from
+    SoosanEgypt. Leading supplier in Egypt for mining, construction, and industrial applications. Get expert solutions and
+    reliable equipment.')
+@section('keywords',
+    'drilling equipment, hydraulic breakers, construction machinery, mining equipment, Soosan, Egypt,
+    industrial solutions, construction tools, demolition equipment, rock breakers')
 @section('og_image', asset('images/logo2.png'))
 
 @push('structured_data')
-<script type="application/ld+json">
+    <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "WebSite",
@@ -23,7 +28,7 @@
     }
 </script>
 
-<script type="application/ld+json">
+    <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "LocalBusiness",
@@ -61,7 +66,7 @@
     }
 </script>
 
-<script type="application/ld+json">
+    <script type="application/ld+json">
     {
         "@context": "https://schema.org",
         "@type": "ItemList",
@@ -125,7 +130,8 @@
             align-items: center;
             gap: 1.5rem;
             flex-wrap: nowrap;
-            min-width: 0; /* Allow shrinking */
+            min-width: 0;
+            /* Allow shrinking */
         }
 
         /* Adaptive spacing for different zoom levels */
@@ -327,6 +333,7 @@
         }
 
         @keyframes homeAnimation {
+
             0%,
             100% {
                 transform: scale(1.1);
@@ -342,6 +349,7 @@
         }
 
         @keyframes gearsAnimation {
+
             0%,
             100% {
                 transform: scale(1.1) rotate(0deg);
@@ -353,6 +361,7 @@
         }
 
         @keyframes searchAnimation {
+
             0%,
             100% {
                 transform: scale(1.1);
@@ -368,6 +377,7 @@
         }
 
         @keyframes shieldAnimation {
+
             0%,
             100% {
                 transform: scale(1.1);
@@ -895,16 +905,23 @@
             flex-direction: column;
             text-align: left;
             background: transparent;
-            padding: 2rem 0
-            animation: heroContentFloat 6s ease-in-out infinite;
+            padding: 2rem 0 animation: heroContentFloat 6s ease-in-out infinite;
         }
+
         [dir="rtl"] .hero-content-overlay {
             text-align: right;
         }
 
         @keyframes heroContentFloat {
-            0%, 100% { transform: translate(-50%, -50%); }
-            50% { transform: translate(-50%, -52%); }
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%);
+            }
+
+            50% {
+                transform: translate(-50%, -52%);
+            }
         }
 
         .hero-main-title {
@@ -1015,37 +1032,38 @@
             }
         }
 
-            .hero-btn-group {
-                margin-left: 30px;
-                gap: 0.8rem;
-                width: 100%;
-            }
-            [dir="ltr"] .hero-btn-group {
-                margin-left: 0;
-            }
+        .hero-btn-group {
+            margin-left: 30px;
+            gap: 0.8rem;
+            width: 100%;
+        }
 
-            .hero-btn {
-                font-size: 0.95rem;
-                padding: 1rem 1.5rem;
-                border-radius: 25px;
-                position: relative;
-                overflow: hidden;
-            }
+        [dir="ltr"] .hero-btn-group {
+            margin-left: 0;
+        }
 
-            .hero-btn::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: -100%;
-                width: 100%;
-                height: 100%;
-                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-                transition: left 0.5s ease;
-            }
+        .hero-btn {
+            font-size: 0.95rem;
+            padding: 1rem 1.5rem;
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+        }
 
-            .hero-btn:active::before {
-                left: 100%;
-            }
+        .hero-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .hero-btn:active::before {
+            left: 100%;
+        }
 
 
         @media (max-width: 480px) {
@@ -1231,10 +1249,11 @@
             justify-content: center;
             opacity: 0.8;
         }
-        @if(app()->getLocale() == 'ar')
-        .slider-nav {
-            padding-right: 8px;
-        }
+
+        @if (app()->getLocale() == 'ar')
+            .slider-nav {
+                padding-right: 8px;
+            }
         @endif
 
         .slider-nav:hover {
@@ -1257,7 +1276,9 @@
         .slider-nav.next {
             right: 2rem;
         }
-        [dir="rtl"] .slider-nav.prev, [dir="rtl"] .slider-nav.next {
+
+        [dir="rtl"] .slider-nav.prev,
+        [dir="rtl"] .slider-nav.next {
             padding-left: 5px;
         }
 
@@ -1374,8 +1395,15 @@
         }
 
         @keyframes statPulse {
-            0%, 100% { transform: translateY(-15px) scale(1.05); }
-            50% { transform: translateY(-18px) scale(1.08); }
+
+            0%,
+            100% {
+                transform: translateY(-15px) scale(1.05);
+            }
+
+            50% {
+                transform: translateY(-18px) scale(1.08);
+            }
         }
 
         .stat-number {
@@ -1675,8 +1703,15 @@
         }
 
         @keyframes cardFloat {
-            0%, 100% { transform: translateY(-20px) rotateX(5deg) rotateY(5deg); }
-            50% { transform: translateY(-25px) rotateX(3deg) rotateY(3deg); }
+
+            0%,
+            100% {
+                transform: translateY(-20px) rotateX(5deg) rotateY(5deg);
+            }
+
+            50% {
+                transform: translateY(-25px) rotateX(3deg) rotateY(3deg);
+            }
         }
 
         .product-image {
@@ -1970,9 +2005,11 @@
                 font-size: 0.9rem;
             }
         }
+
         .badge-item {
             text-align: center;
         }
+
         /* Industries Section */
         .industries-section {
             background: white;
@@ -2028,8 +2065,8 @@
         /* Animations */
 
         /* ========================================
-           ENHANCED RESPONSIVE DESIGN - MOBILE FIRST
-           ======================================== */
+                       ENHANCED RESPONSIVE DESIGN - MOBILE FIRST
+                       ======================================== */
 
         /* Mobile Base (320px+) */
         @media (min-width: 320px) {
@@ -2319,21 +2356,24 @@
                 }
 
                 /* .slider-nav {
-                    width: 45px;
-                    height: 45px;
-                    font-size: 1rem;
-                }
+                                width: 45px;
+                                height: 45px;
+                                font-size: 1rem;
+                            }
 
-                .slider-nav.prev {
-                    left: 1rem;
-                }
+                            .slider-nav.prev {
+                                left: 1rem;
+                            }
 
+                            .slider-nav.next {
+                                right: 1rem;
+                            } */
+                .slider-nav,
+                .slider-nav.prev,
                 .slider-nav.next {
-                    right: 1rem;
-                } */
-                 .slider-nav, .slider-nav.prev, .slider-nav.next {
-                     display: none;
+                    display: none;
                 }
+
                 .slider-dots {
                     bottom: 5rem;
                     gap: 0.75rem;
@@ -2418,6 +2458,7 @@
                 .category-btn {
                     width: 100%;
                 }
+
                 .line-badge {
                     display: none;
                 }
@@ -2798,85 +2839,85 @@
                 box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
             }
 
-        /* ========================================
-           HIGHLIGHTS SECTION STYLES
-           ======================================== */
-        .highlights-section {
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            padding: 6rem 0;
-            position: relative;
-            overflow: hidden;
-        }
+            /* ========================================
+                       HIGHLIGHTS SECTION STYLES
+                       ======================================== */
+            .highlights-section {
+                background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+                padding: 6rem 0;
+                position: relative;
+                overflow: hidden;
+            }
 
-        .highlights-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 30% 20%, rgba(0, 84, 142, 0.05), transparent 50%),
-                        radial-gradient(circle at 70% 80%, rgba(176, 215, 1, 0.05), transparent 50%);
-            z-index: 0;
-        }
+            .highlights-section::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: radial-gradient(circle at 30% 20%, rgba(0, 84, 142, 0.05), transparent 50%),
+                    radial-gradient(circle at 70% 80%, rgba(176, 215, 1, 0.05), transparent 50%);
+                z-index: 0;
+            }
 
-        .highlights-section .container {
-            position: relative;
-            z-index: 1;
-        }
+            .highlights-section .container {
+                position: relative;
+                z-index: 1;
+            }
 
-        .highlights-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
+            .highlights-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 2rem;
+                margin-top: 3rem;
+            }
 
-        .highlight-item {
-            position: relative;
-            overflow: hidden;
-            background: white;
-            box-shadow: 0 10px 40px rgba(0, 84, 142, 0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-style: preserve-3d;
-        }
+            .highlight-item {
+                position: relative;
+                overflow: hidden;
+                background: white;
+                box-shadow: 0 10px 40px rgba(0, 84, 142, 0.1);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                transform-style: preserve-3d;
+            }
 
-        .highlight-item::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(0, 84, 142, 0.1), rgba(176, 215, 1, 0.1));
-            opacity: 0;
-            transition: opacity 0.4s ease;
-            z-index: 1;
-            border-radius: 20px;
-        }
+            .highlight-item::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(135deg, rgba(0, 84, 142, 0.1), rgba(176, 215, 1, 0.1));
+                opacity: 0;
+                transition: opacity 0.4s ease;
+                z-index: 1;
+                border-radius: 20px;
+            }
 
-        .highlight-item:hover {
-            transform: translateY(-15px) rotateX(5deg);
-            box-shadow: 0 25px 60px rgba(0, 84, 142, 0.2);
-        }
+            .highlight-item:hover {
+                transform: translateY(-15px) rotateX(5deg);
+                box-shadow: 0 25px 60px rgba(0, 84, 142, 0.2);
+            }
 
-        .highlight-item:hover::before {
-            opacity: 1;
-        }
+            .highlight-item:hover::before {
+                opacity: 1;
+            }
 
-        .highlight-media {
-            width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border-radius: 20px;
-            transition: all 0.4s ease;
-            position: relative;
-            z-index: 2;
-        }
+            .highlight-media {
+                width: 100%;
+                height: 300px;
+                object-fit: cover;
+                border-radius: 20px;
+                transition: all 0.4s ease;
+                position: relative;
+                z-index: 2;
+            }
 
-        .highlight-item:hover .highlight-media {
-            transform: scale(1.05);
-        }
+            .highlight-item:hover .highlight-media {
+                transform: scale(1.05);
+            }
         }
 
         /* Comprehensive Responsive Design for All Sections */
@@ -3112,17 +3153,17 @@
             }
 
             /* .search-input {
-                padding: 1rem;
-                text-align: center;
-                font-size: 0.9rem;
-                border-radius: 12px;
-            }
+                            padding: 1rem;
+                            text-align: center;
+                            font-size: 0.9rem;
+                            border-radius: 12px;
+                        }
 
-            .search-input-btn {
-                width: 100%;
-                padding: 1rem;
-                font-size: 0.9rem;
-            } */
+                        .search-input-btn {
+                            width: 100%;
+                            padding: 1rem;
+                            font-size: 0.9rem;
+                        } */
 
             /* Product Categories */
             .product-categories {
@@ -3485,7 +3526,8 @@
             <!-- Slide 1 -->
             <div class="hero-slide active" data-video="1">
                 <video class="slide-video" muted>
-                    <source src="https://res.cloudinary.com/dikwwdtgc/video/upload/v1752533779/1751260750371_mcsrrq.webm" type="video/webm">
+                    <source src="https://res.cloudinary.com/dikwwdtgc/video/upload/v1752533779/1751260750371_mcsrrq.webm"
+                        type="video/webm">
                     Your browser does not support the video tag.
                 </video>
                 <div class="slide-overlay">
@@ -3507,7 +3549,8 @@
             <!-- Slide 2 -->
             <div class="hero-slide" data-video="2">
                 <video class="slide-video" muted>
-                    <source src="https://res.cloudinary.com/dikwwdtgc/video/upload/v1752533784/1751260768956_p9g9vo.webm" type="video/webm">
+                    <source src="https://res.cloudinary.com/dikwwdtgc/video/upload/v1752533784/1751260768956_p9g9vo.webm"
+                        type="video/webm">
                     Your browser does not support the video tag.
                 </video>
                 <div class="slide-overlay">
@@ -3529,7 +3572,8 @@
             <!-- Slide 3 -->
             <div class="hero-slide" data-video="3">
                 <video class="slide-video" muted>
-                    <source src="https://res.cloudinary.com/dikwwdtgc/video/upload/v1752533765/1751260792190_qqmvnk.webm" type="video/webm">
+                    <source src="https://res.cloudinary.com/dikwwdtgc/video/upload/v1752533765/1751260792190_qqmvnk.webm"
+                        type="video/webm">
                     Your browser does not support the video tag.
                 </video>
                 <div class="slide-overlay">
@@ -3951,8 +3995,8 @@
         .breaker-product-split-card .subtitle {
             color: #00548e;
             font-weight: 800;
-            font-size: 2rem;x
-            display: flex;
+            font-size: 2rem;
+            x display: flex;
             align-items: center;
             gap: 1rem;
             line-height: 1.2;
@@ -4998,7 +5042,10 @@
                 <form action="{{ route('products.index') }}" method="GET" class="search-form">
                     <div class="search-input-container">
                         <input type="text" name="search" class="search-input"
-                            placeholder="{{ __('homepage.search_placeholder_text') }}" value="{{ request('search') }}">
+                            placeholder="{{ __('homepage.search_placeholder_text') }}" value="{{ request('search') }}"
+                            required title="{{ __('homepage.search_validation_title') }}"
+                            oninvalid="this.setCustomValidity('{{ __('homepage.search_validation_message') }}')"
+                            oninput="this.setCustomValidity('')">
                         <button type="submit" class="search-input-btn">
                             <i class="fas fa-search"></i>
                         </button>
@@ -5009,8 +5056,10 @@
                     <span class="tag-label">{{ __('homepage.popular_searches') }}</span>
                     <a href="{{ route('products.index') }}" class="search-tag">Hydraulic Breakers</a>
                     <a href="{{ route('products.index', ['type[]' => 'TR-F']) }}" class="search-tag">TR-F</a>
-                    <a href="{{ route('products.index', ['type[]' => 'Top Direct']) }}" class="search-tag">Top Direct</a>
-                    <a href="{{ route('products.index', ['type[]' => 'Skid Steer Loader']) }}" class="search-tag">SSL</a>
+                    <a href="{{ route('products.index', ['type[]' => 'Top Direct']) }}" class="search-tag">Top
+                        Direct</a>
+                    <a href="{{ route('products.index', ['type[]' => 'Skid Steer Loader']) }}"
+                        class="search-tag">SSL</a>
                 </div>
             </div>
         </div>
@@ -5136,6 +5185,7 @@
         [dir="rtl"] .search-input-btn {
             right: 91%;
         }
+
         .search-input-btn:hover {
             background: #b0d701;
         }
@@ -5150,9 +5200,11 @@
             [dir="rtl"] .search-input {
                 padding: 1rem 1.5rem 1rem 60px;
             }
+
             .search-input-btn {
                 left: 88%;
             }
+
             [dir="rtl"] .search-input-btn {
                 right: 86%;
             }
@@ -5240,9 +5292,12 @@
                 @foreach ($featuredProducts->whereIn('model_name', ['ET300II', 'SB200 TR-F', 'SB70E Side']) as $product)
                     <div class="product-card" data-category="attachments">
                         <div class="product-image">
-                            <img src="{{ $product->image_url ?? 'https://via.placeholder.com/400x300?text=' . urlencode($product->model_name) }}" alt="{{ $product->model_name }}" style="object-fit: contain; width: 100%; height: 100%;">
+                            <img src="{{ $product->image_url ?? 'https://via.placeholder.com/400x300?text=' . urlencode($product->model_name) }}"
+                                alt="{{ $product->model_name }}"
+                                style="object-fit: contain; width: 100%; height: 100%;">
                             <div class="product-overlay">
-                                <a href="{{ url('/products/' . $product->id) }}" class="product-link" target="_blank" rel="noopener">
+                                <a href="{{ url('/products/' . $product->id) }}" class="product-link" target="_blank"
+                                    rel="noopener">
                                     <i class="fas fa-eye"></i>
                                 </a>
                             </div>
@@ -5250,7 +5305,8 @@
                         <div class="product-info">
                             <h3 class="product-title">{{ $product->model_name }}</h3>
                             <p class="product-description">{{ Str::limit($product->description, 100) }}</p>
-                            <a href="{{ url('/products/' . $product->id) }}" class="product-btn" target="_blank" rel="noopener">{{ __('homepage.learn_more_btn') }}</a>
+                            <a href="{{ url('/products/' . $product->id) }}" class="product-btn" target="_blank"
+                                rel="noopener">{{ __('homepage.learn_more_btn') }}</a>
                         </div>
                     </div>
                 @endforeach
@@ -5268,7 +5324,10 @@
                     @csrf
                     <div class="serial-input-wrapper">
                         <input type="text" name="serial_number" class="serial-input"
-                            placeholder="{{ __('homepage.serial_number_placeholder') }}">
+                            placeholder="{{ __('homepage.serial_number_placeholder') }}" required
+                            title="{{ __('homepage.serial_validation_title') }}"
+                            oninvalid="this.setCustomValidity('{{ __('homepage.serial_validation_message') }}')"
+                            oninput="this.setCustomValidity('')">
                         <button type="submit" class="serial-btn">
                             <i class="fas fa-search"></i>
                         </button>
@@ -5288,32 +5347,23 @@
             <div class="youtube-video-grid">
                 <div class="youtube-video-item">
                     <iframe src="https://www.youtube.com/embed/cMefr35fupY?rel=0&modestbranding=1&fs=1&cc_load_policy=1"
-                        title="Soosan Video 3"
-                        frameborder="0"
+                        title="Soosan Video 3" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen
-                        loading="lazy"
-                        aria-label="Soosan YouTube Video 3">
+                        allowfullscreen loading="lazy" aria-label="Soosan YouTube Video 3">
                     </iframe>
                 </div>
                 <div class="youtube-video-item">
                     <iframe src="https://www.youtube.com/embed/iJmuKhtD_nk?rel=0&modestbranding=1&fs=1&cc_load_policy=1"
-                        title="Soosan Video 2"
-                        frameborder="0"
+                        title="Soosan Video 2" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen
-                        loading="lazy"
-                        aria-label="Soosan YouTube Video 2">
+                        allowfullscreen loading="lazy" aria-label="Soosan YouTube Video 2">
                     </iframe>
                 </div>
                 <div class="youtube-video-item">
                     <iframe src="https://www.youtube.com/embed/AGvShKigxLg?rel=0&modestbranding=1&fs=1&cc_load_policy=1"
-                        title="Soosan Video 4"
-                        frameborder="0"
+                        title="Soosan Video 4" frameborder="0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                        allowfullscreen
-                        loading="lazy"
-                        aria-label="Soosan YouTube Video 4">
+                        allowfullscreen loading="lazy" aria-label="Soosan YouTube Video 4">
                     </iframe>
                 </div>
             </div>
@@ -5445,6 +5495,7 @@
                 max-width: 100%;
                 min-height: 250px;
             }
+
             .youtube-explore-btn {
                 font-size: 1rem;
                 padding: 0.9rem 2rem;
@@ -5466,6 +5517,7 @@
                 margin: 0 auto;
                 max-width: 95%;
             }
+
             .soosan-youtube-section .section-header {
                 margin-bottom: 1.5rem;
                 padding: 0 1rem;
@@ -5515,7 +5567,8 @@
                 <!-- Card 1: Construction -->
                 <div class="industry-serve-card">
                     <div class="industry-serve-img-wrap">
-                        <img src="/images/img10.webp" alt="Construction Equipment" class="industry-serve-img" loading="lazy" />
+                        <img src="/images/img10.webp" alt="Construction Equipment" class="industry-serve-img"
+                            loading="lazy" />
                     </div>
                     <div class="industry-serve-content">
                         <h3 class="industry-serve-name">{{ __('homepage.industry_construction_title') }}</h3>
@@ -5525,9 +5578,15 @@
                             {{ __('homepage.industry_apps_title') }}
                         </div>
                         <ul class="industry-serve-apps">
-                            <li><i class="fas fa-hammer" style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_construction_app_1') }}</li>
-                            <li><i class="fas fa-road" style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_construction_app_2') }}</li>
-                            <li><i class="fas fa-building" style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_construction_app_3') }}</li>
+                            <li><i class="fas fa-hammer"
+                                    style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_construction_app_1') }}
+                            </li>
+                            <li><i class="fas fa-road"
+                                    style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_construction_app_2') }}
+                            </li>
+                            <li><i class="fas fa-building"
+                                    style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_construction_app_3') }}
+                            </li>
                         </ul>
                     </div>
                     <div class="industry-progress-bar"></div>
@@ -5536,7 +5595,8 @@
                 <!-- Card 2: Infrastructure -->
                 <div class="industry-serve-card">
                     <div class="industry-serve-img-wrap">
-                        <img src="/images/img4.webp" alt="Infrastructure Development" class="industry-serve-img" loading="lazy" />
+                        <img src="/images/img4.webp" alt="Infrastructure Development" class="industry-serve-img"
+                            loading="lazy" />
                     </div>
                     <div class="industry-serve-content">
                         <h3 class="industry-serve-name">{{ __('homepage.industry_infrastructure_title') }}</h3>
@@ -5546,9 +5606,15 @@
                             {{ __('homepage.industry_apps_title') }}
                         </div>
                         <ul class="industry-serve-apps">
-                            <li><i class="fas fa-bridge" style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_infrastructure_app_1') }}</li>
-                            <li><i class="fas fa-road" style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_infrastructure_app_2') }}</li>
-                            <li><i class="fas fa-tools" style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_infrastructure_app_3') }}</li>
+                            <li><i class="fas fa-bridge"
+                                    style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_infrastructure_app_1') }}
+                            </li>
+                            <li><i class="fas fa-road"
+                                    style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_infrastructure_app_2') }}
+                            </li>
+                            <li><i class="fas fa-tools"
+                                    style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_infrastructure_app_3') }}
+                            </li>
                         </ul>
                     </div>
                     <div class="industry-progress-bar"></div>
@@ -5557,7 +5623,8 @@
                 <!-- Card 3: Mining -->
                 <div class="industry-serve-card">
                     <div class="industry-serve-img-wrap">
-                        <img src="/images/img9.webp" alt="Mining Operations" class="industry-serve-img" loading="lazy" />
+                        <img src="/images/img9.webp" alt="Mining Operations" class="industry-serve-img"
+                            loading="lazy" />
                     </div>
                     <div class="industry-serve-content">
                         <h3 class="industry-serve-name">{{ __('homepage.industry_mining_title') }}</h3>
@@ -5567,9 +5634,12 @@
                             {{ __('homepage.industry_apps_title') }}
                         </div>
                         <ul class="industry-serve-apps">
-                            <li><i class="fas fa-mountain" style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_mining_app_1') }}</li>
-                            <li><i class="fas fa-gem" style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_mining_app_2') }}</li>
-                            <li><i class="fas fa-industry" style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_mining_app_3') }}</li>
+                            <li><i class="fas fa-mountain"
+                                    style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_mining_app_1') }}</li>
+                            <li><i class="fas fa-gem"
+                                    style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_mining_app_2') }}</li>
+                            <li><i class="fas fa-industry"
+                                    style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_mining_app_3') }}</li>
                         </ul>
                     </div>
                     <div class="industry-progress-bar"></div>
@@ -5578,7 +5648,8 @@
                 <!-- Card 4: Industrial -->
                 <div class="industry-serve-card">
                     <div class="industry-serve-img-wrap">
-                        <img src="/images/img6.webp" alt="Industrial Applications" class="industry-serve-img" loading="lazy" />
+                        <img src="/images/img6.webp" alt="Industrial Applications" class="industry-serve-img"
+                            loading="lazy" />
                     </div>
                     <div class="industry-serve-content">
                         <h3 class="industry-serve-name">{{ __('homepage.industry_industrial_title') }}</h3>
@@ -5588,9 +5659,12 @@
                             {{ __('homepage.industry_apps_title') }}
                         </div>
                         <ul class="industry-serve-apps">
-                            <li><i class="fas fa-industry" style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_industrial_app_1') }}</li>
-                            <li><i class="fas fa-wrench" style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_industrial_app_2') }}</li>
-                            <li><i class="fas fa-cog" style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_industrial_app_3') }}</li>
+                            <li><i class="fas fa-industry"
+                                    style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_industrial_app_1') }}</li>
+                            <li><i class="fas fa-wrench"
+                                    style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_industrial_app_2') }}</li>
+                            <li><i class="fas fa-cog"
+                                    style="margin-right: 0.3rem;"></i>{{ __('homepage.industry_industrial_app_3') }}</li>
                         </ul>
                     </div>
                     <div class="industry-progress-bar"></div>
@@ -5858,6 +5932,38 @@
                     font-size: 0.75rem;
                 }
             }
+
+            /* Custom validation message styling - ONLY the tooltip bubble */
+            input::-webkit-validation-bubble {
+                background-color: #dc3545 !important;
+                color: white !important;
+                border-radius: 8px !important;
+                padding: 10px 15px !important;
+                font-size: 14px !important;
+                font-weight: 500 !important;
+                box-shadow: 0 4px 15px rgba(220, 53, 69, 0.4) !important;
+                border: none !important;
+            }
+
+            input::-webkit-validation-bubble-message {
+                color: white !important;
+                font-weight: 500 !important;
+                text-shadow: none !important;
+            }
+
+            input::-webkit-validation-bubble-arrow {
+                background-color: #dc3545 !important;
+                border: none !important;
+            }
+
+            /* Firefox validation styling */
+            input:invalid {
+                box-shadow: none !important;
+            }
+
+            input:-moz-ui-invalid {
+                box-shadow: none !important;
+            }
         </style>
     </section>
 
@@ -6105,7 +6211,9 @@
                     if (currentSlideIndex === Array.from(videos).indexOf(currentVideo)) {
                         playCurrentVideo();
                     }
-                }, { once: true });
+                }, {
+                    once: true
+                });
             }
         }
 
@@ -6213,7 +6321,9 @@
                     e.preventDefault();
                     handlePrevClick();
                     isAutoPlaying = false;
-                    setTimeout(() => { isAutoPlaying = true; }, 10000);
+                    setTimeout(() => {
+                        isAutoPlaying = true;
+                    }, 10000);
                 });
             }
 
@@ -6222,7 +6332,9 @@
                     e.preventDefault();
                     handleNextClick();
                     isAutoPlaying = false;
-                    setTimeout(() => { isAutoPlaying = true; }, 10000);
+                    setTimeout(() => {
+                        isAutoPlaying = true;
+                    }, 10000);
                 });
             }
 
@@ -6430,4 +6542,3 @@
         });
     </script>
 @endpush
-

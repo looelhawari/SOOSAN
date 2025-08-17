@@ -122,28 +122,19 @@
     </div>
 
     <script>
-        // Prevent Back Button to Protected Pages - Enhanced Version
+        // Prevent Back Button to Protected Pages
         (function() {
             if (window.history && window.history.pushState) {
-                // Replace current state instead of pushing new one
-                window.history.replaceState(null, null, window.location.href);
-
-                window.addEventListener('popstate', function(event) {
-                    // Force stay on login page
-                    window.history.replaceState(null, null, window.location.href);
+                window.history.pushState(null, null, window.location.href);
+                window.addEventListener('popstate', function() {
+                    window.history.pushState(null, null, window.location.href);
                 });
             }
 
-            // Clear browser cache on page load and handle back button scenarios
+            // Clear browser cache on page load
             if (performance.navigation.type === 2) { // Returned via back button
-                // Clear any admin session data and reload login page
-                sessionStorage.clear();
-                localStorage.removeItem('adminPreferences');
-                window.location.replace(window.location.href);
+                window.location.reload();
             }
-
-            // Clear any cached admin data when login page loads
-            sessionStorage.clear();
         })();
 
         // User Preferences Manager

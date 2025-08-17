@@ -255,4 +255,12 @@ return [
     'key_features' => 'الميزات الرئيسية',
     'applications' => 'التطبيقات',
     'explore_more' => 'استكشف المزيد',
+    
+    // Search Validation Messages
+    'search_required' => 'يرجى إدخال مصطلح البحث',
+    'serial_required' => 'يرجى إدخال الرقم التسلسلي',
+    'search_validation_message' => 'يرجى إدخال مصطلح البحث للعثور على المنتجات',
+    'serial_validation_message' => 'يرجى إدخال رقم تسلسلي صحيح (مثال: SB70-12345)',
+    'search_validation_title' => 'يرجى إدخال اسم المنتج أو الطراز أو المواصفات للبحث',
+    'serial_validation_title' => 'يرجى إدخال الرقم التسلسلي لمعداتك للتحقق من الضمان',
 ];

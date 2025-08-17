@@ -509,4 +509,9 @@ return [
     'previous' => 'السابق',
     'next_products' => 'المنتجات التالية',
     'previous_products' => 'المنتجات السابقة',
+    
+    // Search Validation Messages
+    'search_required' => 'يرجى إدخال مصطلح البحث',
+    'serial_required' => 'يرجى إدخال الرقم التسلسلي',
+    'serial_placeholder' => 'أدخل الرقم التسلسلي للمعدة',
 ];

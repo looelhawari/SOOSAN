@@ -521,4 +521,9 @@ return [
     'previous' => 'Previous',
     'next_products' => 'Next Products',
     'previous_products' => 'Previous Products',
+    
+    // Search Validation Messages
+    'search_required' => 'Please enter a search term',
+    'serial_required' => 'Please enter a serial number',
+    'serial_placeholder' => 'Enter your equipment serial number',
 ];
