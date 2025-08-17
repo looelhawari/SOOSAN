@@ -3,9 +3,11 @@
 
 @php use Illuminate\Support\Str; @endphp
 @section('title', 'Hydraulic Breakers & Drilling Equipment - SoosanEgypt')
-@section('description', 'Browse our comprehensive collection of hydraulic breakers, drilling equipment, and construction
+@section('description',
+    'Browse our comprehensive collection of hydraulic breakers, drilling equipment, and construction
     machinery. Find the perfect equipment for your construction, mining, and industrial projects in Egypt.')
-@section('keywords', 'hydraulic breakers, drilling equipment, construction machinery, mining equipment, Soosan, Egypt,
+@section('keywords',
+    'hydraulic breakers, drilling equipment, construction machinery, mining equipment, Soosan, Egypt,
     industrial tools, demolition equipment, rock breakers, construction tools')
 @section('og_image', asset('images/logo2.png'))
 
@@ -431,6 +433,34 @@
             background-color: #e9ecef;
             border-color: #dee2e6;
         }
+
+        /* Search validation styles */
+        .form-control.is-invalid {
+            border-color: #dc3545 !important;
+            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25) !important;
+        }
+
+        #searchError {
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        #searchError:not([style*="display: none"]) {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
     </style>
 
     <div class="bg-light py-3 py-md-5">
@@ -447,14 +477,17 @@
                                 placeholder="{{ __('common.products_search_placeholder') }}"
                                 style="font-size: 1.3rem; background: #fff;">
                             <button class="btn search-btn rounded-end-pill px-3 px-md-4 d-flex align-items-center"
-                                type="submit">
+                                type="button" id="searchBtn">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="white"
                                     viewBox="0 0 16 16" class="me-md-2">
                                     <path
                                         d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zm-5.242 1.398a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z" />
                                 </svg>
                             </button>
+
                         </div>
+                        <!-- Error message container -->
+                        <small id="searchError" class="text-danger mt-2 d-block" style="display: none;"></small>
                     </form>
                 </div>
             </div>
@@ -804,6 +837,59 @@
     <div id="copyToast" class="copy-toast">{{ __('common.copy_link') }}</div>
 
     @push('scripts')
+        <script>
+            document.getElementById("searchBtn").addEventListener("click", function() {
+                let input = document.getElementById("search");
+                let errorDiv = document.getElementById("searchError");
+                let val = input.value.trim();
+
+                if (val === "") {
+                    // إظهار رسالة الخطأ
+                    errorDiv.textContent = "{{ __('common.search_required') }}";
+                    errorDiv.style.display = "block";
+                    input.classList.add("is-invalid");
+                    input.focus();
+                } else {
+                    // إخفاء رسالة الخطأ وإرسال الفورم
+                    hideErrorMessage(errorDiv);
+                    input.classList.remove("is-invalid");
+                    document.getElementById("mainSearchForm").submit();
+                }
+            });
+
+            // دالة لإخفاء رسالة الخطأ بـ smooth transition
+            function hideErrorMessage(errorDiv) {
+                errorDiv.style.opacity = "0";
+                errorDiv.style.transform = "translateY(-5px)";
+                setTimeout(() => {
+                    errorDiv.style.display = "none";
+                    errorDiv.style.opacity = "";
+                    errorDiv.style.transform = "";
+                }, 300);
+            }
+
+            // إخفاء رسالة الخطأ عند الكتابة
+            document.getElementById("search").addEventListener("input", function() {
+                let errorDiv = document.getElementById("searchError");
+                let trimmedValue = this.value.trim();
+
+                // إخفاء الرسالة فوراً لما المستخدم يكتب أي حاجة
+                if (trimmedValue !== "") {
+                    hideErrorMessage(errorDiv);
+                    this.classList.remove("is-invalid");
+                }
+            });
+
+            // إخفاء رسالة الخطأ عند الـ focus أيضاً
+            document.getElementById("search").addEventListener("focus", function() {
+                let errorDiv = document.getElementById("searchError");
+                if (this.value.trim() !== "") {
+                    hideErrorMessage(errorDiv);
+                    this.classList.remove("is-invalid");
+                }
+            });
+        </script>
+
         <script>
             // Progress bar functionality
             function startProgressBar() {
