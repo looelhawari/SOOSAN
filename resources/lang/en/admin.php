@@ -197,4 +197,5 @@ return [
     // User Dropdown
     'profile' => 'Profile',
     'signed_in_as' => 'Signed in as',
+    'deleted_items' => 'Deleted Items',
 ];

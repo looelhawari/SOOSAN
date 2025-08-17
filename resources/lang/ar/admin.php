@@ -35,6 +35,7 @@ return [
     'messages_this_month' => 'الرسائل هذا الشهر',
     
     // Actions
+
     'create' => 'إنشاء',
     'edit' => 'تعديل',
     'delete' => 'حذف',
@@ -184,4 +185,5 @@ return [
     'notifications_help' => 'ستتلقى هنا إشعارات حول طلبات التغيير الخاصة بك.',
     'notification_sound' => 'تشغيل صوت الإشعار',
     'real_time_notifications' => 'تم تفعيل الإشعارات الفورية',
+    'deleted_items' => 'العناصر المحذوفة',
 ];
