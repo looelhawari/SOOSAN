@@ -27,6 +27,7 @@ class User extends Authenticatable
         'created_by',
         'phone_number',
         'image_url',
+        'cloudinary_public_id',
     ];
 
     /**

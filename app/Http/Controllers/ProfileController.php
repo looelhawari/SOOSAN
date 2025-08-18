@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\CloudinaryService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,12 @@ use Illuminate\Support\Facades\Log;
 
 class ProfileController extends Controller
 {
+    protected $cloudinaryService;
+
+    public function __construct(CloudinaryService $cloudinaryService)
+    {
+        $this->cloudinaryService = $cloudinaryService;
+    }
     /**
      * Display the user's profile form.
      */
@@ -36,16 +43,29 @@ class ProfileController extends Controller
         Log::info('Profile update request', ['user_id' => $user->id, 'data' => $validatedData]);
 
         try {
-            // Handle image upload (local storage)
+            // Handle image upload with Cloudinary
             if ($request->hasFile('profile_image')) {
-                // Delete old image if it exists
-                if ($user->image_url && file_exists(public_path($user->image_url))) {
+                // Delete old image first
+                if ($user->cloudinary_public_id) {
+                    $this->cloudinaryService->deleteImage($user->cloudinary_public_id);
+                } elseif ($user->image_url && file_exists(public_path($user->image_url))) {
                     @unlink(public_path($user->image_url));
                 }
-                $image = $request->file('profile_image');
-                $imageName = 'user_' . $user->id . '_' . time() . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('user_images'), $imageName);
-                $validatedData['image_url'] = 'user_images/' . $imageName;
+
+                try {
+                    $uploadResult = $this->cloudinaryService->uploadImage($request->file('profile_image'), 'users');
+                    if ($uploadResult) {
+                        $validatedData['image_url'] = $uploadResult['url'];
+                        $validatedData['cloudinary_public_id'] = $uploadResult['public_id'];
+                    }
+                } catch (\Exception $e) {
+                    // If Cloudinary fails, fall back to local storage
+                    $image = $request->file('profile_image');
+                    $imageName = 'user_' . $user->id . '_' . time() . '.' . $image->getClientOriginalExtension();
+                    $image->move(public_path('user_images'), $imageName);
+                    $validatedData['image_url'] = 'user_images/' . $imageName;
+                    $validatedData['cloudinary_public_id'] = null;
+                }
             }
 
             // Fill user with validated data
@@ -74,6 +94,13 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
+
+        // Delete user's profile image from Cloudinary if it exists
+        if ($user->cloudinary_public_id) {
+            $this->cloudinaryService->deleteImage($user->cloudinary_public_id);
+        } elseif ($user->image_url && file_exists(public_path($user->image_url))) {
+            @unlink(public_path($user->image_url));
+        }
 
         Auth::logout();
 
@@ -137,15 +164,20 @@ class ProfileController extends Controller
     public function removeImage(Request $request): RedirectResponse
     {
         $user = $request->user();
-        
-        // Delete image file from local storage if it exists
-        if ($user->image_url && file_exists(public_path($user->image_url))) {
+
+        // Delete image from Cloudinary if it exists
+        if ($user->cloudinary_public_id) {
+            $this->cloudinaryService->deleteImage($user->cloudinary_public_id);
+        } elseif ($user->image_url && file_exists(public_path($user->image_url))) {
+            // Delete local image file if it exists
             @unlink(public_path($user->image_url));
         }
-        // Remove image URL from database
+
+        // Remove image references from database
         $user->image_url = null;
+        $user->cloudinary_public_id = null;
         $user->save();
-        
+
         return Redirect::route('profile.edit')->with('status', 'image-removed');
     }
 }
