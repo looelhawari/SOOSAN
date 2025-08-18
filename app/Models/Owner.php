@@ -21,6 +21,7 @@ class Owner extends Model
         'country',
         'preferred_language',
         'company_image_url',
+        'cloudinary_public_id',
     ];
 
     // Relationships

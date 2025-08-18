@@ -4,11 +4,18 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Owner;
 use App\Models\PendingChange;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class OwnerController extends Controller
 {
+    protected $cloudinaryService;
+
+    public function __construct(CloudinaryService $cloudinaryService)
+    {
+        $this->cloudinaryService = $cloudinaryService;
+    }
     public function productDetails(Request $request)
     {
         $ownerId = $request->query('owner_id');
@@ -67,7 +74,7 @@ class OwnerController extends Controller
             ];
         });
         $query = Owner::query();
-        
+
         // Search functionality
         if ($request->filled('search')) {
             $search = $request->search;
@@ -79,39 +86,39 @@ class OwnerController extends Controller
                   ->orWhere('country', 'like', "%{$search}%");
             });
         }
-        
+
         // Filter by country
         if ($request->filled('country')) {
             $query->where('country', $request->country);
         }
-        
+
         // Filter by city
         if ($request->filled('city')) {
             $query->where('city', $request->city);
         }
-        
+
         // Sorting
         $sortBy = $request->get('sort_by', 'name');
         $sortDirection = $request->get('sort_direction', 'asc');
-        
+
         if (in_array($sortBy, ['name', 'email', 'company', 'city', 'country', 'created_at'])) {
             $query->orderBy($sortBy, $sortDirection);
         } else {
             $query->orderBy('name', 'asc');
         }
-        
+
         $owners = $query->paginate(15)->withQueryString();
-        
+
         // Statistics
         $totalOwners = Owner::count();
         $ownersWithEmail = Owner::whereNotNull('email')->count();
         $ownersWithCompany = Owner::whereNotNull('company')->count();
         $totalCountries = Owner::whereNotNull('country')->distinct('country')->count();
-        
+
         // Get filter options
         $countries = Owner::whereNotNull('country')->distinct()->pluck('country')->sort();
         $cities = Owner::whereNotNull('city')->distinct()->pluck('city')->sort();
-        
+
         // Top Owners by Spending (limit 10)
         $topOwners = Owner::withCount('soldProducts')
             ->with(['soldProducts' => function($q) { $q->select('owner_id', 'purchase_price'); }])
@@ -139,10 +146,10 @@ class OwnerController extends Controller
             })->values();
 
         return view('admin.owners.index', compact(
-            'owners', 
-            'totalOwners', 
-            'ownersWithEmail', 
-            'ownersWithCompany', 
+            'owners',
+            'totalOwners',
+            'ownersWithEmail',
+            'ownersWithCompany',
             'totalCountries',
             'countries',
             'cities',
@@ -181,17 +188,28 @@ class OwnerController extends Controller
 
             // Handle image upload
             if ($request->hasFile('company_image')) {
-                $image = $request->file('company_image');
-                $imageName = 'company_' . $owner->id . '_' . time() . '.' . $image->getClientOriginalExtension();
-                
-                // Ensure the directory exists
-                if (!file_exists(public_path('company_logos'))) {
-                    mkdir(public_path('company_logos'), 0755, true);
-                }
+                try {
+                    $uploadResult = $this->cloudinaryService->uploadImage($request->file('company_image'), 'owners');
+                    if ($uploadResult) {
+                        $owner->company_image_url = $uploadResult['url'];
+                        $owner->cloudinary_public_id = $uploadResult['public_id'];
+                        $owner->save();
+                    }
+                } catch (\Exception $e) {
+                    // If Cloudinary fails, fall back to local storage
+                    $image = $request->file('company_image');
+                    $imageName = 'company_' . $owner->id . '_' . time() . '.' . $image->getClientOriginalExtension();
 
-                $image->move(public_path('company_logos'), $imageName);
-                $owner->company_image_url = 'company_logos/' . $imageName;
-                $owner->save();
+                    // Ensure the directory exists
+                    if (!file_exists(public_path('company_logos'))) {
+                        mkdir(public_path('company_logos'), 0755, true);
+                    }
+
+                    $image->move(public_path('company_logos'), $imageName);
+                    $owner->company_image_url = 'company_logos/' . $imageName;
+                    $owner->cloudinary_public_id = null;
+                    $owner->save();
+                }
             }
 
             return redirect()->route('admin.owners.index')->with('success', __('owners.owner_created'));
@@ -237,27 +255,44 @@ class OwnerController extends Controller
 
             // 1. Handle Image Removal
             if ($request->boolean('remove_company_image')) {
-                if ($owner->company_image_url && file_exists(public_path($owner->company_image_url))) {
+                // Delete from Cloudinary if it exists
+                if ($owner->cloudinary_public_id) {
+                    $this->cloudinaryService->deleteImage($owner->cloudinary_public_id);
+                } elseif ($owner->company_image_url && file_exists(public_path($owner->company_image_url))) {
                     @unlink(public_path($owner->company_image_url));
                 }
                 $updateData['company_image_url'] = null;
+                $updateData['cloudinary_public_id'] = null;
             }
             // 2. Handle Image Upload
             elseif ($request->hasFile('company_image')) {
-                // Delete old image if it exists
-                if ($owner->company_image_url && file_exists(public_path($owner->company_image_url))) {
+                // Delete old image first
+                if ($owner->cloudinary_public_id) {
+                    $this->cloudinaryService->deleteImage($owner->cloudinary_public_id);
+                } elseif ($owner->company_image_url && file_exists(public_path($owner->company_image_url))) {
                     @unlink(public_path($owner->company_image_url));
                 }
-                $image = $request->file('company_image');
-                $imageName = 'company_' . $owner->id . '_' . time() . '.' . $image->getClientOriginalExtension();
-                
-                // Ensure the directory exists
-                if (!file_exists(public_path('company_logos'))) {
-                    mkdir(public_path('company_logos'), 0755, true);
-                }
 
-                $image->move(public_path('company_logos'), $imageName);
-                $updateData['company_image_url'] = 'company_logos/' . $imageName;
+                try {
+                    $uploadResult = $this->cloudinaryService->uploadImage($request->file('company_image'), 'owners');
+                    if ($uploadResult) {
+                        $updateData['company_image_url'] = $uploadResult['url'];
+                        $updateData['cloudinary_public_id'] = $uploadResult['public_id'];
+                    }
+                } catch (\Exception $e) {
+                    // If Cloudinary fails, fall back to local storage
+                    $image = $request->file('company_image');
+                    $imageName = 'company_' . $owner->id . '_' . time() . '.' . $image->getClientOriginalExtension();
+
+                    // Ensure the directory exists
+                    if (!file_exists(public_path('company_logos'))) {
+                        mkdir(public_path('company_logos'), 0755, true);
+                    }
+
+                    $image->move(public_path('company_logos'), $imageName);
+                    $updateData['company_image_url'] = 'company_logos/' . $imageName;
+                    $updateData['cloudinary_public_id'] = null;
+                }
             }
 
             $owner->update($updateData);
@@ -289,6 +324,13 @@ class OwnerController extends Controller
         }
 
         // If user is admin, delete directly
+        // Delete company image from Cloudinary if it exists
+        if ($owner->cloudinary_public_id) {
+            $this->cloudinaryService->deleteImage($owner->cloudinary_public_id);
+        } elseif ($owner->company_image_url && file_exists(public_path($owner->company_image_url))) {
+            @unlink(public_path($owner->company_image_url));
+        }
+
         $owner->delete();
 
         return redirect()->route('admin.owners.index')

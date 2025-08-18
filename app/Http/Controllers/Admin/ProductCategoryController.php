@@ -4,12 +4,19 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ProductCategory;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ProductCategoryController extends Controller
 {
+    protected $cloudinaryService;
+
+    public function __construct(CloudinaryService $cloudinaryService)
+    {
+        $this->cloudinaryService = $cloudinaryService;
+    }
     public function index()
     {
         $categories = ProductCategory::withCount('products')->orderBy('name')->paginate(15);
@@ -38,9 +45,19 @@ class ProductCategoryController extends Controller
         $category = ProductCategory::create($data);
 
         if ($request->hasFile('icon')) {
-            $iconPath = $request->file('icon')->store('categories', 'public');
-            $category->icon_url = '/storage/' . $iconPath;
-            $category->save();
+            try {
+                $uploadResult = $this->cloudinaryService->uploadImage($request->file('icon'), 'categories');
+                if ($uploadResult) {
+                    $category->icon_url = $uploadResult['url'];
+                    $category->cloudinary_public_id = $uploadResult['public_id'];
+                    $category->save();
+                }
+            } catch (\Exception $e) {
+                // If Cloudinary fails, fall back to local storage
+                $iconPath = $request->file('icon')->store('categories', 'public');
+                $category->icon_url = '/storage/' . $iconPath;
+                $category->save();
+            }
         }
 
         return redirect()->route('admin.product-categories.index')
@@ -69,9 +86,29 @@ class ProductCategoryController extends Controller
         $productCategory->update($data);
 
         if ($request->hasFile('icon')) {
-            $iconPath = $request->file('icon')->store('categories', 'public');
-            $productCategory->icon_url = '/storage/' . $iconPath;
-            $productCategory->save();
+            // Delete old image from Cloudinary if it exists
+            if ($productCategory->cloudinary_public_id) {
+                $this->cloudinaryService->deleteImage($productCategory->cloudinary_public_id);
+            } elseif ($productCategory->icon_url && strpos($productCategory->icon_url, '/storage/') === 0) {
+                // Delete old local image
+                $oldPath = str_replace('/storage/', '', $productCategory->icon_url);
+                Storage::disk('public')->delete($oldPath);
+            }
+
+            try {
+                $uploadResult = $this->cloudinaryService->uploadImage($request->file('icon'), 'categories');
+                if ($uploadResult) {
+                    $productCategory->icon_url = $uploadResult['url'];
+                    $productCategory->cloudinary_public_id = $uploadResult['public_id'];
+                    $productCategory->save();
+                }
+            } catch (\Exception $e) {
+                // If Cloudinary fails, fall back to local storage
+                $iconPath = $request->file('icon')->store('categories', 'public');
+                $productCategory->icon_url = '/storage/' . $iconPath;
+                $productCategory->cloudinary_public_id = null;
+                $productCategory->save();
+            }
         }
 
         return redirect()->route('admin.product-categories.index')
@@ -80,6 +117,15 @@ class ProductCategoryController extends Controller
 
     public function destroy(ProductCategory $productCategory)
     {
+        // Delete image from Cloudinary if it exists
+        if ($productCategory->cloudinary_public_id) {
+            $this->cloudinaryService->deleteImage($productCategory->cloudinary_public_id);
+        } elseif ($productCategory->icon_url && strpos($productCategory->icon_url, '/storage/') === 0) {
+            // Delete local image
+            $oldPath = str_replace('/storage/', '', $productCategory->icon_url);
+            Storage::disk('public')->delete($oldPath);
+        }
+
         $productCategory->delete();
         return redirect()->route('admin.product-categories.index')
             ->with('success', __('product_categories.category_deleted'));

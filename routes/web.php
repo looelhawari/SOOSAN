@@ -6,6 +6,9 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SerialLookupController;
 use Illuminate\Support\Facades\Route;
 
+// Load test routes
+require __DIR__.'/test-cloudinary.php';
+
 // Public routes
 Route::get('/', [PublicController::class, 'homepage'])->name('homepage');
 Route::get('/about', [PublicController::class, 'about'])->name('about');
@@ -59,7 +62,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/test-notifications', function () {
         return view('test.notifications');
     })->name('test.notifications.index');
-    
+
     Route::get('/test-notifications/contact', [App\Http\Controllers\TestNotificationController::class, 'testContactMessage'])->name('test.contact');
     Route::get('/test-notifications/pending', [App\Http\Controllers\TestNotificationController::class, 'testPendingChange'])->name('test.pending');
     Route::get('/test-notifications/rejection', [App\Http\Controllers\TestNotificationController::class, 'testRejection'])->name('test.rejection');
@@ -78,12 +81,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::delete('/profile/image', [ProfileController::class, 'removeImage'])->name('profile.remove-image');
     Route::post('/profile/check-password', [App\Http\Controllers\ProfileController::class, 'checkPassword'])->middleware(['auth'])->name('profile.check-password');
-    
+
     // Notification routes
     Route::get('/notifications', [App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/{id}/mark-as-read', [App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.mark-as-read');
     Route::post('/notifications/mark-all-as-read', [App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-as-read');
-    
+
     // API-style notification routes for AJAX calls
     Route::get('/api/notifications', [App\Http\Controllers\Api\NotificationApiController::class, 'index'])->name('api.notifications.index');
     Route::get('/api/notifications/check', [App\Http\Controllers\Api\NotificationApiController::class, 'check'])->name('api.notifications.check');

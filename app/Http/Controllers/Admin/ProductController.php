@@ -6,11 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Product;
 use App\Models\ProductCategory;
 use App\Models\PendingChange;
+use App\Services\CloudinaryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class ProductController extends Controller
 {
+    protected $cloudinaryService;
+
+    public function __construct(CloudinaryService $cloudinaryService)
+    {
+        $this->cloudinaryService = $cloudinaryService;
+    }
+
     public function index(Request $request)
     {
         $query = Product::with('category');
@@ -38,7 +46,7 @@ class ProductController extends Controller
 
         $products = $query->orderBy('created_at', 'desc')->paginate(15);
         $categories = ProductCategory::all();
-        
+
         // Calculate statistics
         $totalProducts = Product::count();
         $activeProducts = Product::where('is_active', true)->count();
@@ -46,11 +54,11 @@ class ProductController extends Controller
         $totalCategories = ProductCategory::count();
 
         return view('admin.products.index', compact(
-            'products', 
-            'categories', 
-            'totalProducts', 
-            'activeProducts', 
-            'featuredProducts', 
+            'products',
+            'categories',
+            'totalProducts',
+            'activeProducts',
+            'featuredProducts',
             'totalCategories'
         ));
     }
@@ -68,7 +76,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:product_categories,id',
             'line' => 'nullable|string|max:255',
             'type' => 'nullable|string|max:255',
-            
+
             // Specifications
             'body_weight' => 'nullable|string|max:255',
             'operating_weight' => 'nullable|string|max:255',
@@ -82,10 +90,10 @@ class ProductController extends Controller
             'hose_diameter' => 'nullable|string|max:255',
             'rod_diameter' => 'nullable|string|max:255',
             'applicable_carrier' => 'nullable|string|max:255',
-            
+
             // Media
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
-            
+
             // Options
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
@@ -96,7 +104,7 @@ class ProductController extends Controller
             'line' => $request->line,
             'type' => $request->type,
             'category_id' => $request->category_id,
-            
+
             // Specifications
             'body_weight' => $request->body_weight,
             'operating_weight' => $request->operating_weight,
@@ -110,7 +118,7 @@ class ProductController extends Controller
             'hose_diameter' => $request->hose_diameter,
             'rod_diameter' => $request->rod_diameter,
             'applicable_carrier' => $request->applicable_carrier,
-            
+
             // Options
             'is_active' => $request->boolean('is_active'),
             'is_featured' => $request->boolean('is_featured'),
@@ -118,10 +126,19 @@ class ProductController extends Controller
 
         // Handle image upload
         if ($request->hasFile('product_image')) {
-            $image = $request->file('product_image');
-            $filename = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('images/products'), $filename);
-            $productData['image_url'] = '/images/products/' . $filename;
+            $uploadResult = $this->cloudinaryService->uploadImage(
+                $request->file('product_image'),
+                'products'
+            );
+
+            if ($uploadResult) {
+                $productData['image_url'] = $uploadResult['url'];
+                $productData['cloudinary_public_id'] = $uploadResult['public_id'];
+            } else {
+                return redirect()->back()
+                    ->withErrors(['product_image' => 'Failed to upload image. Please try again.'])
+                    ->withInput();
+            }
         }
 
         Product::create($productData);
@@ -148,7 +165,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:product_categories,id',
             'line' => 'nullable|string|max:255',
             'type' => 'nullable|string|max:255',
-            
+
             // Specifications
             'body_weight' => 'nullable|string|max:255',
             'operating_weight' => 'nullable|string|max:255',
@@ -162,10 +179,10 @@ class ProductController extends Controller
             'hose_diameter' => 'nullable|string|max:255',
             'rod_diameter' => 'nullable|string|max:255',
             'applicable_carrier' => 'nullable|string|max:255',
-            
+
             // Media
             'product_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:10240',
-            
+
             // Options
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
@@ -176,7 +193,7 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'line' => $request->line,
             'type' => $request->type,
-            
+
             // Specifications
             'body_weight' => $request->body_weight,
             'operating_weight' => $request->operating_weight,
@@ -190,7 +207,7 @@ class ProductController extends Controller
             'hose_diameter' => $request->hose_diameter,
             'rod_diameter' => $request->rod_diameter,
             'applicable_carrier' => $request->applicable_carrier,
-            
+
             // Options
             'is_active' => $request->boolean('is_active'),
             'is_featured' => $request->boolean('is_featured'),
@@ -198,10 +215,23 @@ class ProductController extends Controller
 
         // Handle image upload
         if ($request->hasFile('product_image')) {
-            $image = $request->file('product_image');
-            $filename = time() . '_' . $image->getClientOriginalName();
-            $image->move(public_path('images/products'), $filename);
-            $updateData['image_url'] = '/images/products/' . $filename;
+            $uploadResult = $this->cloudinaryService->uploadImage(
+                $request->file('product_image'),
+                'products'
+            );
+
+            if ($uploadResult) {
+                $updateData['image_url'] = $uploadResult['url'];
+                $updateData['cloudinary_public_id'] = $uploadResult['public_id'];
+
+                // Store old image info for potential deletion later
+                $oldImageUrl = $product->image_url;
+                $oldPublicId = $product->cloudinary_public_id;
+            } else {
+                return redirect()->back()
+                    ->withErrors(['product_image' => 'Failed to upload image. Please try again.'])
+                    ->withInput();
+            }
         }
 
         // If user is an employee, create a pending change instead of directly updating
@@ -220,9 +250,21 @@ class ProductController extends Controller
         }
 
         // If user is admin, apply changes directly
-        // Handle image deletion for admin updates
-        if ($request->hasFile('product_image') && $product->image_url && file_exists(public_path($product->image_url))) {
-            unlink(public_path($product->image_url));
+        // Handle old image deletion for admin updates
+        if ($request->hasFile('product_image')) {
+            // Delete old image from Cloudinary if it exists
+            if ($product->cloudinary_public_id) {
+                $this->cloudinaryService->deleteImage($product->cloudinary_public_id);
+            } elseif ($product->image_url && $this->cloudinaryService->isCloudinaryUrl($product->image_url)) {
+                // Fallback: extract public_id from URL if not stored in database
+                $publicId = $this->cloudinaryService->extractPublicId($product->image_url);
+                if ($publicId) {
+                    $this->cloudinaryService->deleteImage($publicId);
+                }
+            } elseif ($product->image_url && file_exists(public_path($product->image_url))) {
+                // Handle legacy local files
+                unlink(public_path($product->image_url));
+            }
         }
 
         $product->update($updateData);
@@ -249,6 +291,19 @@ class ProductController extends Controller
         }
 
         // If user is admin, delete directly
+        // Delete associated image from Cloudinary before deleting product
+        if ($product->cloudinary_public_id) {
+            $this->cloudinaryService->deleteImage($product->cloudinary_public_id);
+        } elseif ($product->image_url && $this->cloudinaryService->isCloudinaryUrl($product->image_url)) {
+            $publicId = $this->cloudinaryService->extractPublicId($product->image_url);
+            if ($publicId) {
+                $this->cloudinaryService->deleteImage($publicId);
+            }
+        } elseif ($product->image_url && file_exists(public_path($product->image_url))) {
+            // Handle legacy local files
+            unlink(public_path($product->image_url));
+        }
+
         $product->delete();
         return redirect()->route('admin.products.index')
             ->with('success', 'Product deleted successfully.');

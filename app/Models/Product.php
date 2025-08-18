@@ -32,6 +32,7 @@ class Product extends Model implements HasMedia
         'rod_diameter',
         'applicable_carrier',
         'image_url',
+        'cloudinary_public_id',
         'is_active',
         'is_featured',
     ];

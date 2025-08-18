@@ -6,19 +6,18 @@ use App\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Illuminate\Support\Str;
 
-class ProductCategory extends Model implements HasMedia
+class ProductCategory extends Model
 {
-    use HasFactory, InteractsWithMedia, LogsActivity, SoftDeletes;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     protected $fillable = [
         'name',
         'slug',
         'description',
+        'icon_url',
+        'cloudinary_public_id',
         'parent_id',
         'sort_order',
         'is_active',
@@ -27,29 +26,6 @@ class ProductCategory extends Model implements HasMedia
     protected $casts = [
         'is_active' => 'boolean',
     ];
-
-    protected $appends = ['icon'];
-
-    public function getIconAttribute()
-    {
-        return $this->getFirstMediaUrl('icon', 'thumb') ?: 'https://via.placeholder.com/64';
-    }
-
-    // Media collections
-    public function registerMediaCollections(): void
-    {
-        $this->addMediaCollection('icon')
-            ->singleFile()
-            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml']);
-    }
-
-    public function registerMediaConversions(Media $media = null): void
-    {
-        $this->addMediaConversion('thumb')
-            ->width(64)
-            ->height(64)
-            ->performOnCollections('icon');
-    }
 
     // Auto-generate slug from name
     public function setNameAttribute($value)
