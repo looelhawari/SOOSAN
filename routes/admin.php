@@ -26,7 +26,7 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'prevent.back.after.l
 
     // Logout route for authenticated users
     Route::post('logout', [AdminController::class, 'logout'])->name('logout');
-    
+
     // Session management routes
     Route::middleware(['auth:web'])->group(function () {
         Route::get('session/check', [AdminController::class, 'checkSession'])->name('session.check');
@@ -102,14 +102,14 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'prevent.back.after.l
             Route::get('/', [ReportsController::class, 'index'])->name('index');
             Route::get('/comprehensive', [ReportsController::class, 'downloadComprehensiveReport'])->name('comprehensive');
             Route::get('/owners', [ReportsController::class, 'downloadOwnersReport'])->name('owners');
+            Route::get('/owners-data', [ReportsController::class, 'getOwnersDataForPDF'])->name('owners-data');
             Route::get('/sales', [ReportsController::class, 'downloadSalesReport'])->name('sales');
+            Route::get('/sales-data', [ReportsController::class, 'getSalesDataForPDF'])->name('sales-data');
             Route::get('/warranty', [ReportsController::class, 'downloadWarrantyReport'])->name('warranty');
             Route::get('/warranty-data', [ReportsController::class, 'getWarrantyDataForPDF'])->name('warranty-data');
         });
 
     });
     // --- End Protected Admin Routes ---
-
-
 });
 // End of admin routes

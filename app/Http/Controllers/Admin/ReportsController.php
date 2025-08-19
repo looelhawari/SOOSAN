@@ -550,14 +550,15 @@ class ReportsController extends Controller
         }
 
         // Get all sold products with warranty information
-        $soldProducts = SoldProduct::with(['product', 'owner'])
+        $soldProducts = SoldProduct::with(['product', 'owner', 'employee'])
             ->select([
                 'id',
                 'product_id',
                 'owner_id',
+                'user_id',
                 'serial_number',
                 'sale_date',
-                'sale_price',
+                'purchase_price',
                 'warranty_start_date',
                 'warranty_end_date',
                 'warranty_voided',
@@ -586,7 +587,10 @@ class ReportsController extends Controller
                 'serial_number' => $soldProduct->serial_number ?? 'N/A',
                 'owner_name' => $soldProduct->owner->name ?? 'N/A',
                 'purchase_date' => $soldProduct->sale_date ? $soldProduct->sale_date->format('Y-m-d') : 'N/A',
-                'sale_price' => $soldProduct->sale_price ?? 0,
+                'purchase_price' => $soldProduct->purchase_price ?? 0,
+                'warranty_start_date' => $soldProduct->warranty_start_date ? $soldProduct->warranty_start_date->format('Y-m-d') : 'N/A',
+                'warranty_end_date' => $soldProduct->warranty_end_date ? $soldProduct->warranty_end_date->format('Y-m-d') : 'N/A',
+                'created_by' => $soldProduct->employee->name ?? 'N/A',
                 'days_left' => $daysLeft,
                 'company' => 'SoosanEgypt',
                 'status' => $status,
@@ -607,9 +611,361 @@ class ReportsController extends Controller
             'summary' => [
                 'total_products' => count($underWarranty) + count($expired),
                 'under_warranty_count' => count($underWarranty),
-                'expired_count' => count($expired)
+                'expired_count' => count($expired),
+                'warranty_value_active' => array_sum(array_column($underWarranty, 'purchase_price')),
+                'warranty_value_expired' => array_sum(array_column($expired, 'purchase_price'))
             ]
         ]);
+    }
+
+    /**
+     * Get owners data for PDF generation
+     * Route: /admin/reports/owners-data
+     */
+    public function getOwnersDataForPDF(Request $request)
+    {
+        // Check if user has permission to access reports
+        $user = auth()->user();
+        if (!$user || ($user && method_exists($user, 'canAccessReports') && !$user->canAccessReports())) {
+            abort(403, 'Access denied');
+        }
+
+        // Get all owners with their purchase data
+        $owners = Owner::with(['soldProducts.product'])
+            ->select([
+                'id',
+                'name',
+                'email',
+                'phone_number',
+                'company',
+                'address',
+                'city',
+                'country',
+                'created_at'
+            ])
+            ->get();
+
+        $ownersData = [];
+        $totalRevenue = 0;
+        $countryStats = [];
+        $cityStats = [];
+        $companyStats = [];
+
+        foreach ($owners as $owner) {
+            $purchases = $owner->soldProducts;
+            $totalSpent = $purchases->sum('purchase_price') ?? 0;
+            $totalRevenue += $totalSpent;
+
+            // Build owner data
+            $ownerData = [
+                'name' => $owner->name ?? 'N/A',
+                'email' => $owner->email ?? 'N/A',
+                'phone' => $owner->phone_number ?? 'N/A',
+                'company' => $owner->company ?? 'Individual',
+                'city' => $owner->city ?? 'N/A',
+                'country' => $owner->country ?? 'N/A',
+                'registration_date' => $owner->created_at ? $owner->created_at->format('Y-m-d') : 'N/A',
+                'total_purchases' => $purchases->count(),
+                'total_spent' => $totalSpent,
+                'items_owned' => $purchases->map(function ($purchase) {
+                    return [
+                        'product' => $purchase->product->model_name ?? 'N/A',
+                        'serial' => $purchase->serial_number ?? 'N/A',
+                        'purchase_date' => $purchase->sale_date ? $purchase->sale_date->format('Y-m-d') : 'N/A',
+                        'price' => $purchase->purchase_price ?? 0
+                    ];
+                })->toArray()
+            ];
+
+            $ownersData[] = $ownerData;
+
+            // Country statistics
+            $countryKey = $owner->country ?? 'Unknown';
+            if (!isset($countryStats[$countryKey])) {
+                $countryStats[$countryKey] = ['count' => 0, 'revenue' => 0];
+            }
+            $countryStats[$countryKey]['count']++;
+            $countryStats[$countryKey]['revenue'] += $totalSpent;
+
+            // City statistics
+            $cityKey = ($owner->city ?? 'Unknown') . ', ' . ($owner->country ?? 'Unknown');
+            if (!isset($cityStats[$cityKey])) {
+                $cityStats[$cityKey] = ['count' => 0, 'revenue' => 0];
+            }
+            $cityStats[$cityKey]['count']++;
+            $cityStats[$cityKey]['revenue'] += $totalSpent;
+
+            // Company statistics (only if company is not null/empty)
+            if (!empty($owner->company)) {
+                $companyKey = $owner->company;
+                if (!isset($companyStats[$companyKey])) {
+                    $companyStats[$companyKey] = ['count' => 0, 'revenue' => 0];
+                }
+                $companyStats[$companyKey]['count']++;
+                $companyStats[$companyKey]['revenue'] += $totalSpent;
+            }
+        }
+
+        // Sort statistics by revenue
+        arsort($countryStats);
+        arsort($cityStats);
+        arsort($companyStats);
+
+        return response()->json([
+            'owners' => $ownersData,
+            'analysis' => [
+                'total_owners' => count($ownersData),
+                'total_revenue' => $totalRevenue,
+                'average_revenue_per_owner' => count($ownersData) > 0 ? $totalRevenue / count($ownersData) : 0,
+                'countries' => $countryStats,
+                'cities' => array_slice($cityStats, 0, 10, true), // Top 10 cities
+                'companies' => array_slice($companyStats, 0, 10, true), // Top 10 companies
+                'owners_with_companies' => count($companyStats),
+                'individual_owners' => count($ownersData) - count($companyStats)
+            ]
+        ]);
+    }
+
+    /**
+     * Get sales data for PDF generation
+     * Route: /admin/reports/sales-data
+     */
+    public function getSalesDataForPDF(Request $request)
+    {
+        // Check if user has permission to access reports
+        $user = auth()->user();
+        if (!$user || !$user->canAccessReports()) {
+            abort(403, 'Access denied');
+        }
+
+        $dateRange = $this->getDateRange($request);
+        $salesData = $this->getSalesData($dateRange);
+
+        // Get ALL sold products with complete information - temporarily remove date filter to debug
+        $allSoldProducts = SoldProduct::with(['product.category', 'owner', 'user'])
+            ->whereNotNull('sale_date') // Only get products with actual sale dates
+            ->orderBy('sale_date', 'desc')
+            ->get()
+            ->map(function ($sale) {
+                // Determine warranty status
+                $warrantyStatus = 'Expired';
+                if ($sale->warranty_voided) {
+                    $warrantyStatus = 'Voided';
+                } elseif ($sale->warranty_end_date && now() <= $sale->warranty_end_date) {
+                    $warrantyStatus = 'Active';
+                }
+
+                return [
+                    'model_name' => $sale->product->model_name ?? 'N/A',
+                    'serial_number' => $sale->serial_number ?? 'N/A',
+                    'purchase_date' => $sale->sale_date ? $sale->sale_date->format('Y-m-d') : 'N/A',
+                    'owner_name' => $sale->owner->name ?? 'N/A',
+                    'owner_company' => $sale->owner->company ?? 'Individual',
+                    'owner_location' => ($sale->owner->city ?? 'N/A') . ', ' . ($sale->owner->country ?? 'N/A'),
+                    'purchase_price' => $sale->purchase_price ?? 0,
+                    'seller_name' => $sale->user->name ?? 'N/A',
+                    'product_category' => $sale->product->category->name ?? 'N/A',
+                    'product_line' => $sale->product->line ?? 'N/A',
+                    'product_type' => $sale->product->type ?? 'N/A',
+                    'warranty_status' => $warrantyStatus,
+                    'warranty_start' => $sale->warranty_start_date ? $sale->warranty_start_date->format('Y-m-d') : 'N/A',
+                    'warranty_end' => $sale->warranty_end_date ? $sale->warranty_end_date->format('Y-m-d') : 'N/A',
+                ];
+            });
+
+        // Enhanced sales analysis for PDF
+        $totalSales = $allSoldProducts->count();
+        $totalRevenue = $allSoldProducts->sum('purchase_price');
+        $averageSale = $totalSales > 0 ? ($totalRevenue / $totalSales) : 0;
+
+        $enhancedData = [
+            'summary' => [
+                'total_sales' => $totalSales,
+                'total_revenue' => $totalRevenue,
+                'average_sale' => $averageSale,
+                'period_label' => 'All Time', // Changed since we're showing all data
+                'generated_at' => now()->format('Y-m-d H:i:s'),
+                'date_range' => [
+                    'start' => $allSoldProducts->min('sale_date') ? \Carbon\Carbon::parse($allSoldProducts->min('sale_date'))->format('Y-m-d') : 'N/A',
+                    'end' => $allSoldProducts->max('sale_date') ? \Carbon\Carbon::parse($allSoldProducts->max('sale_date'))->format('Y-m-d') : 'N/A'
+                ]
+            ],
+
+            // ALL sold products data
+            'all_sold_products' => $allSoldProducts,
+
+            // Enhanced product performance analysis - Most sold products based on actual data
+            'most_sold_products' => $allSoldProducts->groupBy('model_name')->map(function ($products, $modelName) use ($totalSales) {
+                $quantitySold = $products->count();
+                $revenue = $products->sum('purchase_price');
+                $avgPrice = $quantitySold > 0 ? ($revenue / $quantitySold) : 0;
+
+                return [
+                    'model_name' => $modelName,
+                    'category' => $products->first()['product_category'] ?? 'N/A',
+                    'line' => $products->first()['product_line'] ?? 'N/A',
+                    'type' => $products->first()['product_type'] ?? 'N/A',
+                    'quantity_sold' => $quantitySold,
+                    'revenue' => $revenue,
+                    'avg_price' => $avgPrice,
+                    'percentage_of_total' => $totalSales > 0 ?
+                        round(($quantitySold / $totalSales) * 100, 2) : 0
+                ];
+            })->sortByDesc('quantity_sold')->values(),
+
+            // Revenue analysis by different metrics based on actual sold products
+            'revenue_analysis' => [
+                'total_revenue' => $totalRevenue,
+                'by_category' => $allSoldProducts->groupBy('product_category')->map(function ($products, $category) {
+                    $totalRevenue = $products->sum('purchase_price');
+                    $totalQuantity = $products->count();
+                    return [
+                        'category' => $category,
+                        'revenue' => $totalRevenue,
+                        'quantity' => $totalQuantity,
+                        'avg_price' => $totalQuantity > 0 ? ($totalRevenue / $totalQuantity) : 0,
+                        'products_count' => $products->count()
+                    ];
+                })->sortByDesc('revenue')->values(),
+
+                'by_product_line' => $allSoldProducts->groupBy('product_line')->map(function ($products, $line) {
+                    $totalRevenue = $products->sum('purchase_price');
+                    $totalQuantity = $products->count();
+                    return [
+                        'line' => $line ?: 'N/A',
+                        'revenue' => $totalRevenue,
+                        'quantity' => $totalQuantity,
+                        'avg_price' => $totalQuantity > 0 ? ($totalRevenue / $totalQuantity) : 0,
+                        'products_count' => $products->count()
+                    ];
+                })->sortByDesc('revenue')->values(),
+
+                'monthly_breakdown' => $allSoldProducts->groupBy(function ($item) {
+                    return \Carbon\Carbon::parse($item['purchase_date'])->format('Y-m');
+                })->map(function ($sales, $month) {
+                    $totalRevenue = $sales->sum('purchase_price');
+                    $totalSales = $sales->count();
+                    return [
+                        'month' => $month,
+                        'total_sales' => $totalSales,
+                        'total_revenue' => $totalRevenue,
+                        'avg_price' => $totalSales > 0 ? ($totalRevenue / $totalSales) : 0
+                    ];
+                })->sortBy('month')->values()
+            ],
+
+            // Top performing analysis based on actual sold products
+            'top_analysis' => [
+                'top_products_by_quantity' => $allSoldProducts->groupBy('model_name')->map(function ($products, $modelName) {
+                    return [
+                        'model_name' => $modelName,
+                        'quantity_sold' => $products->count(),
+                        'revenue' => $products->sum('purchase_price'),
+                        'avg_price' => $products->count() > 0 ? ($products->sum('purchase_price') / $products->count()) : 0
+                    ];
+                })->sortByDesc('quantity_sold')->take(5)->values(),
+
+                'top_products_by_revenue' => $allSoldProducts->groupBy('model_name')->map(function ($products, $modelName) {
+                    return [
+                        'model_name' => $modelName,
+                        'quantity_sold' => $products->count(),
+                        'revenue' => $products->sum('purchase_price'),
+                        'avg_price' => $products->count() > 0 ? ($products->sum('purchase_price') / $products->count()) : 0
+                    ];
+                })->sortByDesc('revenue')->take(5)->values(),
+
+                'top_customers_by_spending' => $allSoldProducts->groupBy('owner_name')->map(function ($sales, $owner) {
+                    $totalSpent = $sales->sum('purchase_price');
+                    $totalPurchases = $sales->count();
+                    return [
+                        'owner_name' => $owner,
+                        'company' => $sales->first()['owner_company'] ?? 'Individual',
+                        'location' => $sales->first()['owner_location'] ?? 'N/A',
+                        'total_spent' => $totalSpent,
+                        'total_purchases' => $totalPurchases,
+                        'avg_purchase' => $totalPurchases > 0 ? ($totalSpent / $totalPurchases) : 0
+                    ];
+                })->sortByDesc('total_spent')->take(10)->values(),
+
+                'top_sales_staff' => $allSoldProducts->groupBy('seller_name')->map(function ($sales, $seller) {
+                    $totalRevenue = $sales->sum('purchase_price');
+                    $totalSales = $sales->count();
+                    return [
+                        'name' => $seller,
+                        'sales_count' => $totalSales,
+                        'revenue' => $totalRevenue,
+                        'avg_sale' => $totalSales > 0 ? ($totalRevenue / $totalSales) : 0
+                    ];
+                })->sortByDesc('revenue')->take(5)->values()
+            ],
+
+            // Staff performance analysis based on actual sold products
+            'staff_performance' => $allSoldProducts->groupBy('seller_name')->map(function ($sales, $seller) {
+                $totalRevenue = $sales->sum('purchase_price');
+                $totalSales = $sales->count();
+                return [
+                    'name' => $seller,
+                    'role' => 'Sales Representative', // Default role
+                    'sales_count' => $totalSales,
+                    'revenue' => $totalRevenue,
+                    'avg_sale' => $totalSales > 0 ? ($totalRevenue / $totalSales) : 0
+                ];
+            })->sortByDesc('revenue')->values(),
+
+            // Daily sales trend based on actual data
+            'daily_trends' => $allSoldProducts->groupBy('purchase_date')->map(function ($sales, $date) {
+                $totalRevenue = $sales->sum('purchase_price');
+                $totalSales = $sales->count();
+                return [
+                    'date' => $date,
+                    'sales_count' => $totalSales,
+                    'revenue' => $totalRevenue,
+                    'avg_sale' => $totalSales > 0 ? ($totalRevenue / $totalSales) : 0
+                ];
+            })->sortBy('date')->values(),
+
+            // Recent transactions
+            'recent_transactions' => $allSoldProducts->take(20)->map(function ($sale) {
+                return [
+                    'model_name' => $sale['model_name'],
+                    'serial_number' => $sale['serial_number'],
+                    'owner_name' => $sale['owner_name'],
+                    'seller_name' => $sale['seller_name'],
+                    'sale_date' => $sale['purchase_date'],
+                    'purchase_price' => $sale['purchase_price'],
+                    'warranty_start' => $sale['warranty_start'],
+                    'warranty_end' => $sale['warranty_end']
+                ];
+            }),
+
+            // Warranty and serial analysis based on actual data
+            'warranty_analysis' => [
+                'total_sales' => $allSoldProducts->count(),
+                'active_warranties' => $allSoldProducts->filter(function ($sale) {
+                    return $sale['warranty_status'] === 'Active';
+                })->count(),
+                'expired_warranties' => $allSoldProducts->filter(function ($sale) {
+                    return $sale['warranty_status'] === 'Expired';
+                })->count(),
+                'voided_warranties' => $allSoldProducts->filter(function ($sale) {
+                    return $sale['warranty_status'] === 'Voided';
+                })->count(),
+                'unique_serials' => $allSoldProducts->pluck('serial_number')->unique()->count()
+            ],
+
+            // Category breakdown based on actual data
+            'category_analysis' => $allSoldProducts->groupBy('product_category')->map(function ($products, $category) {
+                return [
+                    'category' => $category,
+                    'products_count' => $products->count(),
+                    'quantity_sold' => $products->count(),
+                    'total_revenue' => $products->sum('purchase_price'),
+                    'avg_price' => $products->count() > 0 ? ($products->sum('purchase_price') / $products->count()) : 0
+                ];
+            })->values()
+        ];
+
+        return response()->json($enhancedData);
     }
 
     private function getWarrantyData($dateRange)

@@ -37,37 +37,12 @@ Route::get('/lang/{lang}', function ($lang) {
     return redirect()->back();
 })->name('lang.switch');
 
-// Debug route
-Route::get('/debug-admin', function () {
-    $user = \App\Models\User::where('email', 'admin@example.com')->first();
-    if ($user) {
-        return response()->json([
-            'user_exists' => true,
-            'name' => $user->name,
-            'email' => $user->email,
-            'role' => $user->role,
-            'is_admin' => $user->isAdmin(),
-        ]);
-    }
-    return response()->json(['user_exists' => false]);
-});
-
-// Test route
-Route::get('/test', function () {
-    return 'Laravel is working!';
-});
 
 // Test notification routes (remove these in production)
 Route::middleware('auth')->group(function () {
     Route::get('/test-notifications', function () {
         return view('test.notifications');
     })->name('test.notifications.index');
-
-    Route::get('/test-notifications/contact', [App\Http\Controllers\TestNotificationController::class, 'testContactMessage'])->name('test.contact');
-    Route::get('/test-notifications/pending', [App\Http\Controllers\TestNotificationController::class, 'testPendingChange'])->name('test.pending');
-    Route::get('/test-notifications/rejection', [App\Http\Controllers\TestNotificationController::class, 'testRejection'])->name('test.rejection');
-    Route::get('/test-notifications/approval', [App\Http\Controllers\TestNotificationController::class, 'testApproval'])->name('test.approval');
-    Route::get('/test-notifications/audit', [App\Http\Controllers\TestNotificationController::class, 'testAuditLog'])->name('test.audit');
 });
 
 Route::get('/dashboard', function () {

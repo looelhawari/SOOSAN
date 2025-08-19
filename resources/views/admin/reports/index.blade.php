@@ -833,7 +833,7 @@
     <!-- Reports Grid -->
     <div class="row g-4">
         <!-- Comprehensive Report -->
-        <div class="col-lg-4 col-md-6">
+        <!-- <div class="col-lg-4 col-md-6">
             <div class="report-card comprehensive">
                 <div class="card-body p-4">
                     <div class="report-icon">
@@ -874,13 +874,9 @@
                         <span class="mobile-text">{{ __('reports.download_comprehensive') }}</span>
                         <span class="mobile-icon d-none">Download</span>
                     </button>
-                    <button class="download-btn comprehensive-btn mt-2" style="background:#fff;color:#667eea;border:1px solid #667eea" onclick="window.generateReportPDF(null, { reportType: 'comprehensive', title: 'Comprehensive Business Report', generatedAt: new Date().toLocaleString(), filename: 'comprehensive-business-report.pdf' })">
-                        <i class="fas fa-file-pdf"></i>
-                        <span class="mobile-text">Download as PDF (jsPDF)</span>
-                    </button>
                 </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Owners Report -->
         <div class="col-lg-4 col-md-6">
@@ -919,12 +915,7 @@
                         </div>
                     </div>
 
-                    <button class="download-btn owners-btn" onclick="downloadReport('owners')">
-                        <i class="fas fa-download"></i>
-                        <span class="mobile-text">{{ __('reports.download_owners') }}</span>
-                        <span class="mobile-icon d-none">Download</span>
-                    </button>
-                    <button class="download-btn owners-btn mt-2" style="background:#fff;color:#48bb78;border:1px solid #48bb78" onclick="downloadReportPDF('owners')">
+                    <button class="download-btn owners-btn" style="background:#fff;color:#48bb78;border:1px solid #48bb78" onclick="downloadOwnersReportPDF()">
                         <i class="fas fa-file-pdf"></i>
                         <span class="mobile-text">Download as PDF (jsPDF)</span>
                     </button>
@@ -969,12 +960,7 @@
                         </div>
                     </div>
 
-                    <button class="download-btn sales-btn" onclick="downloadReport('sales')">
-                        <i class="fas fa-download"></i>
-                        <span class="mobile-text">{{ __('reports.download_sales') }}</span>
-                        <span class="mobile-icon d-none">Download</span>
-                    </button>
-                    <button class="download-btn sales-btn mt-2" style="background:#fff;color:#ed8936;border:1px solid #ed8936" onclick="downloadReportPDF('sales')">
+                    <button class="download-btn sales-btn" style="background:#fff;color:#ed8936;border:1px solid #ed8936" onclick="downloadSalesReportPDF()">
                         <i class="fas fa-file-pdf"></i>
                         <span class="mobile-text">Download as PDF (jsPDF)</span>
                     </button>
@@ -1019,14 +1005,9 @@
                         </div>
                     </div>
 
-                    <button class="download-btn warranty-btn" onclick="downloadReport('warranty')">
-                        <i class="fas fa-download"></i>
-                        <span class="mobile-text">{{ __('reports.download_warranty') }}</span>
-                        <span class="mobile-icon d-none">Download</span>
-                    </button>
-                    <button class="download-btn warranty-btn mt-2" style="background:#fff;color:#dc3545;border:1px solid #dc3545" onclick="downloadWarrantyReportPDF()">
+                    <button class="download-btn warranty-btn" style="background:#dc3545;color:#fff" onclick="downloadWarrantyReportPDF()">
                         <i class="fas fa-file-pdf"></i>
-                        <span class="mobile-text">Download as PDF (jsPDF)</span>
+                        <span class="mobile-text">{{ __('reports.download_warranty') }}</span>
                     </button>
                 </div>
             </div>
@@ -1078,10 +1059,18 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <!-- jsPDF autoTable plugin for table support -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
-<!-- Custom report PDF logic -->
-<script src="/js/report-pdf.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Wait for all scripts to load before enabling PDF functionality
+    window.addEventListener('load', function() {
+        // Check if jsPDF is available
+        if (typeof window.jspdf !== 'undefined') {
+            console.log('jsPDF loaded successfully');
+        } else {
+            console.error('jsPDF failed to load');
+        }
+    });
+
     // Date filter functionality
     const filterOptions = document.querySelectorAll('.filter-option');
     const customDateInputs = document.getElementById('customDateInputs');
@@ -1214,160 +1203,255 @@ window.downloadReportPDF = function(reportType) {
     }
 }
 
-// Enhanced Warranty Report PDF function with Two Separate Tables - FIXED VERSION
-window.downloadWarrantyReportPDF = function() {
+// Enhanced Sales Report PDF function with Comprehensive Analysis
+window.downloadSalesReportPDF = function() {
     try {
+        // Check if jsPDF is loaded
+        if (typeof window.jspdf === 'undefined') {
+            alert('jsPDF library is not loaded. Please refresh the page and try again.');
+            return;
+        }
+
+        console.log('Starting Sales PDF generation...');
+
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF('l', 'pt', 'a4'); // Landscape mode for better table fit
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
 
-        // Enhanced Header with SoosanEgypt Branding
-        doc.setFillColor(220, 53, 69); // Warranty red background
-        doc.rect(0, 0, pageWidth, 160);
+        // Clean Header with SoosanEgypt Branding
+        doc.setFillColor(237, 137, 54); // Sales orange background
+        doc.rect(0, 0, pageWidth, 120); // Header height
 
-        // Company branding and decorative elements
+        // Company branding
         doc.setFontSize(32);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(255, 255, 255);
-        doc.text('SoosanEgypt', 40, 50);
+        doc.text('SoosanEgypt', 40, 40);
 
-        doc.setFontSize(26);
+        doc.setFontSize(24);
         doc.setFont('helvetica', 'bold');
-        doc.text('Comprehensive Warranty Analysis Report', 40, 85);
+        doc.text('Comprehensive Sales Performance Report', 40, 70);
 
         // Enhanced date and branding
-        doc.setFontSize(14);
+        doc.setFontSize(12);
         doc.setFont('helvetica', 'normal');
         doc.text('Generated on: ' + new Date().toLocaleDateString('en-US', {
-            weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
-        }), 40, 115);
+        }), 40, 95);
 
-        // Professional subtitle
-        doc.setFontSize(12);
-        doc.text('Professional Equipment Warranty Management & Tracking System', 40, 135);
+        // Load transparent logo and continue with PDF generation
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
 
-        // Decorative line with gradient effect
-        doc.setDrawColor(255, 255, 255);
-        doc.setLineWidth(3);
-        doc.line(40, 145, pageWidth - 40, 145);
+        let logoLoaded = false;
+        const logoTimeout = setTimeout(() => {
+            if (!logoLoaded) {
+                console.log('Logo timeout, continuing without logo');
+                continueWithPDFGeneration();
+            }
+        }, 3000);
 
-        let y = 200;
+        logoImg.onload = function() {
+            logoLoaded = true;
+            clearTimeout(logoTimeout);
+            try {
+                // Add transparent logo to top right corner
+                doc.addImage(logoImg, 'PNG', pageWidth - 180, 10, 130, 60);
+                console.log('Logo added successfully');
+            } catch (e) {
+                console.log('Logo loading failed:', e);
+            }
+            continueWithPDFGeneration();
+        };
 
-        // Show loading message
-        console.log('Fetching warranty data...');
+        logoImg.onerror = function() {
+            logoLoaded = true;
+            clearTimeout(logoTimeout);
+            console.log('Logo failed to load, continuing without logo');
+            continueWithPDFGeneration();
+        };
 
-        // Fetch real warranty data from the server
-        fetch('/admin/reports/warranty-data')
+        logoImg.src = '/images/logo2.png';
+
+        function continueWithPDFGeneration() {
+            let y = 140; // Start content after header
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+
+            if (csrfToken) {
+                headers['X-CSRF-TOKEN'] = csrfToken.getAttribute('content');
+            }
+
+            console.log('Fetching sales data...');
+
+            // Fetch real sales data from the server
+            fetch('/admin/reports/sales-data', {
+                method: 'GET',
+                headers: headers
+        })
         .then(response => {
+            console.log('Response received:', response.status);
             if (!response.ok) {
-                throw new Error('Network response was not ok');
+                throw new Error(`Failed to fetch sales data: ${response.status}`);
             }
             return response.json();
         })
         .then(data => {
-            console.log('Warranty data received:', data);
-            generateWarrantyTables(data);
-        })
-        .catch(error => {
-            console.warn('Failed to fetch warranty data, using sample data:', error);
-        });
-
-        function generateWarrantyTables(data) {
             try {
-                // Table column headers - FIXED
-                const tableHeaders = ['Model Name', 'Serial Number', 'Owner', 'Date of Purchase', 'Sale Price', 'Days Left Till Expiration', 'Company', 'Status'];
+                console.log('Sales data received:', data);
 
-                // FIRST TABLE: Products Under Warranty (Active) - ENHANCED
-                doc.setFontSize(18);
+                // Executive Summary
+                doc.setFontSize(16);
                 doc.setFont('helvetica', 'bold');
-                doc.setTextColor(40, 167, 69); // Green for active
-                doc.text('PRODUCTS UNDER WARRANTY (ACTIVE)', 40, y);
+                doc.setTextColor(237, 137, 54);
+                doc.text('EXECUTIVE SUMMARY', 40, y);
+                y += 30;
+
+                // Summary stats
+                const summary = data.summary || {};
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(60, 60, 60);
+
+                doc.text(`Total Sales: ${(summary.total_sales || 0).toLocaleString()}`, 40, y);
+                doc.text(`Total Revenue: $${(summary.total_revenue || 0).toLocaleString()}`, 300, y);
+                y += 20;
+                doc.text(`Average Sale: $${(summary.average_sale || 0).toFixed(2)}`, 40, y);
+                doc.text(`Report Period: ${summary.period_label || 'N/A'}`, 300, y);
                 y += 40;
 
-                const underWarrantyData = [];
-                if (data.under_warranty && Array.isArray(data.under_warranty)) {
-                    data.under_warranty.forEach(item => {
-                        underWarrantyData.push([
-                            String(item.model_name || 'N/A'),
-                            String(item.serial_number || 'N/A'),
-                            String(item.owner_name || 'N/A'),
-                            String(item.purchase_date || 'N/A'),
-                            item.sale_price ? `$${Number(item.sale_price).toLocaleString()}` : 'N/A',
-                            item.days_left ? `${Math.round(Number(item.days_left))} days` : 'N/A',
-                            String(item.company || 'SoosanEgypt'),
-                            String(item.status || 'Active')
+                // ALL SOLD PRODUCTS TABLE - Most important section
+                const allProducts = data.all_sold_products || [];
+                console.log(`Found ${allProducts.length} products`);
+
+                if (allProducts.length > 0) {
+                    doc.setFontSize(16);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(237, 137, 54);
+                    doc.text('ALL SOLD PRODUCTS', 40, y);
+                    y += 30;
+
+                    const allProductsData = [];
+                    allProducts.forEach(product => {
+                        allProductsData.push([
+                            product.model_name || 'N/A',
+                            product.serial_number || 'N/A',
+                            product.purchase_date || 'N/A',
+                            product.owner_name || 'N/A',
+                            product.warranty_status || 'N/A',
+                            `$${(product.purchase_price || 0).toLocaleString()}`
                         ]);
                     });
-                }
 
-                if (underWarrantyData.length > 0) {
                     doc.autoTable({
                         startY: y,
-                        head: [tableHeaders],
-                        body: underWarrantyData,
-                        theme: 'grid',
+                        head: [['Model Name', 'Serial Number', 'Purchase Date', 'Owner', 'Status', 'Price']],
+                        body: allProductsData,
+                        theme: 'striped',
                         headStyles: {
-                            fillColor: [40, 167, 69], // Green for active warranties
+                            fillColor: [237, 137, 54],
                             textColor: [255, 255, 255],
                             fontStyle: 'bold',
-                            fontSize: 10,
+                            fontSize: 9,
                             halign: 'center'
                         },
                         styles: {
                             font: 'helvetica',
                             fontSize: 8,
-                            cellPadding: 4,
+                            cellPadding: 3,
                             halign: 'center',
                             valign: 'middle'
                         },
                         alternateRowStyles: {
-                            fillColor: [240, 248, 240] // Light green alternating rows
+                            fillColor: [255, 248, 240]
                         },
                         columnStyles: {
-                            0: { cellWidth: 70 },   // Model Name
-                            1: { cellWidth: 80 },   // Serial Number
-                            2: { cellWidth: 100 },  // Owner
-                            3: { cellWidth: 70 },   // Date of Purchase
-                            4: { cellWidth: 70 },   // Sale Price
-                            5: { cellWidth: 80 },   // Days Left
-                            6: { cellWidth: 70 },   // Company
-                            7: { cellWidth: 60 }    // Status
+                            0: { cellWidth: 110 },  // Model Name
+                            1: { cellWidth: 100 },  // Serial Number
+                            2: { cellWidth: 80 },   // Purchase Date
+                            3: { cellWidth: 110 },  // Owner
+                            4: { cellWidth: 70 },   // Status
+                            5: { cellWidth: 70 }    // Price
                         },
-                        margin: { left: 40, right: 40 },
-                        didParseCell: function(data) {
-                            // Color code based on status and days left
-                            if (data.column.index === 5 && data.section === 'body') { // Days Left column
-                                const cellText = data.cell.text[0];
-                                if (cellText && cellText.includes('days')) {
-                                    const days = parseInt(cellText);
-                                    if (days <= 30 && days > 0) {
-                                        data.cell.styles.textColor = [255, 193, 7]; // Orange for expiring soon
-                                        data.cell.styles.fontStyle = 'bold';
-                                    } else if (days > 90) {
-                                        data.cell.styles.textColor = [40, 167, 69]; // Green for good
-                                        data.cell.styles.fontStyle = 'bold';
-                                    }
-                                }
-                            }
-                            if (data.column.index === 7 && data.section === 'body') { // Status column
-                                data.cell.styles.textColor = [40, 167, 69]; // Green for active
-                                data.cell.styles.fontStyle = 'bold';
-                            }
-                        }
+                        margin: { left: 20, right: 20 }
                     });
-                    y = doc.lastAutoTable.finalY + 50;
+
+                    y = doc.lastAutoTable.finalY + 30;
                 } else {
-                    doc.setFontSize(12);
+                    // No products found message
+                    doc.setFontSize(14);
                     doc.setFont('helvetica', 'italic');
-                    doc.setTextColor(100, 100, 100);
-                    doc.text('No products currently under warranty.', 40, y + 20);
-                    y += 70;
+                    doc.setTextColor(150, 150, 150);
+                    doc.text('No sales data available for the selected period.', 40, y);
+                    y += 40;
+                }
+
+                // Add new page for analysis
+                if (y > pageHeight - 200) {
+                    doc.addPage();
+                    y = 40;
+                }
+
+                // MOST SOLD PRODUCTS ANALYSIS
+                const mostSoldProducts = data.most_sold_products || [];
+                if (mostSoldProducts.length > 0) {
+                    doc.setFontSize(16);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(237, 137, 54);
+                    doc.text('MOST SOLD PRODUCTS ANALYSIS', 40, y);
+                    y += 30;
+
+                    const mostSoldData = [];
+                    mostSoldProducts.slice(0, 10).forEach(product => {
+                        mostSoldData.push([
+                            product.model_name || 'N/A',
+                            product.category || 'N/A',
+                            product.quantity_sold || 0,
+                            `$${(product.revenue || 0).toLocaleString()}`,
+                            `${product.percentage_of_total || 0}%`,
+                            `$${(product.avg_price || 0).toFixed(2)}`
+                        ]);
+                    });
+
+                    doc.autoTable({
+                        startY: y,
+                        head: [['Model', 'Category', 'Qty Sold', 'Revenue', '% of Total', 'Avg Price']],
+                        body: mostSoldData,
+                        theme: 'striped',
+                        headStyles: {
+                            fillColor: [237, 137, 54],
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold',
+                            fontSize: 9,
+                            halign: 'center'
+                        },
+                        styles: {
+                            font: 'helvetica',
+                            fontSize: 8,
+                            cellPadding: 3,
+                            halign: 'center'
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 100 },
+                            1: { cellWidth: 80 },
+                            2: { cellWidth: 60 },
+                            3: { cellWidth: 80 },
+                            4: { cellWidth: 60 },
+                            5: { cellWidth: 70 }
+                        },
+                        margin: { left: 60, right: 60 }
+                    });
+
+                    y = doc.lastAutoTable.finalY + 30;
                 }
 
                 // Add new page if needed
@@ -1376,37 +1460,32 @@ window.downloadWarrantyReportPDF = function() {
                     y = 40;
                 }
 
-                // SECOND TABLE: Expired Warranties - ENHANCED
-                doc.setFontSize(18);
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(220, 53, 69); // Red for expired
-                doc.text('EXPIRED WARRANTY PRODUCTS', 40, y);
-                y += 40;
+                // REVENUE ANALYSIS BY CATEGORY
+                if (data.revenue_analysis && data.revenue_analysis.by_category && data.revenue_analysis.by_category.length > 0) {
+                    doc.setFontSize(16);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(237, 137, 54);
+                    doc.text('REVENUE ANALYSIS BY CATEGORY', 40, y);
+                    y += 30;
 
-                const expiredWarrantyData = [];
-                if (data.expired && Array.isArray(data.expired)) {
-                    data.expired.forEach(item => {
-                        expiredWarrantyData.push([
-                            String(item.model_name || 'N/A'),
-                            String(item.serial_number || 'N/A'),
-                            String(item.owner_name || 'N/A'),
-                            String(item.purchase_date || 'N/A'),
-                            item.sale_price ? `$${Number(item.sale_price).toLocaleString()}` : 'N/A',
-                            'Expired',
-                            String(item.company || 'SoosanEgypt'),
-                            String(item.status || 'Expired')
+                    const categoryData = [];
+                    data.revenue_analysis.by_category.forEach(category => {
+                        categoryData.push([
+                            category.category || 'N/A',
+                            category.quantity || 0,
+                            `$${(category.revenue || 0).toLocaleString()}`,
+                            `$${(category.avg_price || 0).toFixed(2)}`,
+                            category.products_count || 0
                         ]);
                     });
-                }
 
-                if (expiredWarrantyData.length > 0) {
                     doc.autoTable({
                         startY: y,
-                        head: [tableHeaders],
-                        body: expiredWarrantyData,
-                        theme: 'grid',
+                        head: [['Category', 'Quantity', 'Revenue', 'Avg Price', 'Products']],
+                        body: categoryData,
+                        theme: 'striped',
                         headStyles: {
-                            fillColor: [220, 53, 69], // Red for expired warranties
+                            fillColor: [237, 137, 54],
                             textColor: [255, 255, 255],
                             fontStyle: 'bold',
                             fontSize: 10,
@@ -1414,149 +1493,466 @@ window.downloadWarrantyReportPDF = function() {
                         },
                         styles: {
                             font: 'helvetica',
-                            fontSize: 8,
+                            fontSize: 9,
                             cellPadding: 4,
-                            halign: 'center',
-                            valign: 'middle'
-                        },
-                        alternateRowStyles: {
-                            fillColor: [253, 242, 242] // Light red alternating rows
+                            halign: 'center'
                         },
                         columnStyles: {
-                            0: { cellWidth: 70 },   // Model Name
-                            1: { cellWidth: 80 },   // Serial Number
-                            2: { cellWidth: 100 },  // Owner
-                            3: { cellWidth: 70 },   // Date of Purchase
-                            4: { cellWidth: 70 },   // Sale Price
-                            5: { cellWidth: 80 },   // Days Left
-                            6: { cellWidth: 70 },   // Company
-                            7: { cellWidth: 60 }    // Status
+                            0: { cellWidth: 120 },
+                            1: { cellWidth: 80 },
+                            2: { cellWidth: 100 },
+                            3: { cellWidth: 80 },
+                            4: { cellWidth: 70 }
                         },
-                        margin: { left: 40, right: 40 },
-                        didParseCell: function(data) {
-                            // Color code expired products
-                            if (data.column.index === 5 && data.section === 'body') { // Days Left column
-                                data.cell.styles.textColor = [220, 53, 69]; // Red for expired
-                                data.cell.styles.fontStyle = 'bold';
-                            }
-                            if (data.column.index === 7 && data.section === 'body') { // Status column
-                                data.cell.styles.textColor = [220, 53, 69]; // Red for expired
-                                data.cell.styles.fontStyle = 'bold';
-                            }
-                        }
+                        margin: { left: 60, right: 60 }
                     });
-                    y = doc.lastAutoTable.finalY + 50;
-                } else {
-                    doc.setFontSize(12);
-                    doc.setFont('helvetica', 'italic');
-                    doc.setTextColor(100, 100, 100);
-                    doc.text('No expired warranty products found.', 40, y + 20);
-                    y += 70;
+
+                    y = doc.lastAutoTable.finalY + 30;
                 }
 
-                // Summary Statistics Section - ENHANCED
-                if (y > pageHeight - 150) {
-                    doc.addPage();
-                    y = 40;
+                // Top Customers Analysis
+                if (data.top_analysis && data.top_analysis.top_customers_by_spending && data.top_analysis.top_customers_by_spending.length > 0) {
+                    // Add new page if needed
+                    if (y > pageHeight - 200) {
+                        doc.addPage();
+                        y = 40;
+                    }
+
+                    doc.setFontSize(16);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(237, 137, 54);
+                    doc.text('TOP CUSTOMERS BY SPENDING', 40, y);
+                    y += 30;
+
+                    const customerData = [];
+                    data.top_analysis.top_customers_by_spending.slice(0, 10).forEach(customer => {
+                        customerData.push([
+                            customer.owner_name || 'N/A',
+                            customer.company || 'Individual',
+                            customer.location || 'N/A',
+                            customer.total_purchases || 0,
+                            `$${(customer.total_spent || 0).toLocaleString()}`,
+                            `$${(customer.avg_purchase || 0).toFixed(2)}`
+                        ]);
+                    });
+
+                    doc.autoTable({
+                        startY: y,
+                        head: [['Customer', 'Company', 'Location', 'Purchases', 'Total Spent', 'Avg Purchase']],
+                        body: customerData,
+                        theme: 'striped',
+                        headStyles: {
+                            fillColor: [237, 137, 54],
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold',
+                            fontSize: 9,
+                            halign: 'center'
+                        },
+                        styles: {
+                            font: 'helvetica',
+                            fontSize: 8,
+                            cellPadding: 3,
+                            halign: 'center'
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 100 },
+                            1: { cellWidth: 90 },
+                            2: { cellWidth: 90 },
+                            3: { cellWidth: 70 },
+                            4: { cellWidth: 80 },
+                            5: { cellWidth: 80 }
+                        },
+                        margin: { left: 40, right: 40 }
+                    });
+
+                    y = doc.lastAutoTable.finalY + 30;
                 }
 
-                doc.setFontSize(16);
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(0, 0, 0);
-                doc.text('WARRANTY ANALYSIS SUMMARY', 40, y);
-                y += 40;
-
-                const activeCount = data.under_warranty ? data.under_warranty.length : 0;
-                const expiredCount = data.expired ? data.expired.length : 0;
-                const totalProducts = activeCount + expiredCount;
-
-                const summaryData = [
-                    ['Metric', 'Count', 'Percentage'],
-                    ['Products Under Warranty', String(activeCount), totalProducts > 0 ? `${Math.round((activeCount/totalProducts)*100)}%` : '0%'],
-                    ['Expired Warranties', String(expiredCount), totalProducts > 0 ? `${Math.round((expiredCount/totalProducts)*100)}%` : '0%'],
-                    ['Total Products Tracked', String(totalProducts), '100%']
-                ];
-
-                doc.autoTable({
-                    startY: y,
-                    head: [summaryData[0]],
-                    body: summaryData.slice(1),
-                    theme: 'striped',
-                    headStyles: {
-                        fillColor: [102, 126, 234], // Professional blue
-                        textColor: [255, 255, 255],
-                        fontStyle: 'bold',
-                        fontSize: 12,
-                        halign: 'center'
-                    },
-                    styles: {
-                        font: 'helvetica',
-                        fontSize: 11,
-                        cellPadding: 8,
-                        halign: 'center'
-                    },
-                    columnStyles: {
-                        0: { cellWidth: 200, halign: 'left' },
-                        1: { cellWidth: 100 },
-                        2: { cellWidth: 100 }
-                    },
-                    margin: { left: 40, right: 40 }
-                });
-
-                y = doc.lastAutoTable.finalY + 40;
-
-                // Enhanced Footer with Professional Information
-                doc.setFontSize(11);
-                doc.setFont('helvetica', 'normal');
-                doc.setTextColor(60, 60, 60);
-
-                const footerText = [
-                    'REPORT INSIGHTS AND RECOMMENDATIONS:',
-                    '',
-                    'Active Warranty Monitoring: ' + activeCount + ' products currently under warranty protection',
-                    'Expired Warranty Tracking: ' + expiredCount + ' products requiring warranty renewal consideration',
-                    'Proactive Customer Communication: Notify owners of upcoming warranty expirations',
-                    'Service Excellence: Maintain comprehensive warranty coverage analytics',
-                    'Quality Assurance: Continue monitoring equipment performance and customer satisfaction',
-                    '',
-                    'Color Legend:',
-                    'Green: Active warranty (more than 90 days remaining)',
-                    'Orange: Expiring soon (30 days or less remaining)',
-                    'Red: Warranty expired',
-                    '',
-                    'For warranty inquiries, contact SoosanEgypt Customer Service'
-                ];
-
-                doc.text(footerText, 50, y);
-
-                // Professional signature line
-                const finalY = y + (footerText.length * 15) + 30;
-                if (finalY > pageHeight - 60) {
-                    doc.addPage();
-                    y = 40;
-                } else {
-                    y = finalY;
+                // Footer
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(150, 150, 150);
+                    doc.text('SoosanEgypt - Sales Performance Report', 40, pageHeight - 20);
+                    doc.text(`Page ${i} of ${pageCount}`, pageWidth - 60, pageHeight - 20);
                 }
 
-                doc.setFontSize(10);
-                doc.setTextColor(100, 100, 100);
-                doc.text('Report Generated by SoosanEgypt Professional Warranty Management System', pageWidth / 2, y, { align: 'center' });
-                doc.text('2025 SoosanEgypt - Excellence in Heavy Equipment Solutions', pageWidth / 2, y + 20, { align: 'center' });
-
-                // Save the PDF with enhanced filename
-                const fileName = `soosanegypt-warranty-analysis-${new Date().toISOString().split('T')[0]}.pdf`;
+                // Save the PDF
+                console.log('Saving PDF...');
+                const fileName = `soosan-sales-performance-report-${new Date().toISOString().split('T')[0]}.pdf`;
                 doc.save(fileName);
+                console.log('Sales PDF generated successfully');
+                alert('Sales report PDF generated successfully!');
 
-                // Show success message
-                if (typeof showToast === 'function') {
-                    showToast('Warranty PDF report download completed successfully!');
-                } else {
-                    alert('Warranty PDF report download completed successfully!');
+            } catch (error) {
+                console.error('Error generating sales PDF:', error);
+                alert('Error generating PDF: ' + error.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching sales data:', error);
+            alert('Error fetching sales data: ' + error.message);
+        });
+        }
+
+    } catch (error) {
+        console.error('Error in downloadSalesReportPDF:', error);
+        alert('Error starting PDF generation: ' + error.message);
+    }
+};
+
+// Enhanced Warranty Report PDF function with Two Separate Tables - FIXED VERSION
+window.downloadWarrantyReportPDF = function() {
+    try {
+        // Check if jsPDF is loaded
+        if (typeof window.jspdf === 'undefined') {
+            alert('jsPDF library is not loaded. Please refresh the page and try again.');
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('l', 'pt', 'a4'); // Landscape mode for better table fit
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+
+        // Clean Header with SoosanEgypt Branding
+        doc.setFillColor(220, 53, 69); // Warranty red background
+        doc.rect(0, 0, pageWidth, 120); // Header height
+
+        // Company branding
+        doc.setFontSize(32);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(255, 255, 255);
+        doc.text('SoosanEgypt', 40, 40);
+
+        doc.setFontSize(24);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Comprehensive Warranty Analysis Report', 40, 70);
+
+        // Enhanced date and branding
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Generated on: ' + new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }), 40, 95);
+
+        // Load transparent logo and continue with PDF generation
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
+
+        let logoLoaded = false;
+        const logoTimeout = setTimeout(() => {
+            if (!logoLoaded) {
+                console.log('Logo timeout, continuing without logo');
+                continueWithPDFGeneration();
+            }
+        }, 3000);
+
+        logoImg.onload = function() {
+            logoLoaded = true;
+            clearTimeout(logoTimeout);
+            try {
+                // Add transparent logo to top right corner
+                doc.addImage(logoImg, 'PNG', pageWidth - 180, 10, 130, 60);
+            } catch (e) {
+                console.log('Logo loading failed:', e);
+            }
+            continueWithPDFGeneration();
+        };        logoImg.onerror = function() {
+            logoLoaded = true;
+            clearTimeout(logoTimeout);
+            console.log('Logo failed to load, continuing without logo');
+            continueWithPDFGeneration();
+        };
+
+        logoImg.src = '/images/logo2.png';
+
+        function continueWithPDFGeneration() {
+            let y = 100; // Start tables closer to header
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+
+            if (csrfToken) {
+                headers['X-CSRF-TOKEN'] = csrfToken.getAttribute('content');
+            }
+
+            // Fetch real warranty data from the server
+            fetch('/admin/reports/warranty-data', {
+                method: 'GET',
+                headers: headers
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
                 }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Warranty data received:', data);
+                generateWarrantyTables(data);
+            })
+            .catch(error => {
+                alert('Failed to fetch warranty data. Please check your connection and try again.');
+                return;
+            });
+
+            function generateWarrantyTables(data) {
+                try {
+            // Table column headers - Reordered as requested
+            const tableHeaders = ['Model Name', 'Serial Number', 'Purchase Price', 'Purchase Date', 'Warranty Start', 'Warranty End', 'Days Left', 'Status', 'Owner', 'Created By'];
+
+            // FIRST TABLE: Products Under Warranty (Active) - ENHANCED
+            doc.setFontSize(18);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(40, 167, 69); // Green for active
+            doc.text('PRODUCTS UNDER WARRANTY (ACTIVE)', 40, y);
+            y += 20;
+
+            const underWarrantyData = [];
+            if (data.under_warranty && Array.isArray(data.under_warranty)) {
+                data.under_warranty.forEach(item => {
+                underWarrantyData.push([
+                    String(item.model_name || 'N/A'),
+                    String(item.serial_number || 'N/A'),
+                    item.purchase_price ? `$${Number(item.purchase_price).toLocaleString()}` : 'N/A',
+                    String(item.purchase_date || 'N/A'),
+                    String(item.warranty_start_date || 'N/A'),
+                    String(item.warranty_end_date || 'N/A'),
+                    item.days_left ? `${Math.round(Number(item.days_left))} days` : 'N/A',
+                    String(item.status || 'Active'),
+                    String(item.owner_name || 'N/A'),
+                    String(item.created_by || 'N/A')
+                ]);
+                });
+            }
+
+            if (underWarrantyData.length > 0) {
+                doc.autoTable({
+                startY: y,
+                head: [tableHeaders],
+                body: underWarrantyData,
+                theme: 'striped',
+                headStyles: {
+                    fillColor: [40, 167, 69], // Green for active warranties
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    fontSize: 10,
+                    halign: 'center'
+                },
+                styles: {
+                    font: 'helvetica',
+                    fontSize: 8,
+                    cellPadding: 4,
+                    halign: 'center',
+                    valign: 'middle'
+                },
+                alternateRowStyles: {
+                    fillColor: [240, 248, 240] // Light green alternating rows
+                },
+                columnStyles: {
+                    0: { cellWidth: 70 },   // Model Name
+                    1: { cellWidth: 80 },   // Serial Number
+                    2: { cellWidth: 70 },   // Purchase Price
+                    3: { cellWidth: 70 },   // Purchase Date
+                    4: { cellWidth: 80 },   // Warranty Start
+                    5: { cellWidth: 80 },   // Warranty End
+                    6: { cellWidth: 60 },   // Days Left
+                    7: { cellWidth: 60 },   // Status
+                    8: { cellWidth: 100 },  // Owner
+                    9: { cellWidth: 70 }    // Created By
+                },
+                margin: { left: 40, right: 40 },
+                didParseCell: function(data) {
+                    // Color code based on status and days left
+                    if (data.column.index === 6 && data.section === 'body') { // Days Left column
+                    const cellText = data.cell.text[0];
+                    if (cellText && cellText.includes('days')) {
+                        const days = parseInt(cellText);
+                        if (days <= 30 && days > 0) {
+                        data.cell.styles.textColor = [255, 193, 7]; // Orange for expiring soon
+                        data.cell.styles.fontStyle = 'bold';
+                        } else if (days > 90) {
+                        data.cell.styles.textColor = [40, 167, 69]; // Green for good
+                        data.cell.styles.fontStyle = 'bold';
+                        }
+                    }
+                    }
+                    if (data.column.index === 7 && data.section === 'body') { // Status column
+                    data.cell.styles.textColor = [40, 167, 69]; // Green for active
+                    data.cell.styles.fontStyle = 'bold';
+                    }
+                }
+                });
+                y = doc.lastAutoTable.finalY + 50;
+            } else {
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(100, 100, 100);
+                doc.text('No products currently under warranty.', 40, y + 20);
+                y += 70;
+            }
+
+            // Add new page if needed
+            if (y > pageHeight - 200) {
+                doc.addPage();
+                y = 40;
+            }
+
+            // SECOND TABLE: Expired Warranties - ENHANCED
+            doc.setFontSize(18);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(220, 53, 69); // Red for expired
+            doc.text('EXPIRED WARRANTY PRODUCTS', 40, y);
+            y += 20;
+
+            const expiredWarrantyData = [];
+            if (data.expired && Array.isArray(data.expired)) {
+                data.expired.forEach(item => {
+                expiredWarrantyData.push([
+                    String(item.model_name || 'N/A'),
+                    String(item.serial_number || 'N/A'),
+                    item.purchase_price ? `$${Number(item.purchase_price).toLocaleString()}` : 'N/A',
+                    String(item.purchase_date || 'N/A'),
+                    String(item.warranty_start_date || 'N/A'),
+                    String(item.warranty_end_date || 'N/A'),
+                    'Expired',
+                    String(item.status || 'Expired'),
+                    String(item.owner_name || 'N/A'),
+                    String(item.created_by || 'N/A')
+                ]);
+                });
+            }
+
+            if (expiredWarrantyData.length > 0) {
+                doc.autoTable({
+                startY: y,
+                head: [tableHeaders],
+                body: expiredWarrantyData,
+                theme: 'striped',
+                headStyles: {
+                    fillColor: [220, 53, 69], // Red for expired warranties
+                    textColor: [255, 255, 255],
+                    fontStyle: 'bold',
+                    fontSize: 10,
+                    halign: 'center'
+                },
+                styles: {
+                    font: 'helvetica',
+                    fontSize: 8,
+                    cellPadding: 4,
+                    halign: 'center',
+                    valign: 'middle'
+                },
+                alternateRowStyles: {
+                    fillColor: [253, 242, 242] // Light red alternating rows
+                },
+                columnStyles: {
+                    0: { cellWidth: 70 },   // Model Name
+                    1: { cellWidth: 80 },   // Serial Number
+                    2: { cellWidth: 70 },   // Purchase Price
+                    3: { cellWidth: 70 },   // Purchase Date
+                    4: { cellWidth: 80 },   // Warranty Start
+                    5: { cellWidth: 80 },   // Warranty End
+                    6: { cellWidth: 60 },   // Days Left
+                    7: { cellWidth: 60 },   // Status
+                    8: { cellWidth: 100 },  // Owner
+                    9: { cellWidth: 70 }    // Created By
+                },
+                margin: { left: 40, right: 40 },
+                didParseCell: function(data) {
+                    // Color code expired products
+                    if (data.column.index === 6 && data.section === 'body') { // Days Left column
+                    data.cell.styles.textColor = [220, 53, 69]; // Red for expired
+                    data.cell.styles.fontStyle = 'bold';
+                    }
+                    if (data.column.index === 7 && data.section === 'body') { // Status column
+                    data.cell.styles.textColor = [220, 53, 69]; // Red for expired
+                    data.cell.styles.fontStyle = 'bold';
+                    }
+                }
+                });
+                y = doc.lastAutoTable.finalY + 50;
+            } else {
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'italic');
+                doc.setTextColor(100, 100, 100);
+                doc.text('No expired warranty products found.', 40, y + 20);
+                y += 70;
+            }
+
+            // Summary Statistics Section - ENHANCED
+            if (y > pageHeight - 150) {
+                doc.addPage();
+                y = 40;
+            }
+
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(0, 0, 0);
+            doc.text('WARRANTY ANALYSIS SUMMARY', 40, y);
+            y += 20;
+
+            const activeCount = data.under_warranty ? data.under_warranty.length : 0;
+            const expiredCount = data.expired ? data.expired.length : 0;
+            const totalProducts = activeCount + expiredCount;
+
+            const summaryData = [
+                ['Metric', 'Count', 'Percentage'],
+                ['Products Under Warranty', String(activeCount), totalProducts > 0 ? `${Math.round((activeCount/totalProducts)*100)}%` : '0%'],
+                ['Expired Warranties', String(expiredCount), totalProducts > 0 ? `${Math.round((expiredCount/totalProducts)*100)}%` : '0%'],
+                ['Total Products Tracked', String(totalProducts), '100%']
+            ];
+
+            doc.autoTable({
+                startY: y,
+                head: [summaryData[0]],
+                body: summaryData.slice(1),
+                theme: 'striped',
+                headStyles: {
+                fillColor: [102, 126, 234], // Professional blue
+                textColor: [255, 255, 255],
+                fontStyle: 'bold',
+                fontSize: 12,
+                halign: 'center'
+                },
+                styles: {
+                font: 'helvetica',
+                fontSize: 11,
+                cellPadding: 8,
+                halign: 'center'
+                },
+                columnStyles: {
+                0: { cellWidth: 200, halign: 'left' },
+                1: { cellWidth: 100 },
+                2: { cellWidth: 100 }
+                },
+                margin: { left: 40, right: 40 }
+            });
+
+            // Save the PDF with enhanced filename
+            const fileName = `soosanegypt-warranty-analysis-${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
+
+            // Show success message
+            if (typeof showToast === 'function') {
+                showToast('Warranty PDF report download completed successfully!');
+            } else {
+                alert('Warranty PDF report download completed successfully!');
+            }
 
             } catch (tableError) {
                 console.error('Error generating warranty tables:', tableError);
                 alert('Error generating warranty PDF tables. Please try again.');
+            }
             }
         }
 
@@ -1577,6 +1973,324 @@ if ('ontouchstart' in window) {
         });
     });
 }
+
+// Owners Report PDF function with real data
+window.downloadOwnersReportPDF = function() {
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF('l', 'pt', 'a4');
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+
+        doc.setFillColor(72, 187, 120);
+        doc.rect(0, 0, pageWidth, 120);
+
+        doc.setFontSize(32);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(255, 255, 255);
+        doc.text('SoosanEgypt', 40, 40);
+
+        doc.setFontSize(24);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Comprehensive Owners Analysis Report', 40, 70);
+
+        // Date
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.text('Generated on: ' + new Date().toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }), 40, 95);
+
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
+
+        let logoLoaded = false;
+        const logoTimeout = setTimeout(() => {
+            if (!logoLoaded) {
+                console.log('Logo timeout, continuing without logo');
+                continueWithPDFGeneration();
+            }
+        }, 3000);
+
+        logoImg.onload = function() {
+            logoLoaded = true;
+            clearTimeout(logoTimeout);
+            try {
+                // Add transparent logo to top right corner
+                doc.addImage(logoImg, 'PNG', pageWidth - 180, 10, 160, 80);
+                console.log('Logo added successfully');
+            } catch (e) {
+                console.log('Logo loading failed:', e);
+            }
+            continueWithPDFGeneration();
+        };
+
+        logoImg.onerror = function() {
+            logoLoaded = true;
+            clearTimeout(logoTimeout);
+            console.log('Logo failed to load, continuing without logo');
+            continueWithPDFGeneration();
+        };
+
+        // Use logo2.png (transparent background, no black)
+        logoImg.src = '/images/logo2.png';
+
+        function continueWithPDFGeneration() {
+            let y = 140; // Start tables closer to header
+
+            const csrfToken = document.querySelector('meta[name="csrf-token"]');
+            const headers = {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            };
+
+            if (csrfToken) {
+                headers['X-CSRF-TOKEN'] = csrfToken.getAttribute('content');
+            }
+
+            fetch('/admin/reports/owners-data', {
+                method: 'GET',
+                headers: headers
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Owners data received:', data);
+                generateOwnersReport(data);
+            })
+            .catch(error => {
+                console.error('Failed to fetch owners data:', error);
+                alert('Failed to fetch owners data. Please check your connection and try again.');
+                return;
+            });
+
+            function generateOwnersReport(data) {
+                try {
+                // Summary Section
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(72, 187, 120);
+                doc.text('EXECUTIVE SUMMARY', 40, y);
+                y += 30;
+
+                // Summary stats
+                const analysis = data.analysis || {};
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(60, 60, 60);
+
+                doc.text(`Total Owners: ${analysis.total_owners || 0}`, 40, y);
+                doc.text(`Total Revenue: $${(analysis.total_revenue || 0).toLocaleString()}`, 200, y);
+                y += 20;
+                doc.text(`Average Revenue per Owner: $${(analysis.average_revenue_per_owner || 0).toFixed(2)}`, 40, y);
+                doc.text(`Owners with Companies: ${analysis.owners_with_companies || 0}`, 200, y);
+                y += 20;
+                doc.text(`Individual Owners: ${analysis.individual_owners || 0}`, 40, y);
+                y += 40;
+
+                // Check if we have owners data
+                const owners = data.owners || [];
+                if (owners.length === 0) {
+                    doc.setFontSize(14);
+                    doc.setFont('helvetica', 'italic');
+                    doc.setTextColor(150, 150, 150);
+                    doc.text('No owners data available.', 40, y);
+                    doc.save('owners-report.pdf');
+                    return;
+                }
+
+                // Owners List
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(72, 187, 120);
+                doc.text('OWNERS DIRECTORY', 40, y);
+                y += 30;
+
+                // Table for owners
+                const ownersTableData = [];
+                owners.forEach(owner => {
+                    ownersTableData.push([
+                        owner.name || 'N/A',
+                        owner.company || 'Individual',
+                        owner.city || 'N/A',
+                        owner.country || 'N/A',
+                        owner.total_purchases || 0,
+                        `$${(owner.total_spent || 0).toLocaleString()}`,
+                        owner.registration_date || 'N/A'
+                    ]);
+                });
+
+                doc.autoTable({
+                    startY: y,
+                    head: [['Owner Name', 'Company', 'City', 'Country', 'Purchases', 'Total Spent', 'Registration']],
+                    body: ownersTableData,
+                    theme: 'striped',
+                    headStyles: {
+                        fillColor: [72, 187, 120],
+                        textColor: [255, 255, 255],
+                        fontStyle: 'bold',
+                        fontSize: 9,
+                        halign: 'center'
+                    },
+                    styles: {
+                        font: 'helvetica',
+                        fontSize: 8,
+                        cellPadding: 3,
+                        halign: 'center',
+                        valign: 'middle'
+                    },
+                    alternateRowStyles: {
+                        fillColor: [240, 248, 240]
+                    },
+                    columnStyles: {
+                        0: { cellWidth: 70 },  // Owner Name
+                        1: { cellWidth: 70 },  // Company
+                        2: { cellWidth: 50 },  // City
+                        3: { cellWidth: 50 },  // Country
+                        4: { cellWidth: 30 },  // Purchases
+                        5: { cellWidth: 50 },  // Total Spent
+                        6: { cellWidth: 50 }   // Registration
+                    },
+                    margin: { left: 20, right: 20 }
+                });
+
+                y = doc.lastAutoTable.finalY + 30;
+
+                // Add new page if needed
+                if (y > pageHeight - 100) {
+                    doc.addPage();
+                    y = 40;
+                }
+
+                // Country Analysis
+                if (analysis.countries && Object.keys(analysis.countries).length > 0) {
+                    doc.setFontSize(16);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(72, 187, 120);
+                    doc.text('COUNTRY ANALYSIS', 40, y);
+                    y += 30;
+
+                    const countryData = [];
+                    Object.entries(analysis.countries).forEach(([country, stats]) => {
+                        countryData.push([
+                            country,
+                            stats.count || 0,
+                            `$${(stats.revenue || 0).toLocaleString()}`
+                        ]);
+                    });
+
+                    doc.autoTable({
+                        startY: y,
+                        head: [['Country', 'Owners Count', 'Total Revenue']],
+                        body: countryData,
+                        theme: 'striped',
+                        headStyles: {
+                            fillColor: [72, 187, 120],
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold',
+                            fontSize: 10,
+                            halign: 'center'
+                        },
+                        styles: {
+                            font: 'helvetica',
+                            fontSize: 9,
+                            cellPadding: 4,
+                            halign: 'center'
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 80 },
+                            1: { cellWidth: 60 },
+                            2: { cellWidth: 80 }
+                        },
+                        margin: { left: 80, right: 80 }
+                    });
+
+                    y = doc.lastAutoTable.finalY + 30;
+                }
+
+                // Add new page if needed
+                if (y > pageHeight - 100) {
+                    doc.addPage();
+                    y = 40;
+                }
+
+                // Top Companies Analysis (if available)
+                if (analysis.companies && Object.keys(analysis.companies).length > 0) {
+                    doc.setFontSize(16);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(72, 187, 120);
+                    doc.text('TOP COMPANIES ANALYSIS', 40, y);
+                    y += 30;
+
+                    const companyData = [];
+                    Object.entries(analysis.companies).forEach(([company, stats]) => {
+                        companyData.push([
+                            company,
+                            stats.count || 0,
+                            `$${(stats.revenue || 0).toLocaleString()}`
+                        ]);
+                    });
+
+                    doc.autoTable({
+                        startY: y,
+                        head: [['Company', 'Owners Count', 'Total Revenue']],
+                        body: companyData,
+                        theme: 'striped',
+                        headStyles: {
+                            fillColor: [72, 187, 120],
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold',
+                            fontSize: 10,
+                            halign: 'center'
+                        },
+                        styles: {
+                            font: 'helvetica',
+                            fontSize: 9,
+                            cellPadding: 4,
+                            halign: 'center'
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 100 },
+                            1: { cellWidth: 60 },
+                            2: { cellWidth: 80 }
+                        },
+                        margin: { left: 60, right: 60 }
+                    });
+                }
+
+                // Footer
+                const pageCount = doc.internal.getNumberOfPages();
+                for (let i = 1; i <= pageCount; i++) {
+                    doc.setPage(i);
+                    doc.setFontSize(8);
+                    doc.setTextColor(150, 150, 150);
+                    doc.text('SoosanEgypt - Owners Analysis Report', 40, pageHeight - 20);
+                    doc.text(`Page ${i} of ${pageCount}`, pageWidth - 60, pageHeight - 20);
+                }
+
+                // Save the PDF
+                doc.save('soosan-owners-analysis-report.pdf');
+                } catch (error) {
+                    console.error('Error generating owners PDF:', error);
+                    alert('Error generating PDF: ' + error.message);
+                }
+            }
+        }
+
+    } catch (error) {
+        console.error('Error in downloadOwnersReportPDF:', error);
+        alert('Error starting PDF generation: ' + error.message);
+    }
+};
 
 // Keyboard navigation support
 document.addEventListener('keydown', function(e) {
