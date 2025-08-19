@@ -960,6 +960,10 @@
                         </div>
                     </div>
 
+                    <button class="download-btn test-btn" style="background:#6c757d;color:#fff;margin-right:10px" onclick="testPDFGeneration()">
+                        <i class="fas fa-vial"></i>
+                        <span class="mobile-text">Test PDF</span>
+                    </button>
                     <button class="download-btn sales-btn" style="background:#fff;color:#ed8936;border:1px solid #ed8936" onclick="downloadSalesReportPDF()">
                         <i class="fas fa-file-pdf"></i>
                         <span class="mobile-text">Download as PDF (jsPDF)</span>
@@ -1214,7 +1218,14 @@ window.downloadSalesReportPDF = function() {
 
         console.log('Starting Sales PDF generation...');
 
+        // Test basic PDF creation first
         const { jsPDF } = window.jspdf;
+        const testDoc = new jsPDF();
+        testDoc.text('Test PDF', 20, 20);
+
+        // If this works, we know jsPDF is functioning
+        console.log('jsPDF basic test successful');
+
         const doc = new jsPDF('l', 'pt', 'a4'); // Landscape mode for better table fit
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
@@ -1291,25 +1302,42 @@ window.downloadSalesReportPDF = function() {
                 headers['X-CSRF-TOKEN'] = csrfToken.getAttribute('content');
             }
 
-            console.log('Fetching sales data...');
+            // Get selected time period for filtering
+            const selectedPeriod = document.querySelector('.filter-option.active').dataset.period;
+            let url = `/admin/reports/sales-data?period=${selectedPeriod}`;
 
-            // Fetch real sales data from the server
-            fetch('/admin/reports/sales-data', {
+            console.log('Fetching data from:', url);
+            console.log('Selected period:', selectedPeriod);
+
+            // Add custom date range if selected
+            if (selectedPeriod === 'custom') {
+                const startDate = document.getElementById('customStartDate').value;
+                const endDate = document.getElementById('customEndDate').value;
+                if (startDate && endDate) {
+                    url += `&start_date=${startDate}&end_date=${endDate}`;
+                }
+            }
+
+            // Fetch real sales data from the server with time filtering
+            fetch(url, {
                 method: 'GET',
                 headers: headers
-        })
-        .then(response => {
-            console.log('Response received:', response.status);
-            if (!response.ok) {
-                throw new Error(`Failed to fetch sales data: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then(data => {
-            try {
-                console.log('Sales data received:', data);
+            }).then(response => {
+                console.log('Response received:', response.status);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch sales data: ${response.status} - ${response.statusText}`);
+                }
+                return response.json();
+            }).then(data => {
+                try {
+                    console.log('Sales data received:', data);
 
-                // Executive Summary
+                    // Check if data is valid
+                    if (!data || typeof data !== 'object') {
+                        throw new Error('Invalid data received from server');
+                    }
+
+                    // Executive Summary
                 doc.setFontSize(16);
                 doc.setFont('helvetica', 'bold');
                 doc.setTextColor(237, 137, 54);
@@ -1322,10 +1350,10 @@ window.downloadSalesReportPDF = function() {
                 doc.setFont('helvetica', 'normal');
                 doc.setTextColor(60, 60, 60);
 
-                doc.text(`Total Sales: ${(summary.total_sales || 0).toLocaleString()}`, 40, y);
-                doc.text(`Total Revenue: $${(summary.total_revenue || 0).toLocaleString()}`, 300, y);
+                doc.text(`Total Sales: ${(Number(summary.total_sales) || 0).toLocaleString()} transactions`, 40, y);
+                doc.text(`Total Revenue: $${(Number(summary.total_revenue) || 0).toLocaleString()}`, 300, y);
                 y += 20;
-                doc.text(`Average Sale: $${(summary.average_sale || 0).toFixed(2)}`, 40, y);
+                doc.text(`Total Units Sold: ${(Number(summary.total_quantity) || 0).toLocaleString()} units`, 40, y);
                 doc.text(`Report Period: ${summary.period_label || 'N/A'}`, 300, y);
                 y += 40;
 
@@ -1345,29 +1373,31 @@ window.downloadSalesReportPDF = function() {
                         allProductsData.push([
                             product.model_name || 'N/A',
                             product.serial_number || 'N/A',
+                            product.quantity || 1,
                             product.purchase_date || 'N/A',
                             product.owner_name || 'N/A',
                             product.warranty_status || 'N/A',
-                            `$${(product.purchase_price || 0).toLocaleString()}`
+                            `$${(Number(product.purchase_price) || 0).toFixed(2)}`, // Unit price
+                            `$${(Number(product.total_price) || 0).toFixed(2)}` // Total price
                         ]);
                     });
 
                     doc.autoTable({
                         startY: y,
-                        head: [['Model Name', 'Serial Number', 'Purchase Date', 'Owner', 'Status', 'Price']],
+                        head: [['Model Name', 'Serial Number', 'Qty', 'Purchase Date', 'Owner', 'Status', 'Unit Price', 'Total Price']],
                         body: allProductsData,
                         theme: 'striped',
                         headStyles: {
                             fillColor: [237, 137, 54],
                             textColor: [255, 255, 255],
                             fontStyle: 'bold',
-                            fontSize: 9,
+                            fontSize: 10,
                             halign: 'center'
                         },
                         styles: {
                             font: 'helvetica',
-                            fontSize: 8,
-                            cellPadding: 3,
+                            fontSize: 9,
+                            cellPadding: 4,
                             halign: 'center',
                             valign: 'middle'
                         },
@@ -1375,14 +1405,16 @@ window.downloadSalesReportPDF = function() {
                             fillColor: [255, 248, 240]
                         },
                         columnStyles: {
-                            0: { cellWidth: 110 },  // Model Name
-                            1: { cellWidth: 100 },  // Serial Number
-                            2: { cellWidth: 80 },   // Purchase Date
-                            3: { cellWidth: 110 },  // Owner
-                            4: { cellWidth: 70 },   // Status
-                            5: { cellWidth: 70 }    // Price
+                            0: { cellWidth: 100 },  // Model Name
+                            1: { cellWidth: 90 },   // Serial Number
+                            2: { cellWidth: 40 },   // Qty
+                            3: { cellWidth: 80 },   // Purchase Date
+                            4: { cellWidth: 100 },  // Owner
+                            5: { cellWidth: 60 },   // Status
+                            6: { cellWidth: 70 },   // Unit Price
+                            7: { cellWidth: 80 }    // Total Price
                         },
-                        margin: { left: 20, right: 20 }
+                        margin: { left: 30, right: 30 }
                     });
 
                     y = doc.lastAutoTable.finalY + 30;
@@ -1416,42 +1448,41 @@ window.downloadSalesReportPDF = function() {
                             product.model_name || 'N/A',
                             product.category || 'N/A',
                             product.quantity_sold || 0,
-                            `$${(product.revenue || 0).toLocaleString()}`,
-                            `${product.percentage_of_total || 0}%`,
-                            `$${(product.avg_price || 0).toFixed(2)}`
+                            `$${(Number(product.revenue) || 0).toLocaleString()}`,
+                            `$${(Number(product.avg_unit_price) || 0).toFixed(2)}`, // Unit price
+                            `$${(Number(product.total_price) || 0).toLocaleString()}` // Total price (same as revenue)
                         ]);
                     });
 
-                    doc.autoTable({
-                        startY: y,
-                        head: [['Model', 'Category', 'Qty Sold', 'Revenue', '% of Total', 'Avg Price']],
-                        body: mostSoldData,
-                        theme: 'striped',
-                        headStyles: {
-                            fillColor: [237, 137, 54],
-                            textColor: [255, 255, 255],
-                            fontStyle: 'bold',
-                            fontSize: 9,
-                            halign: 'center'
-                        },
-                        styles: {
-                            font: 'helvetica',
-                            fontSize: 8,
-                            cellPadding: 3,
-                            halign: 'center'
-                        },
-                        columnStyles: {
-                            0: { cellWidth: 100 },
-                            1: { cellWidth: 80 },
-                            2: { cellWidth: 60 },
-                            3: { cellWidth: 80 },
-                            4: { cellWidth: 60 },
-                            5: { cellWidth: 70 }
-                        },
-                        margin: { left: 60, right: 60 }
-                    });
-
-                    y = doc.lastAutoTable.finalY + 30;
+                        doc.autoTable({
+                            startY: y,
+                            head: [['Model', 'Category', 'Quantity Sold', 'Revenue', 'Unit Price', 'Total Price']],
+                            body: mostSoldData,
+                            theme: 'striped',
+                            headStyles: {
+                                fillColor: [237, 137, 54],
+                                textColor: [255, 255, 255],
+                                fontStyle: 'bold',
+                                fontSize: 10,
+                                halign: 'center'
+                            },
+                            styles: {
+                                font: 'helvetica',
+                                fontSize: 9,
+                                cellPadding: 4,
+                                halign: 'center'
+                            },
+                            columnStyles: {
+                                0: { cellWidth: 120 },
+                                1: { cellWidth: 100 },
+                                2: { cellWidth: 80 },
+                                3: { cellWidth: 100 },
+                                4: { cellWidth: 80 },
+                                5: { cellWidth: 100 }
+                            },
+                            margin: { left: 30, right: 30 }
+                        });
+                        y = doc.lastAutoTable.finalY + 30;
                 }
 
                 // Add new page if needed
@@ -1473,8 +1504,8 @@ window.downloadSalesReportPDF = function() {
                         categoryData.push([
                             category.category || 'N/A',
                             category.quantity || 0,
-                            `$${(category.revenue || 0).toLocaleString()}`,
-                            `$${(category.avg_price || 0).toFixed(2)}`,
+                            `$${(Number(category.revenue) || 0).toLocaleString()}`,
+                            `$${(Number(category.avg_price) || 0).toFixed(2)}`,
                             category.products_count || 0
                         ]);
                     });
@@ -1498,13 +1529,13 @@ window.downloadSalesReportPDF = function() {
                             halign: 'center'
                         },
                         columnStyles: {
-                            0: { cellWidth: 120 },
-                            1: { cellWidth: 80 },
-                            2: { cellWidth: 100 },
-                            3: { cellWidth: 80 },
-                            4: { cellWidth: 70 }
+                            0: { cellWidth: 140 },
+                            1: { cellWidth: 100 },
+                            2: { cellWidth: 120 },
+                            3: { cellWidth: 120 },
+                            4: { cellWidth: 100 }
                         },
-                        margin: { left: 60, right: 60 }
+                        margin: { left: 30, right: 30 }
                     });
 
                     y = doc.lastAutoTable.finalY + 30;
@@ -1531,8 +1562,8 @@ window.downloadSalesReportPDF = function() {
                             customer.company || 'Individual',
                             customer.location || 'N/A',
                             customer.total_purchases || 0,
-                            `$${(customer.total_spent || 0).toLocaleString()}`,
-                            `$${(customer.avg_purchase || 0).toFixed(2)}`
+                            `$${(Number(customer.total_spent) || 0).toLocaleString()}`,
+                            `$${(Number(customer.avg_purchase) || 0).toFixed(2)}`
                         ]);
                     });
 
@@ -1545,24 +1576,24 @@ window.downloadSalesReportPDF = function() {
                             fillColor: [237, 137, 54],
                             textColor: [255, 255, 255],
                             fontStyle: 'bold',
-                            fontSize: 9,
+                            fontSize: 10,
                             halign: 'center'
                         },
                         styles: {
                             font: 'helvetica',
-                            fontSize: 8,
-                            cellPadding: 3,
+                            fontSize: 9,
+                            cellPadding: 4,
                             halign: 'center'
                         },
                         columnStyles: {
-                            0: { cellWidth: 100 },
-                            1: { cellWidth: 90 },
-                            2: { cellWidth: 90 },
-                            3: { cellWidth: 70 },
-                            4: { cellWidth: 80 },
-                            5: { cellWidth: 80 }
+                            0: { cellWidth: 120 },
+                            1: { cellWidth: 100 },
+                            2: { cellWidth: 110 },
+                            3: { cellWidth: 80 },
+                            4: { cellWidth: 100 },
+                            5: { cellWidth: 110 }
                         },
-                        margin: { left: 40, right: 40 }
+                        margin: { left: 30, right: 30 }
                     });
 
                     y = doc.lastAutoTable.finalY + 30;
@@ -1583,7 +1614,13 @@ window.downloadSalesReportPDF = function() {
                 const fileName = `soosan-sales-performance-report-${new Date().toISOString().split('T')[0]}.pdf`;
                 doc.save(fileName);
                 console.log('Sales PDF generated successfully');
-                alert('Sales report PDF generated successfully!');
+
+                // Show success message
+                if (typeof showToast === 'function') {
+                    showToast('Sales PDF report downloaded successfully!');
+                } else {
+                    alert('Sales PDF report downloaded successfully!');
+                }
 
             } catch (error) {
                 console.error('Error generating sales PDF:', error);
@@ -1592,13 +1629,52 @@ window.downloadSalesReportPDF = function() {
         })
         .catch(error => {
             console.error('Error fetching sales data:', error);
-            alert('Error fetching sales data: ' + error.message);
+            alert('Error fetching sales data: ' + error.message + '. Generating basic PDF instead...');
+
+            // Generate a basic PDF as fallback
+            try {
+                const { jsPDF } = window.jspdf;
+                const fallbackDoc = new jsPDF();
+                fallbackDoc.setFontSize(20);
+                fallbackDoc.text('SoosanEgypt Sales Report', 20, 30);
+                fallbackDoc.setFontSize(12);
+                fallbackDoc.text('Error occurred while fetching data from server.', 20, 50);
+                fallbackDoc.text('Please try again or contact support.', 20, 70);
+                fallbackDoc.text('Error details: ' + error.message, 20, 90);
+                fallbackDoc.save('soosan-sales-report-error.pdf');
+                console.log('Fallback PDF generated');
+            } catch (fallbackError) {
+                console.error('Even fallback PDF failed:', fallbackError);
+                alert('Critical PDF generation error. Please refresh the page and try again.');
+            }
         });
         }
 
     } catch (error) {
         console.error('Error in downloadSalesReportPDF:', error);
-        alert('Error starting PDF generation: ' + error.message);
+        alert('Critical error in PDF generation: ' + error.message);
+    }
+};
+
+// Simple test function to verify PDF generation works
+window.testPDFGeneration = function() {
+    try {
+        console.log('Testing PDF generation...');
+
+        if (typeof window.jspdf === 'undefined') {
+            alert('jsPDF not loaded');
+            return;
+        }
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.text('Hello SoosanEgypt!', 10, 10);
+        doc.save('test.pdf');
+        alert('Test PDF generated successfully!');
+
+    } catch (error) {
+        console.error('Test PDF failed:', error);
+        alert('Test PDF failed: ' + error.message);
     }
 };
 
@@ -1686,8 +1762,21 @@ window.downloadWarrantyReportPDF = function() {
             }
 
             // Fetch real warranty data from the server
-            fetch('/admin/reports/warranty-data', {
-                method: 'GET',
+            // Get selected time period for filtering
+            const selectedPeriod = document.querySelector('.filter-option.active').dataset.period;
+            let url = `/admin/reports/warranty-data?period=${selectedPeriod}`;
+
+            // Add custom date range if selected
+            if (selectedPeriod === 'custom') {
+                const startDate = document.getElementById('customStartDate').value;
+                const endDate = document.getElementById('customEndDate').value;
+                if (startDate && endDate) {
+                    url += `&start_date=${startDate}&end_date=${endDate}`;
+                }
+            }
+
+            // Fetch real warranty data from the server with time filtering
+            fetch(url, {
                 headers: headers
             })
             .then(response => {
@@ -1939,28 +2028,22 @@ window.downloadWarrantyReportPDF = function() {
             });
 
             // Save the PDF with enhanced filename
-            const fileName = `soosanegypt-warranty-analysis-${new Date().toISOString().split('T')[0]}.pdf`;
+            const fileName = `SOOSANEG-Warranty-Report${new Date().toISOString().split('T')[0]}.pdf`;
             doc.save(fileName);
-
-            // Show success message
-            if (typeof showToast === 'function') {
-                showToast('Warranty PDF report download completed successfully!');
-            } else {
-                alert('Warranty PDF report download completed successfully!');
-            }
 
             } catch (tableError) {
                 console.error('Error generating warranty tables:', tableError);
                 alert('Error generating warranty PDF tables. Please try again.');
             }
-            }
-        }
+        } // End of generateWarrantyTables function
+
+        } // End of continueWithPDFGeneration function
 
     } catch (error) {
         console.error('Error in warranty PDF function:', error);
         alert('Error generating warranty PDF. Please check that jsPDF is loaded correctly.');
     }
-}
+};
 
 // Enhanced mobile interactions
 if ('ontouchstart' in window) {
@@ -2052,7 +2135,20 @@ window.downloadOwnersReportPDF = function() {
                 headers['X-CSRF-TOKEN'] = csrfToken.getAttribute('content');
             }
 
-            fetch('/admin/reports/owners-data', {
+            // Get selected time period for filtering
+            const selectedPeriod = document.querySelector('.filter-option.active').dataset.period;
+            let url = `/admin/reports/owners-data?period=${selectedPeriod}`;
+
+            // Add custom date range if selected
+            if (selectedPeriod === 'custom') {
+                const startDate = document.getElementById('customStartDate').value;
+                const endDate = document.getElementById('customEndDate').value;
+                if (startDate && endDate) {
+                    url += `&start_date=${startDate}&end_date=${endDate}`;
+                }
+            }
+
+            fetch(url, {
                 method: 'GET',
                 headers: headers
             })
@@ -2089,9 +2185,9 @@ window.downloadOwnersReportPDF = function() {
                 doc.setTextColor(60, 60, 60);
 
                 doc.text(`Total Owners: ${analysis.total_owners || 0}`, 40, y);
-                doc.text(`Total Revenue: $${(analysis.total_revenue || 0).toLocaleString()}`, 200, y);
+                doc.text(`Total Revenue: $${(Number(analysis.total_revenue) || 0).toLocaleString()}`, 200, y);
                 y += 20;
-                doc.text(`Average Revenue per Owner: $${(analysis.average_revenue_per_owner || 0).toFixed(2)}`, 40, y);
+                doc.text(`Average Revenue per Owner: $${(Number(analysis.average_revenue_per_owner) || 0).toFixed(2)}`, 40, y);
                 doc.text(`Owners with Companies: ${analysis.owners_with_companies || 0}`, 200, y);
                 y += 20;
                 doc.text(`Individual Owners: ${analysis.individual_owners || 0}`, 40, y);
@@ -2124,7 +2220,7 @@ window.downloadOwnersReportPDF = function() {
                         owner.city || 'N/A',
                         owner.country || 'N/A',
                         owner.total_purchases || 0,
-                        `$${(owner.total_spent || 0).toLocaleString()}`,
+                        `$${(Number(owner.total_spent) || 0).toLocaleString()}`,
                         owner.registration_date || 'N/A'
                     ]);
                 });
@@ -2184,7 +2280,7 @@ window.downloadOwnersReportPDF = function() {
                         countryData.push([
                             country,
                             stats.count || 0,
-                            `$${(stats.revenue || 0).toLocaleString()}`
+                            `$${(Number(stats.revenue) || 0).toLocaleString()}`
                         ]);
                     });
 
@@ -2236,7 +2332,7 @@ window.downloadOwnersReportPDF = function() {
                         companyData.push([
                             company,
                             stats.count || 0,
-                            `$${(stats.revenue || 0).toLocaleString()}`
+                            `$${(Number(stats.revenue) || 0).toLocaleString()}`
                         ]);
                     });
 

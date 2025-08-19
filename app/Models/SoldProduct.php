@@ -16,6 +16,7 @@ class SoldProduct extends Model
         'owner_id',
         'user_id',
         'serial_number',
+        'quantity',
         'sale_date',
         'warranty_start_date',
         'warranty_end_date',

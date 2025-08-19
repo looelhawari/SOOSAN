@@ -28,7 +28,9 @@ class OwnerController extends Controller
             return $sp->product && $sp->product->model_name === $product;
         });
 
-        $totalSpent = $owner->soldProducts->sum('purchase_price');
+        $totalSpent = $owner->soldProducts->sum(function($sp) {
+            return ($sp->purchase_price ?? 0) * ($sp->quantity ?? 1);
+        });
 
         return view('admin.owners.product-details', [
             'owner' => $owner,
@@ -56,8 +58,10 @@ class OwnerController extends Controller
         $ownerChartData = Owner::with('soldProducts')->get()->map(function($owner) {
             return [
                 'name' => $owner->name,
-                'devicesBought' => $owner->soldProducts->count(),
-                'totalSpent' => $owner->soldProducts->sum('purchase_price'),
+                'devicesBought' => $owner->soldProducts->sum('quantity'), // Sum quantities instead of count
+                'totalSpent' => $owner->soldProducts->sum(function($sp) {
+                    return ($sp->purchase_price ?? 0) * ($sp->quantity ?? 1);
+                }), // Total spent considering quantities
             ];
         });
 
@@ -121,13 +125,15 @@ class OwnerController extends Controller
 
         // Top Owners by Spending (limit 10)
         $topOwners = Owner::withCount('soldProducts')
-            ->with(['soldProducts' => function($q) { $q->select('owner_id', 'purchase_price'); }])
+            ->with(['soldProducts' => function($q) { $q->select('owner_id', 'purchase_price', 'quantity'); }])
             ->get()
             ->map(function($owner) {
                 return [
                     'name' => $owner->name,
-                    'total_spent' => $owner->soldProducts->sum('purchase_price'),
-                    'total_devices' => $owner->sold_products_count,
+                    'total_spent' => $owner->soldProducts->sum(function($sp) {
+                        return ($sp->purchase_price ?? 0) * ($sp->quantity ?? 1);
+                    }),
+                    'total_devices' => $owner->soldProducts->sum('quantity'), // Sum quantities instead of count
                 ];
             })
             ->sortByDesc('total_spent')

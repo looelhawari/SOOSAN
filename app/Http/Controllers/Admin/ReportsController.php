@@ -741,9 +741,10 @@ class ReportsController extends Controller
         $dateRange = $this->getDateRange($request);
         $salesData = $this->getSalesData($dateRange);
 
-        // Get ALL sold products with complete information - temporarily remove date filter to debug
-        $allSoldProducts = SoldProduct::with(['product.category', 'owner', 'user'])
+        // Get sold products with date filtering and complete information
+        $soldProducts = SoldProduct::with(['product.category', 'owner', 'user'])
             ->whereNotNull('sale_date') // Only get products with actual sale dates
+            ->whereBetween('sale_date', [$dateRange['start'], $dateRange['end']]) // Apply date filtering
             ->orderBy('sale_date', 'desc')
             ->get()
             ->map(function ($sale) {
@@ -758,11 +759,13 @@ class ReportsController extends Controller
                 return [
                     'model_name' => $sale->product->model_name ?? 'N/A',
                     'serial_number' => $sale->serial_number ?? 'N/A',
+                    'quantity' => $sale->quantity ?? 1, // Default to 1 if quantity is null
                     'purchase_date' => $sale->sale_date ? $sale->sale_date->format('Y-m-d') : 'N/A',
                     'owner_name' => $sale->owner->name ?? 'N/A',
                     'owner_company' => $sale->owner->company ?? 'Individual',
                     'owner_location' => ($sale->owner->city ?? 'N/A') . ', ' . ($sale->owner->country ?? 'N/A'),
                     'purchase_price' => $sale->purchase_price ?? 0,
+                    'total_price' => ($sale->purchase_price ?? 0) * ($sale->quantity ?? 1), // Unit price * quantity
                     'seller_name' => $sale->user->name ?? 'N/A',
                     'product_category' => $sale->product->category->name ?? 'N/A',
                     'product_line' => $sale->product->line ?? 'N/A',
@@ -773,64 +776,82 @@ class ReportsController extends Controller
                 ];
             });
 
-        // Enhanced sales analysis for PDF
-        $totalSales = $allSoldProducts->count();
-        $totalRevenue = $allSoldProducts->sum('purchase_price');
+        // Enhanced sales analysis for PDF with quantity support
+        $totalSales = $soldProducts->count(); // Number of sale records
+        $totalQuantity = $soldProducts->sum('quantity'); // Total units sold
+        $totalRevenue = $soldProducts->sum('total_price'); // Sum of (unit_price * quantity)
         $averageSale = $totalSales > 0 ? ($totalRevenue / $totalSales) : 0;
+
+        // Get period label for display
+        $periodLabels = [
+            'last_7_days' => 'Last 7 Days',
+            'last_30_days' => 'Last 30 Days',
+            'last_90_days' => 'Last 90 Days',
+            'this_year' => 'This Year',
+            'last_year' => 'Last Year',
+            'custom' => 'Custom Date Range'
+        ];
+        $periodLabel = $periodLabels[$request->get('period', 'last_30_days')] ?? 'Last 30 Days';
 
         $enhancedData = [
             'summary' => [
                 'total_sales' => $totalSales,
+                'total_quantity' => $totalQuantity, // Total units sold
                 'total_revenue' => $totalRevenue,
                 'average_sale' => $averageSale,
-                'period_label' => 'All Time', // Changed since we're showing all data
+                'period_label' => $periodLabel,
                 'generated_at' => now()->format('Y-m-d H:i:s'),
                 'date_range' => [
-                    'start' => $allSoldProducts->min('sale_date') ? \Carbon\Carbon::parse($allSoldProducts->min('sale_date'))->format('Y-m-d') : 'N/A',
-                    'end' => $allSoldProducts->max('sale_date') ? \Carbon\Carbon::parse($allSoldProducts->max('sale_date'))->format('Y-m-d') : 'N/A'
+                    'start' => $dateRange['start']->format('Y-m-d'),
+                    'end' => $dateRange['end']->format('Y-m-d')
                 ]
             ],
 
-            // ALL sold products data
-            'all_sold_products' => $allSoldProducts,
+            // Filtered sold products data
+            'all_sold_products' => $soldProducts,
 
-            // Enhanced product performance analysis - Most sold products based on actual data
-            'most_sold_products' => $allSoldProducts->groupBy('model_name')->map(function ($products, $modelName) use ($totalSales) {
-                $quantitySold = $products->count();
-                $revenue = $products->sum('purchase_price');
-                $avgPrice = $quantitySold > 0 ? ($revenue / $quantitySold) : 0;
+            // Enhanced product performance analysis - Most sold products based on filtered data
+            'most_sold_products' => $soldProducts->groupBy('model_name')->map(function ($products, $modelName) use ($totalQuantity) {
+                $quantitySold = $products->sum('quantity'); // Sum of quantities for this product
+                $salesCount = $products->count(); // Number of sale records
+                $revenue = $products->sum('total_price'); // Total revenue for this product
+                $avgUnitPrice = $salesCount > 0 ? ($products->sum('purchase_price') / $salesCount) : 0; // Average unit price
 
                 return [
                     'model_name' => $modelName,
                     'category' => $products->first()['product_category'] ?? 'N/A',
                     'line' => $products->first()['product_line'] ?? 'N/A',
                     'type' => $products->first()['product_type'] ?? 'N/A',
-                    'quantity_sold' => $quantitySold,
-                    'revenue' => $revenue,
-                    'avg_price' => $avgPrice,
-                    'percentage_of_total' => $totalSales > 0 ?
-                        round(($quantitySold / $totalSales) * 100, 2) : 0
+                    'quantity_sold' => $quantitySold, // Total units sold
+                    'sales_count' => $salesCount, // Number of transactions
+                    'revenue' => $revenue, // Total revenue
+                    'avg_unit_price' => $avgUnitPrice, // Average price per unit
+                    'total_price' => $revenue, // Same as revenue
+                    'percentage_of_total' => $totalQuantity > 0 ?
+                        round(($quantitySold / $totalQuantity) * 100, 2) : 0
                 ];
             })->sortByDesc('quantity_sold')->values(),
 
             // Revenue analysis by different metrics based on actual sold products
             'revenue_analysis' => [
                 'total_revenue' => $totalRevenue,
-                'by_category' => $allSoldProducts->groupBy('product_category')->map(function ($products, $category) {
-                    $totalRevenue = $products->sum('purchase_price');
-                    $totalQuantity = $products->count();
+                'by_category' => $soldProducts->groupBy('product_category')->map(function ($products, $category) {
+                    $totalRevenue = $products->sum('total_price'); // Sum of (unit_price * quantity)
+                    $totalQuantity = $products->sum('quantity'); // Sum of quantities
+                    $salesCount = $products->count(); // Number of transactions
                     return [
                         'category' => $category,
                         'revenue' => $totalRevenue,
-                        'quantity' => $totalQuantity,
-                        'avg_price' => $totalQuantity > 0 ? ($totalRevenue / $totalQuantity) : 0,
-                        'products_count' => $products->count()
+                        'quantity' => $totalQuantity, // Total units sold in this category
+                        'sales_count' => $salesCount, // Number of transactions
+                        'avg_price' => $totalQuantity > 0 ? ($totalRevenue / $totalQuantity) : 0, // Average price per unit
+                        'products_count' => $products->pluck('model_name')->unique()->count()
                     ];
                 })->sortByDesc('revenue')->values(),
 
-                'by_product_line' => $allSoldProducts->groupBy('product_line')->map(function ($products, $line) {
-                    $totalRevenue = $products->sum('purchase_price');
-                    $totalQuantity = $products->count();
+                'by_product_line' => $soldProducts->groupBy('product_line')->map(function ($products, $line) {
+                    $totalRevenue = $products->sum('total_price');
+                    $totalQuantity = $products->sum('quantity');
                     return [
                         'line' => $line ?: 'N/A',
                         'revenue' => $totalRevenue,
@@ -840,7 +861,7 @@ class ReportsController extends Controller
                     ];
                 })->sortByDesc('revenue')->values(),
 
-                'monthly_breakdown' => $allSoldProducts->groupBy(function ($item) {
+                'monthly_breakdown' => $soldProducts->groupBy(function ($item) {
                     return \Carbon\Carbon::parse($item['purchase_date'])->format('Y-m');
                 })->map(function ($sales, $month) {
                     $totalRevenue = $sales->sum('purchase_price');
@@ -856,7 +877,7 @@ class ReportsController extends Controller
 
             // Top performing analysis based on actual sold products
             'top_analysis' => [
-                'top_products_by_quantity' => $allSoldProducts->groupBy('model_name')->map(function ($products, $modelName) {
+                'top_products_by_quantity' => $soldProducts->groupBy('model_name')->map(function ($products, $modelName) {
                     return [
                         'model_name' => $modelName,
                         'quantity_sold' => $products->count(),
@@ -865,7 +886,7 @@ class ReportsController extends Controller
                     ];
                 })->sortByDesc('quantity_sold')->take(5)->values(),
 
-                'top_products_by_revenue' => $allSoldProducts->groupBy('model_name')->map(function ($products, $modelName) {
+                'top_products_by_revenue' => $soldProducts->groupBy('model_name')->map(function ($products, $modelName) {
                     return [
                         'model_name' => $modelName,
                         'quantity_sold' => $products->count(),
@@ -874,7 +895,7 @@ class ReportsController extends Controller
                     ];
                 })->sortByDesc('revenue')->take(5)->values(),
 
-                'top_customers_by_spending' => $allSoldProducts->groupBy('owner_name')->map(function ($sales, $owner) {
+                'top_customers_by_spending' => $soldProducts->groupBy('owner_name')->map(function ($sales, $owner) {
                     $totalSpent = $sales->sum('purchase_price');
                     $totalPurchases = $sales->count();
                     return [
@@ -887,7 +908,7 @@ class ReportsController extends Controller
                     ];
                 })->sortByDesc('total_spent')->take(10)->values(),
 
-                'top_sales_staff' => $allSoldProducts->groupBy('seller_name')->map(function ($sales, $seller) {
+                'top_sales_staff' => $soldProducts->groupBy('seller_name')->map(function ($sales, $seller) {
                     $totalRevenue = $sales->sum('purchase_price');
                     $totalSales = $sales->count();
                     return [
@@ -900,7 +921,7 @@ class ReportsController extends Controller
             ],
 
             // Staff performance analysis based on actual sold products
-            'staff_performance' => $allSoldProducts->groupBy('seller_name')->map(function ($sales, $seller) {
+            'staff_performance' => $soldProducts->groupBy('seller_name')->map(function ($sales, $seller) {
                 $totalRevenue = $sales->sum('purchase_price');
                 $totalSales = $sales->count();
                 return [
@@ -913,7 +934,7 @@ class ReportsController extends Controller
             })->sortByDesc('revenue')->values(),
 
             // Daily sales trend based on actual data
-            'daily_trends' => $allSoldProducts->groupBy('purchase_date')->map(function ($sales, $date) {
+            'daily_trends' => $soldProducts->groupBy('purchase_date')->map(function ($sales, $date) {
                 $totalRevenue = $sales->sum('purchase_price');
                 $totalSales = $sales->count();
                 return [
@@ -925,7 +946,7 @@ class ReportsController extends Controller
             })->sortBy('date')->values(),
 
             // Recent transactions
-            'recent_transactions' => $allSoldProducts->take(20)->map(function ($sale) {
+            'recent_transactions' => $soldProducts->take(20)->map(function ($sale) {
                 return [
                     'model_name' => $sale['model_name'],
                     'serial_number' => $sale['serial_number'],
@@ -940,21 +961,21 @@ class ReportsController extends Controller
 
             // Warranty and serial analysis based on actual data
             'warranty_analysis' => [
-                'total_sales' => $allSoldProducts->count(),
-                'active_warranties' => $allSoldProducts->filter(function ($sale) {
+                'total_sales' => $soldProducts->count(),
+                'active_warranties' => $soldProducts->filter(function ($sale) {
                     return $sale['warranty_status'] === 'Active';
                 })->count(),
-                'expired_warranties' => $allSoldProducts->filter(function ($sale) {
+                'expired_warranties' => $soldProducts->filter(function ($sale) {
                     return $sale['warranty_status'] === 'Expired';
                 })->count(),
-                'voided_warranties' => $allSoldProducts->filter(function ($sale) {
+                'voided_warranties' => $soldProducts->filter(function ($sale) {
                     return $sale['warranty_status'] === 'Voided';
                 })->count(),
-                'unique_serials' => $allSoldProducts->pluck('serial_number')->unique()->count()
+                'unique_serials' => $soldProducts->pluck('serial_number')->unique()->count()
             ],
 
             // Category breakdown based on actual data
-            'category_analysis' => $allSoldProducts->groupBy('product_category')->map(function ($products, $category) {
+            'category_analysis' => $soldProducts->groupBy('product_category')->map(function ($products, $category) {
                 return [
                     'category' => $category,
                     'products_count' => $products->count(),
