@@ -11,11 +11,11 @@ return [
     'product_sales' => 'Product Sales',
     'sales_transactions' => 'Sales Transactions',
     'sales_records' => 'Sales Records',
-    
+
     // Employee Access
     'employee_access' => 'Employee Access',
     'employee_access_desc' => 'You can create new sales and edit existing ones. Any edits to existing sales will be submitted for admin approval before taking effect.',
-    
+
     // Statistics
     'total_sales' => 'Total Sales',
     'total_revenue' => 'Total Revenue',
@@ -25,7 +25,7 @@ return [
     'monthly_sales' => 'Monthly Sales',
     'yearly_sales' => 'Yearly Sales',
     'average_sale_value' => 'Average Sale Value',
-    
+
     // Actions
     'add_new_sale' => 'Add New Sale',
     'create_sale' => 'Create Sale',
@@ -39,7 +39,7 @@ return [
     'update_sale' => 'Update Sale',
     'cancel' => 'Cancel',
     'back_to_sales' => 'Back to Sales',
-    
+
     // Sale Details
     'sale_information' => 'Sale Information',
     'sale_details' => 'Sale Details',
@@ -53,7 +53,7 @@ return [
     'warranty_info_desc' => 'Warranty coverage and duration details',
     'additional_information' => 'Additional Information',
     'additional_info_desc' => 'Optional additional sale details',
-    
+
     // Form Fields
     'product' => 'Product',
     'select_product' => 'Select Product',
@@ -71,6 +71,7 @@ return [
     'sale_date' => 'Sale Date',
     'sale_date_required' => 'Sale date is required',
     'purchase_price' => 'Purchase Price',
+    'quantity' => 'Quantity',
     'sale_price' => 'Sale Price',
     'selling_price' => 'Selling Price',
     'price_required' => 'Price is required',
@@ -101,7 +102,7 @@ return [
     'receipt_number' => 'Receipt Number',
     'sale_recored_by' => 'Sale Recorded By:',
     'void_sale' => 'Cancel Sale',
-    
+
     // Payment Methods
     'cash' => 'Cash',
     'credit_card' => 'Credit Card',
@@ -109,14 +110,14 @@ return [
     'check' => 'Check',
     'financing' => 'Financing',
     'installments' => 'Installments',
-    
+
     // Payment Status
     'paid' => 'Paid',
     'pending' => 'Pending',
     'partial' => 'Partial',
     'overdue' => 'Overdue',
     'refunded' => 'Refunded',
-    
+
     // Sale Status
     'completed' => 'Completed',
     'processing' => 'Processing',
@@ -124,7 +125,7 @@ return [
     'delivered' => 'Delivered',
     'cancelled' => 'Cancelled',
     'returned' => 'Returned',
-    
+
     // Display Labels
     'model_name' => 'Model Name',
     'category' => 'Category',
@@ -139,7 +140,7 @@ return [
     'updated_at' => 'Updated At',
     'created_by' => 'Created By',
     'updated_by' => 'Updated By',
-    
+
     // Warranty Display
     'warranty_info' => 'Warranty Information',
     'warranty_valid' => 'Warranty Valid',
@@ -149,14 +150,14 @@ return [
     'warranty_years_left' => 'years left',
     'no_warranty' => 'No Warranty',
     'lifetime_warranty' => 'Lifetime Warranty',
-    
+
     // Empty States
     'no_sales_found' => 'No sold products found',
     'no_sales_recorded' => 'No sales recorded yet',
     'start_recording_sales' => 'Start by recording your first sale transaction.',
     'no_results_found' => 'No results found for your search.',
     'try_different_criteria' => 'Try adjusting your search criteria.',
-    
+
     // Search & Filter
     'search_sales' => 'Search Sales',
     'search_placeholder' => 'Search by customer, product, or serial number...',
@@ -176,10 +177,10 @@ return [
     'apply_filters' => 'Apply Filters',
     'clear_filters' => 'Clear Filters',
     'search' => 'Search',
-    
+
     // Quick Search
     'quick_search_placeholder' => 'Quick search by owner name or serial number...',
-    
+
     // Filtering and Search
     'advanced_filters' => 'Advanced Filters',
     'toggle_filters' => 'Toggle Filters',
@@ -201,7 +202,7 @@ return [
     'showing_results' => 'Showing :count results',
     'this_month' => 'This Month',
     'expiring_soon' => 'Expiring Soon',
-    
+
     // Page titles and headers
     'page_title' => 'Sold Products',
     'track_and_manage_description' => 'Track and manage all product sales and transactions',
@@ -215,7 +216,7 @@ return [
     'complete_information' => 'Complete information about this product sale',
     'update_information' => 'Update sold product information and warranty details',
     'sale_number' => 'Sale #:id',
-    
+
     // Form fields and labels
     'product' => 'Product',
     'owner' => 'Owner',
@@ -232,14 +233,14 @@ return [
     'created' => 'Created',
     'updated' => 'Updated',
     'additional_notes' => 'Additional Notes',
-    
+
     // Placeholders
     'select_product' => 'Select Product',
     'select_owner' => 'Select Owner',
     'select_employee' => 'Select Employee',
     'enter_serial_number' => 'Enter unique serial number',
     'additional_notes_placeholder' => 'Additional notes about this sale...',
-    
+
     // Actions
     'create_sale' => 'Create Sale',
     'update_sale' => 'Update Sale',
@@ -251,7 +252,7 @@ return [
     'quick_actions' => 'Quick Actions',
     'view_product' => 'View Product',
     'view_owner' => 'View Owner',
-    
+
     // Warranty information
     'warranty_information' => 'Warranty Information',
     'under_warranty' => 'Under Warranty',
@@ -260,24 +261,34 @@ return [
     'warranty_not_started' => 'Warranty has not started yet',
     'expired_time_ago' => 'Expired :time',
     'days_remaining' => ':days days remaining',
-    
+
     // Confirmation messages
     'confirm_delete' => 'Are you sure you want to delete this sale record?',
-    
+
     // Success messages
     'created_successfully' => 'Sale record created successfully!',
     'updated_successfully' => 'Sale record updated successfully!',
     'deleted_successfully' => 'Sale record deleted successfully!',
-    
+
     // Error messages
     'create_error' => 'Error creating sale record. Please try again.',
     'update_error' => 'Error updating sale record. Please try again.',
     'delete_error' => 'Error deleting sale record. Please try again.',
     'not_found' => 'Sale record not found.',
-    
+
     // Status and other values
     'na' => 'N/A',
     'no_sales' => 'No sales found.',
+    'empty_state_description' => 'Start by recording your first sale transaction. Track products, manage warranties, and analyze your sales performance.',
+    'quick_entry' => 'Quick Entry',
+    'quick_entry_desc' => 'Fast and intuitive sale recording process',
+    'warranty_tracking' => 'Warranty Tracking',
+    'warranty_tracking_desc' => 'Automatic warranty management and monitoring',
+    'analytics' => 'Sales Analytics',
+    'analytics_desc' => 'Comprehensive sales reports and insights',
+    'add_sale' => 'Add Sale',
+    'manage_products' => 'Manage Products',
+    'products' => 'Products',
     'required' => 'Required field',
     'optional' => 'Optional field',
 

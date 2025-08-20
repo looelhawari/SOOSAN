@@ -916,11 +916,11 @@
                                         <i class="fas fa-tag mobile-icon"></i>
                                         {{ __('products.model_name') }} <span class="required">*</span>
                         </label>
-                        <input type="text" 
-                                class="modern-input @error('model_name') is-invalid @enderror" 
-                               id="model_name" 
-                               name="model_name" 
-                               value="{{ old('model_name') }}" 
+                        <input type="text"
+                                class="modern-input @error('model_name') is-invalid @enderror"
+                               id="model_name"
+                               name="model_name"
+                               value="{{ old('model_name') }}"
                                 placeholder="{{ __('products.enter_model_name') }}"
                                required>
                         @error('model_name')
@@ -933,9 +933,9 @@
                             <i class="fas fa-folder mobile-icon"></i>
                             {{ __('products.category') }} <span class="required">*</span>
                         </label>
-                                    <select class="modern-select @error('category_id') is-invalid @enderror" 
-                                            id="category_id" 
-                                name="category_id" 
+                        <select class="modern-select @error('category_id') is-invalid @enderror"
+                                id="category_id"
+                                name="category_id"
                                 required>
                             <option value="">{{ __('products.select_category') }}</option>
                             @foreach($categories as $category)
@@ -945,41 +945,58 @@
                             @endforeach
                         </select>
                         @error('category_id')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="modern-form-group">
                         <label for="line" class="modern-label">
-                                        <i class="fas fa-stream mobile-icon"></i>
+                            <i class="fas fa-stream mobile-icon"></i>
                             {{ __('products.line') }}
                         </label>
-                        <input type="text" 
-                                           class="modern-input @error('line') is-invalid @enderror" 
-                               id="line" 
-                               name="line" 
-                               value="{{ old('line') }}" 
-                               placeholder="{{ __('products.line_placeholder') }}">
+                        <select
+                            class="modern-select @error('line') is-invalid @enderror"
+                            id="line"
+                            name="line"
+                            required
+                        >
+                            <option value="">{{ __('products.line_placeholder') }}</option>
+                            <option value="ET-II Line" {{ old('line') == 'ET-II Line' ? 'selected' : '' }}>ET-II Line</option>
+                            <option value="SB Line" {{ old('line') == 'SB Line' ? 'selected' : '' }}>SB Line</option>
+                            <option value="SB-E Line" {{ old('line') == 'SB-E Line' ? 'selected' : '' }}>SB-E Line</option>
+                            <option value="SQ Line" {{ old('line') == 'SQ Line' ? 'selected' : '' }}>SQ Line</option>
+                        </select>
                         @error('line')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="modern-form-group">
                         <label for="type" class="modern-label">
-                                        <i class="fas fa-shapes mobile-icon"></i>
+                            <i class="fas fa-shapes mobile-icon"></i>
                             {{ __('products.type') }}
                         </label>
-                        <input type="text" 
-                                class="modern-input @error('type') is-invalid @enderror" 
-                               id="type" 
-                               name="type" 
-                               value="{{ old('type') }}" 
-                               placeholder="{{ __('products.type_placeholder') }}">
+                        <select
+                            class="modern-select @error('type') is-invalid @enderror"
+                            id="type"
+                            name="type"
+                            required
+                        >
+                            <option value="">{{ __('products.type_placeholder') }}</option>
+                            <option value="Side" {{ old('type') == 'Side' ? 'selected' : '' }}>Side</option>
+                            <option value="Side Silenced" {{ old('type') == 'Side Silenced' ? 'selected' : '' }}>Side Silenced</option>
+                            <option value="Top Direct" {{ old('type') == 'Top Direct' ? 'selected' : '' }}>Top Direct</option>
+                            <option value="Top Cap" {{ old('type') == 'Top Cap' ? 'selected' : '' }}>Top Cap</option>
+                            <option value="TR-F" {{ old('type') == 'TR-F' ? 'selected' : '' }}>TR-F</option>
+                            <option value="TS-P" {{ old('type') == 'TS-P' ? 'selected' : '' }}>TS-P</option>
+                            <option value="SQ Easylube" {{ old('type') == 'SQ Easylube' ? 'selected' : '' }}>SQ Easylube</option>
+                            <option value="Backhoe" {{ old('type') == 'Backhoe' ? 'selected' : '' }}>Backhoe</option>
+                            <option value="Backhoe Silenced" {{ old('type') == 'Backhoe Silenced' ? 'selected' : '' }}>Backhoe Silenced</option>
+                            <option value="Skid Steer Loader" {{ old('type') == 'Skid Steer Loader' ? 'selected' : '' }}>Skid Steer Loader</option>
+                        </select>
                         @error('type')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                                </div>
                     </div>
                 </div>
             </div>
@@ -988,7 +1005,7 @@
                     <div class="modern-card animate-stagger">
                         <div class="modern-card-header">
                             <h3 class="modern-card-title">
-                        <i class="fas fa-cogs"></i>
+                                <i class="fas fa-cogs"></i>
                                 {{ __('products.technical_specifications') }}
                             </h3>
                     </div>
@@ -999,11 +1016,11 @@
                             <i class="fas fa-weight mobile-icon"></i>
                             {{ __('products.body_weight') }}
                         </label>
-                        <input type="text" 
-                                class="modern-input @error('body_weight') is-invalid @enderror" 
-                               id="body_weight" 
-                               name="body_weight" 
-                               value="{{ old('body_weight') }}" 
+                        <input type="text"
+                                class="modern-input @error('body_weight') is-invalid @enderror"
+                               id="body_weight"
+                               name="body_weight"
+                               value="{{ old('body_weight') }}"
                                placeholder="{{ __('products.body_weight_placeholder') }}">
                         @error('body_weight')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -1015,11 +1032,11 @@
                                         <i class="fas fa-weight-hanging mobile-icon"></i>
                             {{ __('products.operating_weight') }}
                         </label>
-                        <input type="text" 
-                                           class="modern-input @error('operating_weight') is-invalid @enderror" 
-                               id="operating_weight" 
-                               name="operating_weight" 
-                               value="{{ old('operating_weight') }}" 
+                        <input type="text"
+                                           class="modern-input @error('operating_weight') is-invalid @enderror"
+                               id="operating_weight"
+                               name="operating_weight"
+                               value="{{ old('operating_weight') }}"
                                placeholder="{{ __('products.operating_weight_placeholder') }}">
                         @error('operating_weight')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -1031,11 +1048,11 @@
                                         <i class="fas fa-ruler-horizontal mobile-icon"></i>
                             {{ __('products.overall_length') }}
                         </label>
-                        <input type="text" 
-                                class="modern-input @error('overall_length') is-invalid @enderror" 
-                               id="overall_length" 
-                               name="overall_length" 
-                               value="{{ old('overall_length') }}" 
+                        <input type="text"
+                                class="modern-input @error('overall_length') is-invalid @enderror"
+                               id="overall_length"
+                               name="overall_length"
+                               value="{{ old('overall_length') }}"
                                placeholder="{{ __('products.overall_length_placeholder') }}">
                         @error('overall_length')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -1047,11 +1064,11 @@
                                         <i class="fas fa-arrows-alt-h mobile-icon"></i>
                             {{ __('products.overall_width') }}
                         </label>
-                        <input type="text" 
-                                           class="modern-input @error('overall_width') is-invalid @enderror" 
-                               id="overall_width" 
-                               name="overall_width" 
-                               value="{{ old('overall_width') }}" 
+                        <input type="text"
+                                           class="modern-input @error('overall_width') is-invalid @enderror"
+                               id="overall_width"
+                               name="overall_width"
+                               value="{{ old('overall_width') }}"
                                placeholder="{{ __('products.overall_width_placeholder') }}">
                         @error('overall_width')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -1063,11 +1080,11 @@
                                         <i class="fas fa-arrows-alt-v mobile-icon"></i>
                             {{ __('products.overall_height') }}
                         </label>
-                        <input type="text" 
-                                           class="modern-input @error('overall_height') is-invalid @enderror" 
-                               id="overall_height" 
-                               name="overall_height" 
-                               value="{{ old('overall_height') }}" 
+                        <input type="text"
+                                           class="modern-input @error('overall_height') is-invalid @enderror"
+                               id="overall_height"
+                               name="overall_height"
+                               value="{{ old('overall_height') }}"
                                placeholder="{{ __('products.overall_height_placeholder') }}">
                         @error('overall_height')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -1079,11 +1096,11 @@
                                         <i class="fas fa-tint mobile-icon"></i>
                             {{ __('products.required_oil_flow') }}
                         </label>
-                        <input type="text" 
-                                           class="modern-input @error('required_oil_flow') is-invalid @enderror" 
-                               id="required_oil_flow" 
-                               name="required_oil_flow" 
-                               value="{{ old('required_oil_flow') }}" 
+                        <input type="text"
+                                           class="modern-input @error('required_oil_flow') is-invalid @enderror"
+                               id="required_oil_flow"
+                               name="required_oil_flow"
+                               value="{{ old('required_oil_flow') }}"
                                placeholder="{{ __('products.required_oil_flow_placeholder') }}">
                         @error('required_oil_flow')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -1095,11 +1112,11 @@
                                         <i class="fas fa-gauge-high mobile-icon"></i>
                             {{ __('products.operating_pressure') }}
                         </label>
-                        <input type="text" 
-                                           class="modern-input @error('operating_pressure') is-invalid @enderror" 
-                               id="operating_pressure" 
-                               name="operating_pressure" 
-                               value="{{ old('operating_pressure') }}" 
+                        <input type="text"
+                                           class="modern-input @error('operating_pressure') is-invalid @enderror"
+                               id="operating_pressure"
+                               name="operating_pressure"
+                               value="{{ old('operating_pressure') }}"
                                placeholder="{{ __('products.operating_pressure_placeholder') }}">
                         @error('operating_pressure')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -1111,11 +1128,11 @@
                                         <i class="fas fa-bolt mobile-icon"></i>
                             {{ __('products.impact_rate') }}
                         </label>
-                        <input type="text" 
-                                           class="modern-input @error('impact_rate') is-invalid @enderror" 
-                               id="impact_rate" 
-                               name="impact_rate" 
-                               value="{{ old('impact_rate') }}" 
+                        <input type="text"
+                                           class="modern-input @error('impact_rate') is-invalid @enderror"
+                               id="impact_rate"
+                               name="impact_rate"
+                               value="{{ old('impact_rate') }}"
                                placeholder="{{ __('products.impact_rate_placeholder') }}">
                         @error('impact_rate')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -1127,11 +1144,11 @@
                                         <i class="fas fa-mountain mobile-icon"></i>
                             {{ __('products.impact_rate_soft_rock') }}
                         </label>
-                        <input type="text" 
-                                           class="modern-input @error('impact_rate_soft_rock') is-invalid @enderror" 
-                               id="impact_rate_soft_rock" 
-                               name="impact_rate_soft_rock" 
-                               value="{{ old('impact_rate_soft_rock') }}" 
+                        <input type="text"
+                                           class="modern-input @error('impact_rate_soft_rock') is-invalid @enderror"
+                               id="impact_rate_soft_rock"
+                               name="impact_rate_soft_rock"
+                               value="{{ old('impact_rate_soft_rock') }}"
                                placeholder="{{ __('products.impact_rate_soft_rock_placeholder') }}">
                         @error('impact_rate_soft_rock')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -1143,11 +1160,11 @@
                                         <i class="fas fa-circle mobile-icon"></i>
                             {{ __('products.hose_diameter') }}
                         </label>
-                        <input type="text" 
-                                class="modern-input @error('hose_diameter') is-invalid @enderror" 
-                               id="hose_diameter" 
-                               name="hose_diameter" 
-                               value="{{ old('hose_diameter') }}" 
+                        <input type="text"
+                                class="modern-input @error('hose_diameter') is-invalid @enderror"
+                               id="hose_diameter"
+                               name="hose_diameter"
+                               value="{{ old('hose_diameter') }}"
                                placeholder="{{ __('products.hose_diameter_placeholder') }}">
                         @error('hose_diameter')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -1156,35 +1173,34 @@
 
                     <div class="modern-form-group">
                         <label for="rod_diameter" class="modern-label">
-                                        <i class="fas fa-minus mobile-icon"></i>
+                            <i class="fas fa-minus mobile-icon"></i>
                             {{ __('products.rod_diameter') }}
                         </label>
-                        <input type="text" 
-                                           class="modern-input @error('rod_diameter') is-invalid @enderror" 
-                               id="rod_diameter" 
-                               name="rod_diameter" 
-                               value="{{ old('rod_diameter') }}" 
+                        <input type="text"
+                               class="modern-input @error('rod_diameter') is-invalid @enderror"
+                               id="rod_diameter"
+                               name="rod_diameter"
+                               value="{{ old('rod_diameter') }}"
                                placeholder="{{ __('products.rod_diameter_placeholder') }}">
                         @error('rod_diameter')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                        <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
                     <div class="modern-form-group">
                         <label for="applicable_carrier" class="modern-label">
-                                        <i class="fas fa-truck mobile-icon"></i>
+                            <i class="fas fa-truck mobile-icon"></i>
                             {{ __('products.applicable_carrier') }}
                         </label>
-                        <input type="text" 
-                                           class="modern-input @error('applicable_carrier') is-invalid @enderror" 
-                               id="applicable_carrier" 
-                               name="applicable_carrier" 
-                               value="{{ old('applicable_carrier') }}" 
+                        <input type="text"
+                                class="modern-input @error('applicable_carrier') is-invalid @enderror"
+                               id="applicable_carrier"
+                               name="applicable_carrier"
+                               value="{{ old('applicable_carrier') }}"
                                placeholder="{{ __('products.applicable_carrier_placeholder') }}">
                         @error('applicable_carrier')
-                                        <div class="invalid-feedback">{{ $message }}</div>
+                            <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
-                                </div>
                     </div>
                 </div>
             </div>
@@ -1204,9 +1220,9 @@
                             {{ __('products.product_image') }}
                         </label>
                                 <div class="file-upload-container" id="fileUpload">
-                            <input type="file" 
-                                   id="product_image" 
-                                   name="product_image" 
+                            <input type="file"
+                                   id="product_image"
+                                   name="product_image"
                                            class="file-input @error('product_image') is-invalid @enderror"
                                    accept="image/*">
                                     <div class="file-upload-icon">
@@ -1239,10 +1255,10 @@
                                     <div class="checkbox-group">
                             <input type="hidden" name="is_active" value="0">
                                         <div class="checkbox-container">
-                                <input type="checkbox" 
-                                       id="is_active" 
-                                       name="is_active" 
-                                       value="1" 
+                                <input type="checkbox"
+                                       id="is_active"
+                                       name="is_active"
+                                       value="1"
                                                    class="checkbox-input"
                                        {{ old('is_active', 1) ? 'checked' : '' }}>
                                             <div class="checkbox-custom"></div>
@@ -1256,10 +1272,10 @@
                                     <div class="checkbox-group">
                             <input type="hidden" name="is_featured" value="0">
                                         <div class="checkbox-container">
-                                <input type="checkbox" 
-                                       id="is_featured" 
-                                       name="is_featured" 
-                                       value="1" 
+                                <input type="checkbox"
+                                       id="is_featured"
+                                       name="is_featured"
+                                       value="1"
                                                    class="checkbox-input"
                                        {{ old('is_featured') ? 'checked' : '' }}>
                                             <div class="checkbox-custom"></div>
@@ -1273,7 +1289,7 @@
                 </div>
             </div>
 
-                    <div class="d-flex justify-content-between mt-4">
+            <div class="d-flex justify-content-between mt-4">
                 <a href="{{ route('admin.products.index') }}" class="modern-btn modern-btn-secondary">
                             <i class="fas fa-times me-2"></i>
                             <span class="mobile-text-hide">{{ __('products.cancel') }}</span>
@@ -1286,7 +1302,6 @@
                 </button>
             </div>
         </form>
-            </div>
         </div>
     </div>
 </div>
@@ -1297,7 +1312,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const createProductForm = document.getElementById('createProductForm');
     const submitBtn = document.getElementById('submitBtn');
     const formProgress = document.getElementById('formProgress');
-    
+
     // File upload elements
     const fileInput = document.getElementById('product_image');
     const fileUpload = document.getElementById('fileUpload');
@@ -1305,17 +1320,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Required fields for progress tracking
     const requiredFields = ['model_name', 'category_id'];
-    
+
     // Progress tracking
     function updateProgress() {
         const filledFields = requiredFields.filter(field => {
             const element = document.getElementById(field);
             return element && element.value.trim() !== '';
         });
-        
+
         const progress = (filledFields.length / requiredFields.length) * 100;
         formProgress.style.width = progress + '%';
-        
+
         if (progress === 100) {
             formProgress.style.background = 'var(--success-gradient)';
         } else {
@@ -1358,7 +1373,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     validateField(field);
                 }
             });
-            
+
             element.addEventListener('blur', function() {
                 validateField(field);
             });
@@ -1425,14 +1440,14 @@ document.addEventListener('DOMContentLoaded', function() {
     createProductForm.addEventListener('submit', function(e) {
         if (!validateForm()) {
                 e.preventDefault();
-            
+
             // Scroll to first invalid field
             const firstInvalid = document.querySelector('.is-invalid');
             if (firstInvalid) {
                 firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 firstInvalid.focus();
             }
-            
+
             // Show error notification
             showNotification('{{ __('products.please_correct_errors') }}', 'error');
                 return;
@@ -1440,12 +1455,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Perform SI to Imperial conversion before submission
         convertSIToImperial();
-        
+
         // Show loading state
                 submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i><span class="mobile-text-hide">{{ __('products.saving') }}</span><span class="d-md-none">{{ __('products.saving') }}</span>';
         createProductForm.classList.add('loading');
-        
+
         // Show conversion notification
         showNotification('Converting SI units to Imperial and saving...', 'info');
     });
@@ -1473,7 +1488,7 @@ document.addEventListener('DOMContentLoaded', function() {
     formGroups.forEach((group, index) => {
         group.style.opacity = '0';
         group.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
             group.style.transition = 'all 0.6s ease';
             group.style.opacity = '1';
@@ -1487,7 +1502,7 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('touchstart', function() {
                 this.style.transform = 'scale(0.95)';
             });
-            
+
             btn.addEventListener('touchend', function() {
                 setTimeout(() => {
                     this.style.transform = '';
@@ -1498,14 +1513,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Auto-save to localStorage (for form recovery)
     const formInputs = document.querySelectorAll('input, select, textarea');
-    
+
     formInputs.forEach(input => {
         // Load saved data
         const savedValue = localStorage.getItem(`createProductForm_${input.name}`);
         if (savedValue && !input.value && input.name !== '_token') {
             input.value = savedValue;
         }
-        
+
         // Save data on change
         input.addEventListener('change', function() {
             if (this.name !== '_token') {
@@ -1532,22 +1547,22 @@ document.addEventListener('DOMContentLoaded', function() {
             // Weight: kg to lb (factor: 1/0.45359237)
             body_weight: { factor: 2.204622621849, siUnit: 'kg', impUnit: 'lb' },
             operating_weight: { factor: 2.204622621849, siUnit: 'kg', impUnit: 'lb' },
-            
+
             // Length: mm to inches (factor: 1/25.4)
             overall_length: { factor: 0.03937007874, siUnit: 'mm', impUnit: 'in' },
             overall_width: { factor: 0.03937007874, siUnit: 'mm', impUnit: 'in' },
             overall_height: { factor: 0.03937007874, siUnit: 'mm', impUnit: 'in' },
             rod_diameter: { factor: 0.03937007874, siUnit: 'mm', impUnit: 'in' },
-            
+
             // Oil flow: l/min to gal/min (factor: 1/3.785411784)
             required_oil_flow: { factor: 0.264172052358, siUnit: 'l/min', impUnit: 'gal/min' },
-            
+
             // Pressure: kgf/cm² to psi (factor: 1/0.0703069578296)
             operating_pressure: { factor: 14.223343307087, siUnit: 'kgf/cm²', impUnit: 'psi' },
-            
+
             // Applicable carrier: ton to lb (factor: 1/0.00045359237)
             applicable_carrier: { factor: 2204.622621849, siUnit: 'ton', impUnit: 'lb' }
-            
+
             // Note: impact_rate and hose_diameter remain unchanged (BPM and inches respectively)
         };
 
@@ -1556,19 +1571,19 @@ document.addEventListener('DOMContentLoaded', function() {
             if (field && field.value.trim()) {
                 const conversion = conversions[fieldName];
                 const siValue = field.value.trim();
-                
+
                 // Handle range values (e.g., "20~40", "20-40", or "20 - 40")
                 if (siValue.includes('~') || siValue.includes('-')) {
                     const separator = siValue.includes('~') ? '~' : '-';
                     const parts = siValue.split(separator).map(part => part.trim());
-                    
+
                     if (parts.length === 2) {
                         const min = parseFloat(parts[0]);
                         const max = parseFloat(parts[1]);
-                        
+
                         if (!isNaN(min) && !isNaN(max)) {
                             let minImperial, maxImperial;
-                            
+
                             // Special formatting for different units
                             if (fieldName === 'operating_pressure') {
                                 // Pressure: format as whole numbers with commas for thousands
@@ -1583,16 +1598,16 @@ document.addEventListener('DOMContentLoaded', function() {
                                 minImperial = (min * conversion.factor).toFixed(1);
                                 maxImperial = (max * conversion.factor).toFixed(1);
                             }
-                            
+
                             field.value = `${minImperial} ${separator} ${maxImperial}`;
                         }
                     }
-                } 
+                }
                 // Handle single numeric values
                 else if (!isNaN(parseFloat(siValue))) {
                     const numericValue = parseFloat(siValue);
                     let imperialValue;
-                    
+
                     // Special formatting for different units
                     if (fieldName === 'operating_pressure') {
                         // Pressure: format as whole numbers with commas
@@ -1604,7 +1619,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         // Other units: 1 decimal place
                         imperialValue = (numericValue * conversion.factor).toFixed(1);
                     }
-                    
+
                     field.value = imperialValue;
                 }
                 // Non-numeric values remain unchanged
@@ -1616,7 +1631,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function addUnitLabels() {
         // const unitLabels = {
         //     body_weight: 'Enter in kg ',
-        //     operating_weight: 'Enter in kg ', 
+        //     operating_weight: 'Enter in kg ',
         //     overall_length: 'Enter in mm ',
         //     overall_width: 'Enter in mm ',
         //     overall_height: 'Enter in mm ',
@@ -1635,7 +1650,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Update placeholder to show SI unit input expected
                 const currentPlaceholder = field.getAttribute('placeholder');
                 field.setAttribute('data-original-placeholder', currentPlaceholder);
-                
+
                 // Add unit info to placeholder based on exact format from screenshots
                 if (fieldName === 'body_weight') {
                     field.setAttribute('placeholder', 'e.g., 54 kg');
@@ -1662,17 +1677,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (fieldName === 'hose_diameter') {
                     field.setAttribute('placeholder', 'e.g., 3/8, 1/2 in');
                 }
-                
+
                 // Add title attribute for additional guidance
                 field.setAttribute('title', unitLabels[fieldName]);
-                
+
                 // Add a small helper text below the field
                 const helpText = document.createElement('small');
                 helpText.className = 'form-text text-muted mt-1';
                 helpText.textContent = unitLabels[fieldName];
                 helpText.style.fontSize = '0.75rem';
                 helpText.style.fontStyle = 'italic';
-                
+
                 // Insert after the field
                 field.parentNode.insertBefore(helpText, field.nextSibling);
             }
@@ -1700,9 +1715,9 @@ document.addEventListener('DOMContentLoaded', function() {
             ${message}
             <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
         `;
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.remove();
         }, 5000);

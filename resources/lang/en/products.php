@@ -10,14 +10,14 @@ return [
     'employee_access_desc' => 'You can create new products and edit existing ones. Any edits to existing products will be submitted for admin approval before taking effect.',
     'hydraulic_breakers' => 'Hydraulic Breakers',
 
-    
+
     // Statistics
     'total_products' => 'Total Products',
     'active_products' => 'Active Products',
     'featured_products' => 'Featured Products',
     'categories' => 'Categories',
     'products_stats' => 'Products Statistics',
-    
+
     // Search & Filter
     'search_filter_products' => 'Search & Filter Products',
     'search_products' => 'Search Products',
@@ -32,7 +32,7 @@ return [
     'apply_filters' => 'Apply Filters',
     'clear_filters' => 'Clear Filters',
     'filter_by' => 'Filter by',
-    
+
     // Product Actions
     'add_product' => 'Add Product',
     'create_product' => 'Create Product',
@@ -51,7 +51,7 @@ return [
     'cancel' => 'Cancel',
     'created_at' => 'Created At',
     'updated_at' => 'Updated At',
-    
+
     // Create Product Page
     'create_new_product' => 'Create New Product',
     'add_new_product' => 'Add a new drilling equipment product to your catalog',
@@ -66,18 +66,18 @@ return [
     'overall_height' => 'Overall Height',
     'overall_height_placeholder' => 'e.g., 1200 mm',
     'required_oil_flow' => 'Required Oil Flow',
-    'required_oil_flow_placeholder' => 'e.g., 45-80 L/min',
+    'required_oil_flow_placeholder' => 'e.g., 45~80 L/min',
     'operating_pressure' => 'Operating Pressure',
-    'operating_pressure_placeholder' => 'e.g., 130-160 bar',
+    'operating_pressure_placeholder' => 'e.g., 130~160 bar',
     'impact_rate' => 'Impact Rate',
-    'impact_rate_placeholder' => 'e.g., 450-1000 BPM',
+    'impact_rate_placeholder' => 'e.g., 450~1000 BPM',
     'impact_rate_soft_rock' => 'Impact Rate (Soft Rock)',
     'product_options' => 'Product Options',
     'product_options_desc' => 'Configure product visibility and features',
     'active_product' => 'Active Product',
     'featured_product' => 'Featured Product',
     'required' => '*',
-    
+
     // Edit Product Page
     'edit_product' => 'Edit Product',
     'update_product_info' => 'Update product information and settings',
@@ -86,7 +86,7 @@ return [
     'enter_model_name' => 'Enter model name',
     'enter_product_line' => 'Enter product line',
     'update_product' => 'Update Product',
-    
+
     // Show Product Page
     'product_details' => 'Product Details',
     'product_details_specifications' => 'Product Details & Specifications',
@@ -103,7 +103,7 @@ return [
     'no_image_available' => 'No Image Available',
     'n_a' => 'N/A',
     'normal' => 'Normal',
-    
+
     // Product Details
     'product_name' => 'Product Name',
     'product_title' => 'Product Title',
@@ -120,7 +120,7 @@ return [
     'upload_image' => 'Upload Image',
     'remove_image' => 'Remove Image',
     'change_image' => 'Change Image',
-    
+
     // Pricing
     'price' => 'Price',
     'original_price' => 'Original Price',
@@ -132,7 +132,7 @@ return [
     'price_currency' => 'Price Currency',
     'price_includes_tax' => 'Price includes tax',
     'tax_rate' => 'Tax Rate',
-    
+
     // Inventory
     'stock' => 'Stock',
     'stock_quantity' => 'Stock Quantity',
@@ -146,7 +146,7 @@ return [
     'unlimited_stock' => 'Unlimited Stock',
     'stock_alert' => 'Stock Alert',
     'restock_level' => 'Restock Level',
-    
+
     // Product Attributes
     'sku' => 'SKU',
     'barcode' => 'Barcode',
@@ -169,7 +169,7 @@ return [
     'new' => 'New',
     'used' => 'Used',
     'refurbished' => 'Refurbished',
-    
+
     // SEO
     'seo_settings' => 'SEO Settings',
     'meta_title' => 'Meta Title',
@@ -181,7 +181,7 @@ return [
     'search_engine_visibility' => 'Search Engine Visibility',
     'index_product' => 'Index Product',
     'noindex_product' => 'No Index Product',
-    
+
     // Product Categories
     'product_category' => 'Product Category',
     'product_categories' => 'Product Categories',
@@ -192,14 +192,14 @@ return [
     'category_image' => 'Category Image',
     'category_slug' => 'Category Slug',
     'uncategorized' => 'Uncategorized',
-    
+
     // Product Tags
     'tags' => 'Tags',
     'product_tags' => 'Product Tags',
     'add_tag' => 'Add Tag',
     'popular_tags' => 'Popular Tags',
     'tag_name' => 'Tag Name',
-    
+
     // Product Variations
     'variations' => 'Variations',
     'product_variations' => 'Product Variations',
@@ -210,7 +210,7 @@ return [
     'variation_stock' => 'Variation Stock',
     'variation_image' => 'Variation Image',
     'default_variation' => 'Default Variation',
-    
+
     // Product Reviews
     'reviews' => 'Reviews',
     'product_reviews' => 'Product Reviews',
@@ -223,7 +223,7 @@ return [
     'moderate_reviews' => 'Moderate Reviews',
     'average_rating' => 'Average Rating',
     'total_reviews' => 'Total Reviews',
-    
+
     // Product Shipping
     'shipping' => 'Shipping',
     'shipping_info' => 'Shipping Information',
@@ -235,7 +235,7 @@ return [
     'delivery_time' => 'Delivery Time',
     'express_shipping' => 'Express Shipping',
     'standard_shipping' => 'Standard Shipping',
-    
+
     // Product Visibility
     'visibility' => 'Visibility',
     'product_visibility' => 'Product Visibility',
@@ -248,7 +248,7 @@ return [
     'featured_only' => 'Featured Only',
     'catalog_only' => 'Catalog Only',
     'search_only' => 'Search Only',
-    
+
     // Bulk Actions
     'bulk_actions' => 'Bulk Actions',
     'select_all' => 'Select All',
@@ -263,7 +263,7 @@ return [
     'bulk_export' => 'Bulk Export',
     'bulk_duplicate' => 'Bulk Duplicate',
     'apply_action' => 'Apply Action',
-    
+
     // Pagination & Sorting
     'showing' => 'Showing',
     'of' => 'of',
@@ -281,7 +281,7 @@ return [
     'price_high_low' => 'Price (High to Low)',
     'most_popular' => 'Most Popular',
     'best_rated' => 'Best Rated',
-    
+
     // Messages
     'no_products_found' => 'No products found',
     'product_created' => 'Product created successfully',
@@ -308,7 +308,7 @@ return [
     'file_too_large' => 'File is too large',
     'invalid_file_type' => 'Invalid file type',
     'max_images_exceeded' => 'Maximum number of images exceeded',
-    
+
     // Form Validation
     'name_required' => 'Product name is required',
     'description_required' => 'Product description is required',
@@ -325,7 +325,7 @@ return [
     'slug_unique' => 'Slug must be unique',
     'meta_title_max' => 'Meta title cannot exceed 60 characters',
     'meta_description_max' => 'Meta description cannot exceed 160 characters',
-    
+
     // Import/Export
     'import_products' => 'Import Products',
     'export_products' => 'Export Products',
@@ -343,11 +343,11 @@ return [
     'date_range' => 'Date Range',
     'from_date' => 'From Date',
     'to_date' => 'To Date',
-    
+
     // Missing translation keys for forms
     'line' => 'Line',
     'line_placeholder' => 'Enter product line',
-    'type' => 'Type', 
+    'type' => 'Type',
     'type_placeholder' => 'Enter product type',
     'technical_specifications' => 'Technical Specifications',
     'technical_specifications_desc' => 'Enter detailed technical specifications',
@@ -356,15 +356,15 @@ return [
     'operating_weight_placeholder' => 'e.g., 600 kg',
     'overall_length' => 'Overall Length',
     'overall_length_placeholder' => 'e.g., 2500 mm',
-    'impact_rate_soft_rock_placeholder' => 'e.g., 400-900 BPM',
+    'impact_rate_soft_rock_placeholder' => 'e.g., 400~900 BPM',
     'additional_specifications' => 'Additional Specifications',
     'additional_specifications_desc' => 'Optional additional technical details',
     'hose_diameter' => 'Hose Diameter',
     'hose_diameter_placeholder' => 'e.g., 1/2 inch',
-    'rod_diameter' => 'Rod Diameter', 
+    'rod_diameter' => 'Rod Diameter',
     'rod_diameter_placeholder' => 'e.g., 22 mm',
     'applicable_carrier' => 'Applicable Carrier',
-    'applicable_carrier_placeholder' => 'e.g., 1.5-3.5 tons',
+    'applicable_carrier_placeholder' => 'e.g., 1.5~3.5 tons',
     'product_image' => 'Product Image',
     'product_image_desc' => 'Upload a high-quality product image',
     'drag_drop_image' => 'Drag & drop an image here, or click to select',
@@ -385,7 +385,7 @@ return [
     'edit' => 'Edit',
     'delete' => 'Delete',
     'search' => 'Search',
-    
+
     // UI Elements for blade files
     'view' => 'View',
     'edit' => 'Edit',
@@ -406,7 +406,7 @@ return [
     'all' => 'All',
     'none' => 'None',
     'optional' => 'Optional',
-    
+
     // Form and Upload elements
     'form_progress' => 'Form Progress',
     'progress_completed' => 'Completed',
@@ -428,7 +428,7 @@ return [
     'supported_formats_desc' => 'Supported formats: JPG, PNG, GIF (Max: 10MB)',
     'file_too_large_error' => 'File is too large. Maximum size is 10MB.',
     'invalid_file_format' => 'Invalid file format. Please use JPG, PNG, or GIF.',
-    
+
     // Messages and Notifications
     'please_correct_errors' => 'Please correct the errors below',
     'form_saved_successfully' => 'Form has been saved successfully',
@@ -440,7 +440,7 @@ return [
     'action_cannot_undone' => 'This action cannot be undone',
     'unsaved_changes' => 'You have unsaved changes',
     'continue_without_saving' => 'Continue without saving?',
-    
+
     // Product specific translations
     'editing_product' => 'Editing Product',
     'creating_product' => 'Creating Product',
@@ -450,10 +450,10 @@ return [
     'fill_product_details' => 'Fill in the product details below',
     'add_new_product_to_catalog' => 'Add a new drilling equipment product to your catalog',
     'update_product_information' => 'Update product information and settings',
-    
+
     // Mobile responsive text
     'mobile_back' => 'Back',
-    'mobile_view' => 'View', 
+    'mobile_view' => 'View',
     'mobile_edit' => 'Edit',
     'mobile_save' => 'Save',
     'mobile_update' => 'Update',
@@ -461,18 +461,18 @@ return [
     'mobile_delete' => 'Delete',
     'mobile_upload' => 'Upload',
     'mobile_remove' => 'Remove',
-    
+
     // Status and state indicators
     'current_status' => 'Current Status',
     'product_active' => 'Active Product',
-    'product_inactive' => 'Inactive Product', 
+    'product_inactive' => 'Inactive Product',
     'product_featured' => 'Featured Product',
     'product_not_featured' => 'Not Featured',
     'visible_in_catalog' => 'Visible in catalog',
     'hidden_from_catalog' => 'Hidden from catalog',
     'appears_prominently' => 'Appears prominently',
     'normal_display' => 'Normal display',
-    
+
     // Form validation messages
     'field_required' => 'This field is required',
     'please_select' => 'Please select an option',
@@ -480,7 +480,7 @@ return [
     'value_too_long' => 'Value is too long',
     'value_too_short' => 'Value is too short',
     'invalid_characters' => 'Contains invalid characters',
-    
+
     // Keyboard shortcuts
     'keyboard_shortcuts' => 'Keyboard Shortcuts',
     'save_shortcut' => 'Ctrl + S to save',

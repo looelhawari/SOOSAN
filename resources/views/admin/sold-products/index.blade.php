@@ -502,30 +502,202 @@
         /* Enhanced Empty State */
         .empty-state {
             text-align: center;
-            padding: 5rem 2rem;
+            padding: 4rem 2rem;
             color: #6c757d;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
             border-radius: var(--border-radius);
-            border: 2px dashed #dee2e6;
+            border: 1px solid #e9ecef;
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .empty-state::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+            z-index: 1;
+        }
+
+        .empty-state > * {
+            position: relative;
+            z-index: 2;
         }
 
         .empty-state:hover {
             border-color: #667eea;
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
         }
 
-        .empty-state i {
-            font-size: 5rem;
-            margin-bottom: 2rem;
-            opacity: 0.6;
+        .empty-state-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            transition: var(--transition);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .empty-state-icon i {
+            font-size: 3rem;
+            color: white;
             transition: var(--transition);
         }
 
-        .empty-state:hover i {
+        .empty-state:hover .empty-state-icon {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .empty-state:hover .empty-state-icon i {
             transform: scale(1.1);
-            opacity: 0.8;
+        }
+
+        .empty-state-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #495057;
+        }
+
+        .empty-state-subtitle {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            color: #6c757d;
+            max-width: 500px;
+        }
+
+        .empty-state-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .empty-state-feature {
+            background: white;
+            padding: 1.5rem;
+            border-radius: var(--border-radius-sm);
+            border: 1px solid #e9ecef;
+            transition: var(--transition);
+        }
+
+        .empty-state-feature:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .empty-state-feature i {
+            font-size: 1.5rem;
             color: #667eea;
+            margin-bottom: 0.75rem;
+            display: block;
+        }
+
+        .empty-state-feature h6 {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #495057;
+        }
+
+        .empty-state-feature p {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin: 0;
+        }
+
+        .empty-state-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .empty-state {
+                padding: 3rem 1.5rem;
+                min-height: 400px;
+            }
+
+            .empty-state-icon {
+                width: 100px;
+                height: 100px;
+                margin-bottom: 1.5rem;
+            }
+
+            .empty-state-icon i {
+                font-size: 2.5rem;
+            }
+
+            .empty-state-title {
+                font-size: 1.5rem;
+            }
+
+            .empty-state-subtitle {
+                font-size: 1rem;
+            }
+
+            .empty-state-features {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .empty-state-feature {
+                padding: 1.25rem;
+            }
+
+            .empty-state-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .empty-state-actions .modern-btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .empty-state {
+                padding: 2rem 1rem;
+                min-height: 350px;
+            }
+
+            .empty-state-icon {
+                width: 80px;
+                height: 80px;
+            }
+
+            .empty-state-icon i {
+                font-size: 2rem;
+            }
+
+            .empty-state-title {
+                font-size: 1.25rem;
+            }
+
+            .empty-state-subtitle {
+                font-size: 0.9rem;
+            }
         }
 
         /* Enhanced Animations */
@@ -588,12 +760,12 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1.25rem;
             }
-            
+
             .modern-page-header {
                 padding: 2rem 1.25rem;
                 margin: -1rem -1rem 2rem;
             }
-            
+
             .sale-card {
                 padding: 2rem;
             }
@@ -1176,14 +1348,14 @@
         @empty
             <div class="col-12">
                 <div class="empty-state animate-fade-in-up">
-                    <i class="fas fa-shopping-cart"></i>
-                    <h4 style="font-weight: 700; margin-bottom: 1rem;">{{ __('sold-products.no_sales') }}</h4>
-                    <p class="mb-4" style="font-size: 1.1rem; line-height: 1.6;">Start by recording your first sale transaction.</p>
-                    <a href="{{ route('admin.sold-products.create') }}" class="modern-btn">
-                        <i class="fas fa-plus"></i>
-                        <span class="d-none d-sm-inline">Record First Sale</span>
-                        <span class="d-sm-none">Add Sale</span>
-                    </a>
+                    <div class="empty-state-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                    </div>
+
+                    <h4 class="empty-state-title">{{ __('sold-products.no_sales') }}</h4>
+                    <p class="empty-state-subtitle">
+                        {{ __('sold-products.empty_state_description') }}
+                    </p>
                 </div>
             </div>
         @endforelse
@@ -1206,12 +1378,14 @@
             const toggleIcon = document.getElementById('filterToggleIcon');
 
             // Check if filters are active and show them by default
-            const hasActiveFilters = @json(request()->filled('owner_name') ||
-                    request()->filled('serial_number') ||
-                    request()->filled('warranty_status') ||
-                    request()->filled('product_id') ||
-                    request()->filled('date_from') ||
-                    request()->filled('date_to'));
+            const hasActiveFilters = @json(
+                request()->filled('owner_name') ||
+                request()->filled('serial_number') ||
+                request()->filled('warranty_status') ||
+                request()->filled('product_id') ||
+                request()->filled('date_from') ||
+                request()->filled('date_to')
+            );
 
             if (hasActiveFilters) {
                 filterSection.classList.add('show');

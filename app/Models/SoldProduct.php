@@ -69,7 +69,17 @@ class SoldProduct extends Model
         if ($this->warranty_voided ?? false) {
             return false;
         }
-        return now()->between($this->warranty_start_date, $this->warranty_end_date);
+
+        // Check if we have valid warranty dates
+        if (!$this->warranty_start_date || !$this->warranty_end_date) {
+            return false;
+        }
+
+        $today = now()->startOfDay();
+        $startDate = $this->warranty_start_date->startOfDay();
+        $endDate = $this->warranty_end_date->endOfDay();
+
+        return $today->between($startDate, $endDate);
     }
 
     /**

@@ -735,6 +735,75 @@
                 </h3>
                 </div>
                 <div class="modern-card-body">
+                @php
+                    function nf1($v) {
+                        return is_numeric($v) ? number_format($v, 1, '.', ',') : $v;
+                    }
+
+                    function nf0($v) {
+                        return is_numeric($v) ? number_format($v, 0, '.', ',') : $v;
+                    }
+
+                    function spec_row($val, $factor, $si_unit, $imp_unit, $si_decimals = 0) {
+                        if ($val === null || $val === '' || $val === '-') {
+                            return '- ' . $si_unit;
+                        }
+                        if (preg_match('/^([\d.]+)~([\d.]+)/', $val, $m)) {
+                            $si_min = number_format($m[1] * $factor, $si_decimals, '.', ',');
+                            $si_max = number_format($m[2] * $factor, $si_decimals, '.', ',');
+                            return "$si_min ~ $si_max $si_unit";
+                        }
+                        if (preg_match('/^(\d+)\/(\d+)$/', trim($val), $m)) {
+                            $dec = $m[1] / $m[2];
+                            return number_format($dec * $factor, $si_decimals, '.', ',') . " $si_unit";
+                        }
+                        if (is_numeric($val)) {
+                            return number_format($val * $factor, $si_decimals, '.', ',') . " $si_unit";
+                        }
+                        return $val . " $si_unit";
+                    }
+
+                    function bpm_row($val) {
+                        $dash = '- BPM';
+                        if ($val === null || $val === '' || $val === '-') return $dash;
+                        if (preg_match('/^([\d.]+)~([\d.]+)/', $val, $m)) {
+                            return nf0($m[1]) . ' ~ ' . nf0($m[2]) . ' BPM';
+                        }
+                        if (is_numeric($val)) return nf0($val) . ' BPM';
+                        return $val . ' BPM';
+                    }
+
+                    function hose_row($val) {
+                        if ($val === null || $val === '' || $val === '-') return '- in';
+                        return "$val in";
+                    }
+
+                    function op_row($val) {
+                        $si_unit = 'kgf/cm²';
+                        if ($val === null || $val === '' || $val === '-') return '- ' . $si_unit;
+                        if (preg_match('/^([\d.,]+)~([\d.,]+)/', $val, $m)) {
+                            $si_min = nf0(floatval(str_replace([','], [''], $m[1])) * 0.070307);
+                            $si_max = nf0(floatval(str_replace([','], [''], $m[2])) * 0.070307);
+                            return "$si_min ~ $si_max $si_unit";
+                        }
+                        if (is_numeric(str_replace([','], [''], $val))) {
+                            $si = nf0(floatval(str_replace([','], [''], $val)) * 0.070307);
+                            return "$si $si_unit";
+                        }
+                        return $val . ' ' . $si_unit;
+                    }
+
+                    // Convert to SI units
+                    $bw_si = spec_row($product->body_weight, 0.45359237, 'kg', 'lb', 0);
+                    $ow_si = spec_row($product->operating_weight, 0.45359237, 'kg', 'lb', 0);
+                    $ol_si = spec_row($product->overall_length, 25.4, 'mm', 'in', 0);
+                    $owd_si = spec_row($product->overall_width, 25.4, 'mm', 'in', 0);
+                    $oh_si = spec_row($product->overall_height, 25.4, 'mm', 'in', 0);
+                    $rof_si = spec_row($product->required_oil_flow, 3.785411784, 'l/min', 'gal/min', 0);
+                    $op_si = op_row($product->operating_pressure);
+                    $ir_si = bpm_row($product->impact_rate);
+                    $ac_si = spec_row($product->applicable_carrier, 0.00045359237, 'ton', 'lb', 1);
+                @endphp
                 <div class="specs-grid">
                     <div class="spec-column">
                         <div class="spec-item">
@@ -755,37 +824,37 @@
                             </div>
                         <div class="spec-item">
                             <span class="spec-label">{{ __('products.body_weight') }}</span>
-                            <span class="spec-value">{{ $product->body_weight ?? __('products.n_a') }}</span>
+                            <span class="spec-value">{{ $bw_si }}</span>
                             </div>
                         <div class="spec-item">
                             <span class="spec-label">{{ __('products.operating_weight') }}</span>
-                            <span class="spec-value">{{ $product->operating_weight ?? __('products.n_a') }}</span>
+                            <span class="spec-value">{{ $ow_si }}</span>
                             </div>
                             </div>
                     <div class="spec-column">
                         <div class="spec-item">
                             <span class="spec-label">{{ __('products.overall_length') }}</span>
-                            <span class="spec-value">{{ $product->overall_length ?? __('products.n_a') }}</span>
+                            <span class="spec-value">{{ $ol_si }}</span>
                         </div>
                         <div class="spec-item">
                             <span class="spec-label">{{ __('products.overall_width') }}</span>
-                            <span class="spec-value">{{ $product->overall_width ?? __('products.n_a') }}</span>
+                            <span class="spec-value">{{ $owd_si }}</span>
                             </div>
                         <div class="spec-item">
                             <span class="spec-label">{{ __('products.overall_height') }}</span>
-                            <span class="spec-value">{{ $product->overall_height ?? __('products.n_a') }}</span>
+                            <span class="spec-value">{{ $oh_si }}</span>
                             </div>
                         <div class="spec-item">
                             <span class="spec-label">{{ __('products.required_oil_flow') }}</span>
-                            <span class="spec-value">{{ $product->required_oil_flow ?? __('products.n_a') }}</span>
+                            <span class="spec-value">{{ $rof_si }}</span>
                             </div>
                         <div class="spec-item">
                             <span class="spec-label">{{ __('products.operating_pressure') }}</span>
-                            <span class="spec-value">{{ $product->operating_pressure ?? __('products.n_a') }}</span>
+                            <span class="spec-value">{{ $op_si }}</span>
                             </div>
                         <div class="spec-item">
                             <span class="spec-label">{{ __('products.impact_rate') }}</span>
-                            <span class="spec-value">{{ $product->impact_rate ?? __('products.n_a') }}</span>
+                            <span class="spec-value">{{ $ir_si }}</span>
                         </div>
                         </div>
                     </div>
@@ -801,25 +870,30 @@
                 </h3>
                 </div>
                 <div class="modern-card-body">
+                @php
+                    $irsr_si = bpm_row($product->impact_rate_soft_rock);
+                    $hd_si = hose_row($product->hose_diameter);
+                    $rd_si = spec_row($product->rod_diameter, 25.4, 'mm', 'in', 0);
+                @endphp
                 <div class="specs-grid">
                     <div class="spec-column">
                         <div class="spec-item">
                             <span class="spec-label">{{ __('products.impact_rate_soft_rock') }}</span>
-                            <span class="spec-value">{{ $product->impact_rate_soft_rock ?? __('products.n_a') }}</span>
+                            <span class="spec-value">{{ $irsr_si }}</span>
                     </div>
                         <div class="spec-item">
                             <span class="spec-label">{{ __('products.hose_diameter') }}</span>
-                            <span class="spec-value">{{ $product->hose_diameter ?? __('products.n_a') }}</span>
+                            <span class="spec-value">{{ $hd_si }}</span>
                         </div>
                         <div class="spec-item">
                             <span class="spec-label">{{ __('products.rod_diameter') }}</span>
-                            <span class="spec-value">{{ $product->rod_diameter ?? __('products.n_a') }}</span>
+                            <span class="spec-value">{{ $rd_si }}</span>
                         </div>
                     </div>
                     <div class="spec-column">
                         <div class="spec-item">
                             <span class="spec-label">{{ __('products.applicable_carrier') }}</span>
-                            <span class="spec-value">{{ $product->applicable_carrier ?? __('products.n_a') }}</span>
+                            <span class="spec-value">{{ $ac_si }}</span>
                             </div>
                         @if($product->price)
                         <div class="spec-item">
@@ -883,7 +957,7 @@ document.addEventListener('DOMContentLoaded', function() {
     animatedElements.forEach((element, index) => {
         element.style.opacity = '0';
         element.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
             element.style.transition = 'all 0.6s ease';
             element.style.opacity = '1';
@@ -897,7 +971,7 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('touchstart', function() {
                 this.style.transform = 'scale(0.95)';
             });
-            
+
             btn.addEventListener('touchend', function() {
                 setTimeout(() => {
                     this.style.transform = '';
@@ -934,7 +1008,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.style.paddingRight = '0.5rem';
             this.style.borderRadius = '0.5rem';
         });
-        
+
         item.addEventListener('mouseleave', function() {
             this.style.backgroundColor = '';
             this.style.paddingLeft = '';

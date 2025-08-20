@@ -959,11 +959,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <button class="download-btn test-btn" style="background:#6c757d;color:#fff;margin-right:10px" onclick="testPDFGeneration()">
-                        <i class="fas fa-vial"></i>
-                        <span class="mobile-text">Test PDF</span>
-                    </button>
                     <button class="download-btn sales-btn" style="background:#fff;color:#ed8936;border:1px solid #ed8936" onclick="downloadSalesReportPDF()">
                         <i class="fas fa-file-pdf"></i>
                         <span class="mobile-text">Download as PDF (jsPDF)</span>
@@ -1656,27 +1651,6 @@ window.downloadSalesReportPDF = function() {
     }
 };
 
-// Simple test function to verify PDF generation works
-window.testPDFGeneration = function() {
-    try {
-        console.log('Testing PDF generation...');
-
-        if (typeof window.jspdf === 'undefined') {
-            alert('jsPDF not loaded');
-            return;
-        }
-
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        doc.text('Hello SoosanEgypt!', 10, 10);
-        doc.save('test.pdf');
-        alert('Test PDF generated successfully!');
-
-    } catch (error) {
-        console.error('Test PDF failed:', error);
-        alert('Test PDF failed: ' + error.message);
-    }
-};
 
 // Enhanced Warranty Report PDF function with Two Separate Tables - FIXED VERSION
 window.downloadWarrantyReportPDF = function() {

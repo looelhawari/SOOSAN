@@ -58,7 +58,7 @@ class SoldProductController extends Controller
         // Sorting
         $sortBy = $request->get('sort_by', 'sale_date');
         $sortOrder = $request->get('sort_order', 'desc');
-        
+
         $allowedSorts = ['sale_date', 'warranty_end_date', 'serial_number', 'purchase_price'];
         if (in_array($sortBy, $allowedSorts)) {
             $query->orderBy($sortBy, $sortOrder);
@@ -103,6 +103,7 @@ class SoldProductController extends Controller
             'product_id' => 'required|exists:products,id',
             'owner_id' => 'required|exists:owners,id',
             'serial_number' => 'required|string|unique:sold_products,serial_number',
+            'quantity' => 'required|integer|min:1',
             'sale_date' => 'required|date',
             'warranty_start_date' => 'required|date',
             'warranty_end_date' => 'required|date|after_or_equal:warranty_start_date',
@@ -128,12 +129,12 @@ class SoldProductController extends Controller
     {
         $products = Product::where('is_active', true)->orderBy('model_name')->get();
         $owners = Owner::orderBy('name')->get();
-        
+
         // Only include employees field for admins
-        $employees = Auth::user()->isAdmin() 
+        $employees = Auth::user()->isAdmin()
             ? \App\Models\User::whereIn('role', ['admin', 'employee'])->orderBy('name')->get()
             : collect();
-            
+
         return view('admin.sold-products.edit', compact('soldProduct', 'products', 'owners', 'employees'));
     }
 
@@ -141,8 +142,9 @@ class SoldProductController extends Controller
     {
         $validated = $request->validate([
             'product_id' => 'required|exists:products,id',
-            'owner_id' => 'required|exists:owners,id', 
+            'owner_id' => 'required|exists:owners,id',
             'serial_number' => 'required|string|unique:sold_products,serial_number,' . $soldProduct->id,
+            'quantity' => 'required|integer|min:1',
             'sale_date' => 'required|date',
             'warranty_start_date' => 'required|date',
             'warranty_end_date' => 'required|date|after_or_equal:warranty_start_date',

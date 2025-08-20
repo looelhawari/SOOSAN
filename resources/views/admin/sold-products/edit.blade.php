@@ -765,6 +765,20 @@
                             </div>
                         </div>
 
+                        <!-- Quantity -->
+                        <div class="col-md-6">
+                            <div class="modern-form-group animate-stagger">
+                                <label for="quantity" class="modern-label">
+                                    <i class="fas fa-sort-numeric-up mobile-icon"></i>
+                                    {{ __('sold-products.quantity') }}
+                                </label>
+                                <input type="number" min="1" class="modern-input @error('quantity') is-invalid @enderror" id="quantity" name="quantity" value="{{ old('quantity', $soldProduct->quantity ?? 1) }}" placeholder="1">
+                                @error('quantity')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
                         <!-- Notes -->
                         <div class="col-12">
                             <div class="modern-form-group animate-stagger">
@@ -806,7 +820,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const editSaleForm = document.getElementById('editSaleForm');
     const submitBtn = document.getElementById('submitBtn');
     const formProgress = document.getElementById('formProgress');
-    
+
     warrantyStartInput.addEventListener('change', function() {
         if (this.value && !warrantyEndInput.value) {
             // Default to 1 year warranty
@@ -814,7 +828,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const endDate = new Date(startDate);
             endDate.setFullYear(endDate.getFullYear() + 1);
             warrantyEndInput.value = endDate.toISOString().split('T')[0];
-            
+
             // Visual feedback
             warrantyEndInput.style.borderColor = '#28a745';
             warrantyEndInput.classList.add('success-pulse');
@@ -827,16 +841,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Form validation and progress tracking
     const requiredFields = ['product_id', 'owner_id', 'user_id', 'serial_number', 'sale_date', 'warranty_start_date', 'warranty_end_date'];
-    
+
     function updateProgress() {
         const filledFields = requiredFields.filter(field => {
             const element = document.getElementById(field);
             return element && element.value.trim() !== '';
         });
-        
+
         const progress = (filledFields.length / requiredFields.length) * 100;
         formProgress.style.width = progress + '%';
-        
+
         if (progress === 100) {
             formProgress.style.background = 'var(--success-gradient)';
         } else {
@@ -879,7 +893,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     validateField(field);
                 }
             });
-            
+
             element.addEventListener('blur', function() {
                 validateField(field);
             });
@@ -891,7 +905,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const saleDate = new Date(document.getElementById('sale_date').value);
         const warrantyStart = new Date(warrantyStartInput.value);
         const warrantyEnd = new Date(warrantyEndInput.value);
-        
+
         if (warrantyStart && warrantyEnd && warrantyStart >= warrantyEnd) {
             warrantyEndInput.setCustomValidity('Warranty end date must be after start date');
             warrantyEndInput.classList.add('is-invalid');
@@ -913,14 +927,14 @@ document.addEventListener('DOMContentLoaded', function() {
     editSaleForm.addEventListener('submit', function(e) {
         if (!validateForm() || !validateDates()) {
             e.preventDefault();
-            
+
             // Scroll to first invalid field
             const firstInvalid = document.querySelector('.is-invalid');
             if (firstInvalid) {
                 firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 firstInvalid.focus();
             }
-            
+
             // Show error notification
             showNotification('Please correct the errors below', 'error');
             return;
@@ -955,7 +969,7 @@ document.addEventListener('DOMContentLoaded', function() {
     formGroups.forEach((group, index) => {
         group.style.opacity = '0';
         group.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
             group.style.transition = 'all 0.6s ease';
             group.style.opacity = '1';
@@ -969,7 +983,7 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('touchstart', function() {
                 this.style.transform = 'scale(0.95)';
             });
-            
+
             btn.addEventListener('touchend', function() {
                 setTimeout(() => {
                     this.style.transform = '';
@@ -980,14 +994,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Auto-save to localStorage (for form recovery)
     const formInputs = document.querySelectorAll('input, select, textarea');
-    
+
     formInputs.forEach(input => {
         // Load saved data
         const savedValue = localStorage.getItem(`editSaleForm_${input.name}`);
         if (savedValue && !input.value && input.name !== '_token') {
             input.value = savedValue;
         }
-        
+
         // Save data on change
         input.addEventListener('change', function() {
             if (this.name !== '_token') {
@@ -1025,9 +1039,9 @@ document.addEventListener('DOMContentLoaded', function() {
             ${message}
             <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
         `;
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.remove();
         }, 5000);

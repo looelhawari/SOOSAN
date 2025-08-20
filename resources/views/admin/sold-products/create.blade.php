@@ -401,7 +401,7 @@
     <div class="card-body p-4">
         <form action="{{ route('admin.sold-products.store') }}" method="POST" id="saleForm">
             @csrf
-            
+
             <div class="row g-4">
                 <!-- Product Selection -->
                 <div class="col-md-6">
@@ -410,7 +410,7 @@
                             <i class="fas fa-box mobile-icon"></i>
                             {{ __('sold-products.product') }} <span class="text-danger">*</span>
                         </label>
-                        <select class="modern-select @error('product_id') is-invalid @enderror" 
+                        <select class="modern-select @error('product_id') is-invalid @enderror"
                                 id="product_id" name="product_id" required>
                             <option value="">{{ __('sold-products.select_product') }}</option>
                             @foreach($products as $product)
@@ -424,7 +424,7 @@
                         @enderror
                     </div>
                 </div>
-                
+
                 <!-- Owner Selection -->
                 <div class="col-md-6">
                     <div class="modern-form-group">
@@ -432,7 +432,7 @@
                             <i class="fas fa-user mobile-icon"></i>
                             {{ __('sold-products.owner') }} <span class="text-danger">*</span>
                         </label>
-                        <select class="modern-select @error('owner_id') is-invalid @enderror" 
+                        <select class="modern-select @error('owner_id') is-invalid @enderror"
                                 id="owner_id" name="owner_id" required>
                             <option value="">{{ __('sold-products.select_owner') }}</option>
                             @foreach($owners as $owner)
@@ -462,8 +462,8 @@
                             <i class="fas fa-barcode mobile-icon"></i>
                             {{ __('sold-products.serial_number') }} <span class="text-danger">*</span>
                         </label>
-                        <input type="text" class="modern-input @error('serial_number') is-invalid @enderror" 
-                               id="serial_number" name="serial_number" value="{{ old('serial_number') }}" 
+                        <input type="text" class="modern-input @error('serial_number') is-invalid @enderror"
+                               id="serial_number" name="serial_number" value="{{ old('serial_number') }}"
                                placeholder="{{ __('sold-products.enter_serial_number') }}" required>
                         @error('serial_number')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -478,7 +478,7 @@
                             <i class="fas fa-calendar mobile-icon"></i>
                             {{ __('sold-products.sale_date') }} <span class="text-danger">*</span>
                         </label>
-                        <input type="date" class="modern-input @error('sale_date') is-invalid @enderror" 
+                        <input type="date" class="modern-input @error('sale_date') is-invalid @enderror"
                                id="sale_date" name="sale_date" value="{{ old('sale_date', date('Y-m-d')) }}" required>
                         @error('sale_date')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -493,7 +493,7 @@
                             <i class="fas fa-calendar-check mobile-icon"></i>
                             {{ __('sold-products.warranty_start') }} <span class="text-danger">*</span>
                         </label>
-                        <input type="date" class="modern-input @error('warranty_start_date') is-invalid @enderror" 
+                        <input type="date" class="modern-input @error('warranty_start_date') is-invalid @enderror"
                                id="warranty_start_date" name="warranty_start_date" value="{{ old('warranty_start_date', date('Y-m-d')) }}" required>
                         @error('warranty_start_date')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -508,7 +508,7 @@
                             <i class="fas fa-calendar-times mobile-icon"></i>
                             {{ __('sold-products.warranty_end') }} <span class="text-danger">*</span>
                         </label>
-                        <input type="date" class="modern-input @error('warranty_end_date') is-invalid @enderror" 
+                        <input type="date" class="modern-input @error('warranty_end_date') is-invalid @enderror"
                                id="warranty_end_date" name="warranty_end_date" value="{{ old('warranty_end_date') }}" required>
                         @error('warranty_end_date')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -523,10 +523,26 @@
                             <i class="fas fa-dollar-sign mobile-icon"></i>
                             {{ __('sold-products.purchase_price') }}
                         </label>
-                        <input type="number" step="0.01" min="0" class="modern-input @error('purchase_price') is-invalid @enderror" 
-                               id="purchase_price" name="purchase_price" value="{{ old('purchase_price') }}" 
+                        <input type="number" step="0.01" min="0" class="modern-input @error('purchase_price') is-invalid @enderror"
+                               id="purchase_price" name="purchase_price" value="{{ old('purchase_price') }}"
                                placeholder="0.00">
                         @error('purchase_price')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
+
+                <!-- Quantity -->
+                <div class="col-md-6">
+                    <div class="modern-form-group">
+                        <label for="quantity" class="modern-label">
+                            <i class="fas fa-sort-numeric-up mobile-icon"></i>
+                            {{ __('sold-products.quantity') }}
+                        </label>
+                        <input type="number" min="1" class="modern-input @error('quantity') is-invalid @enderror"
+                               id="quantity" name="quantity" value="{{ old('quantity', 1) }}"
+                               placeholder="1">
+                        @error('quantity')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -539,8 +555,8 @@
                             <i class="fas fa-sticky-note mobile-icon"></i>
                             {{ __('sold-products.notes') }}
                         </label>
-                        <textarea class="modern-input @error('notes') is-invalid @enderror" 
-                                  id="notes" name="notes" rows="4" 
+                        <textarea class="modern-input @error('notes') is-invalid @enderror"
+                                  id="notes" name="notes" rows="4"
                                   placeholder="{{ __('sold-products.additional_notes_placeholder') }}">{{ old('notes') }}</textarea>
                         @error('notes')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -571,7 +587,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const warrantyEndInput = document.getElementById('warranty_end_date');
     const saleForm = document.getElementById('saleForm');
     const submitBtn = document.getElementById('submitBtn');
-    
+
     warrantyStartInput.addEventListener('change', function() {
         if (this.value && !warrantyEndInput.value) {
             // Default to 1 year warranty
@@ -579,7 +595,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const endDate = new Date(startDate);
             endDate.setFullYear(endDate.getFullYear() + 1);
             warrantyEndInput.value = endDate.toISOString().split('T')[0];
-            
+
             // Visual feedback
             warrantyEndInput.style.borderColor = '#28a745';
             setTimeout(() => {
@@ -590,7 +606,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Form validation enhancements
     const requiredFields = ['product_id', 'owner_id', 'serial_number', 'sale_date', 'warranty_start_date', 'warranty_end_date'];
-    
+
     function validateField(field) {
         const element = document.getElementById(field);
         if (!element.value.trim()) {
@@ -619,7 +635,7 @@ document.addEventListener('DOMContentLoaded', function() {
             element.addEventListener('blur', function() {
                 validateField(field);
             });
-            
+
             element.addEventListener('input', function() {
                 if (this.classList.contains('is-invalid')) {
                     validateField(field);
@@ -630,12 +646,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Date validation
     const saleDateInput = document.getElementById('sale_date');
-    
+
     function validateDates() {
         const saleDate = new Date(saleDateInput.value);
         const warrantyStart = new Date(warrantyStartInput.value);
         const warrantyEnd = new Date(warrantyEndInput.value);
-        
+
         if (warrantyStart && warrantyEnd && warrantyStart >= warrantyEnd) {
             warrantyEndInput.setCustomValidity('Warranty end date must be after start date');
             warrantyEndInput.classList.add('is-invalid');
@@ -657,14 +673,14 @@ document.addEventListener('DOMContentLoaded', function() {
     saleForm.addEventListener('submit', function(e) {
         if (!validateForm() || !validateDates()) {
             e.preventDefault();
-            
+
             // Scroll to first invalid field
             const firstInvalid = document.querySelector('.is-invalid');
             if (firstInvalid) {
                 firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 firstInvalid.focus();
             }
-            
+
             // Show error message
             showNotification('Please correct the errors below', 'error');
             return;
@@ -696,7 +712,7 @@ document.addEventListener('DOMContentLoaded', function() {
     formGroups.forEach((group, index) => {
         group.style.opacity = '0';
         group.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
             group.style.transition = 'all 0.6s ease';
             group.style.opacity = '1';
@@ -710,7 +726,7 @@ document.addEventListener('DOMContentLoaded', function() {
             btn.addEventListener('touchstart', function() {
                 this.style.transform = 'scale(0.95)';
             });
-            
+
             btn.addEventListener('touchend', function() {
                 setTimeout(() => {
                     this.style.transform = '';
@@ -722,14 +738,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // Auto-save to localStorage (for form recovery)
     const formInputs = document.querySelectorAll('input, select, textarea');
     const formData = {};
-    
+
     formInputs.forEach(input => {
         // Load saved data
         const savedValue = localStorage.getItem(`saleForm_${input.name}`);
         if (savedValue && !input.value) {
             input.value = savedValue;
         }
-        
+
         // Save data on change
         input.addEventListener('change', function() {
             localStorage.setItem(`saleForm_${this.name}`, this.value);
@@ -763,9 +779,9 @@ document.addEventListener('DOMContentLoaded', function() {
             ${message}
             <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
         `;
-        
+
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.remove();
         }, 5000);
