@@ -16,7 +16,7 @@
         }
 
         .modern-page-header {
-            background: var(--danger-gradient);
+            background: var(--primary-gradient);
             color: #ffffff;
             padding: 2rem 1.5rem;
             margin: -1rem -1rem 2rem;
@@ -65,11 +65,6 @@
             transition: var(--transition);
         }
 
-        .search-input-group .form-control:focus {
-            border-color: #dc3545;
-            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-        }
-
         .search-input-group .search-icon {
             position: absolute;
             left: 0.75rem;
@@ -84,14 +79,8 @@
             border: 2px solid #e9ecef;
             transition: var(--transition);
         }
-
-        .filter-select:focus {
-            border-color: #dc3545;
-            box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
-        }
-
         .btn-clear-filters {
-            background: var(--warning-gradient);
+            background: var(--primary-gradient);
             border: none;
             color: white;
             padding: 0.5rem 1rem;
@@ -101,7 +90,6 @@
 
         .btn-clear-filters:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 193, 7, 0.3);
             color: white;
         }
 

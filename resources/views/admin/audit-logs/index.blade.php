@@ -411,7 +411,7 @@
         .modern-stat-content h4 {
             font-size: 1.5rem;
         }
-        
+
         /* Mobile table responsiveness */
         .table-responsive {
             border-radius: 12px;
@@ -424,7 +424,7 @@
             padding: 0.75rem 0.5rem;
             font-size: 0.875rem;
         }
-        
+
         /* Hide text on mobile, show icons */
         .mobile-hide-text {
             display: none;
@@ -432,7 +432,7 @@
         .mobile-show-icon {
             display: inline;
         }
-        
+
         /* Stack user info vertically on mobile */
         .user-info-mobile {
             flex-direction: column;
@@ -448,7 +448,7 @@
             padding: 0.5rem 0.75rem;
             font-size: 0.75rem;
         }
-        
+
         /* Make chevron icons smaller */
         .fas.fa-chevron-down,
         .fas.fa-chevron-up {
@@ -467,14 +467,14 @@
             padding: 0.75rem;
             font-size: 0.75rem;
         }
-        
+
         /* Ultra mobile optimizations */
         .modern-table thead th,
         .modern-table tbody td {
             padding: 0.5rem 0.25rem;
             font-size: 0.75rem;
         }
-        
+
         /* Collapse some columns on very small screens */
         .mobile-collapse {
             display: none;
@@ -529,7 +529,7 @@
         .pagination-info {
             font-size: 0.75rem;
         }
-        
+
         /* Ultra compact filter layout */
         .card-body {
             padding: 1rem !important;
@@ -542,7 +542,7 @@
             padding: 0.5rem 0.75rem;
             font-size: 0.75rem;
         }
-        
+
         /* Smaller badges and buttons */
         .modern-badge {
             padding: 0.25rem 0.5rem;
@@ -730,7 +730,7 @@
                 <div class="small">{{ __('audit-logs.stats.total_events') }}</div>
             </div>
         </div>
-        
+
         <div class="modern-stat-card fade-in-up" style="animation-delay: 0.1s;">
             <div class="modern-stat-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
                 <i class="fas fa-calendar-day"></i>
@@ -740,7 +740,7 @@
                 <div class="small">{{ __('audit-logs.stats.today') }}</div>
             </div>
         </div>
-        
+
         <div class="modern-stat-card fade-in-up" style="animation-delay: 0.2s;">
             <div class="modern-stat-icon" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);">
                 <i class="fas fa-calendar-week"></i>
@@ -750,7 +750,7 @@
                 <div class="small">{{ __('audit-logs.stats.this_week') }}</div>
             </div>
         </div>
-        
+
         <div class="modern-stat-card fade-in-up" style="animation-delay: 0.3s;">
             <div class="modern-stat-icon" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
                 <i class="fas fa-calendar-alt"></i>
@@ -864,7 +864,6 @@
                             <th>{{ __('audit-logs.table.columns.event') }}</th>
                             <th class="mobile-collapse">{{ __('audit-logs.table.columns.model') }}</th>
                             <th class="mobile-collapse">{{ __('audit-logs.table.columns.ip_address') }}</th>
-                            <th class="mobile-collapse">{{ __('audit-logs.table.columns.details') }}</th>
                             <th>{{ __('audit-logs.table.columns.actions') }}</th>
                         </tr>
                     </thead>
@@ -923,16 +922,6 @@
                                         <br><small class="text-muted">{{ Str::limit($log->url, 30) }}</small>
                                     @endif
                                 </td>
-                                <td class="mobile-collapse">
-                                    @if($log->new_values)
-                                        <button class="modern-btn btn-sm" onclick="showChanges({{ json_encode($log->old_values) }}, {{ json_encode($log->new_values) }}, '{{ $log->event }}')">
-                                            <i class="fas fa-eye"></i>
-                                            <span class="mobile-hide-text">{{ __('audit-logs.table.view_changes') }}</span>
-                                        </button>
-                                    @else
-                                        <span class="text-muted">{{ __('audit-logs.table.no_changes') }}</span>
-                                    @endif
-                                </td>
                                 <td>
                                     <a href="{{ route('admin.audit-logs.show', $log) }}" class="modern-btn btn-sm">
                                         <i class="fas fa-search"></i>
@@ -941,7 +930,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="text-center py-4">
+                                <td colspan="6" class="text-center py-4">
                                     <i class="fas fa-search fa-2x text-muted mb-3"></i>
                                     <p class="text-muted">{{ __('audit-logs.table.empty_state') }}</p>
                                 </td>
@@ -1028,7 +1017,7 @@
                         </span>
                     @endif
                 </nav>
-                
+
                 <div class="pagination-info">
                     {{ __('audit-logs.pagination.showing_results', ['first' => $auditLogs->firstItem(), 'last' => $auditLogs->lastItem(), 'total' => $auditLogs->total()]) }}
                 </div>
@@ -1064,7 +1053,7 @@ lastLogId = {{ $auditLogs->first()->id }};
 
 document.getElementById('realTimeToggle').addEventListener('click', function() {
     realTimeEnabled = !realTimeEnabled;
-    
+
     if (realTimeEnabled) {
         this.innerHTML = '<i class="fas fa-pause"></i> <span class="mobile-hide-text">Stop Real-time</span>';
         this.className = 'modern-btn modern-btn-danger';
@@ -1109,15 +1098,15 @@ function addLogToTable(log) {
     const row = document.createElement('tr');
     row.className = 'table-warning';
     row.setAttribute('data-log-id', log.id);
-    
+
     const eventColors = {
         'created': 'success',
-        'updated': 'warning', 
+        'updated': 'warning',
         'deleted': 'danger',
         'restored': 'info'
     };
     const color = eventColors[log.event] || 'secondary';
-    
+
     const eventIcons = {
         'created': 'plus',
         'updated': 'edit',
@@ -1125,7 +1114,7 @@ function addLogToTable(log) {
         'restored': 'undo'
     };
     const icon = eventIcons[log.event] || 'question';
-    
+
     row.innerHTML = `
         <td>
             <span class="text-muted small">${new Date(log.created_at).toLocaleString()}</span>
@@ -1175,9 +1164,9 @@ function addLogToTable(log) {
             </a>
         </td>
     `;
-    
+
     tbody.insertBefore(row, tbody.firstChild);
-    
+
     setTimeout(() => {
         row.classList.remove('table-warning');
     }, 5000);
@@ -1185,7 +1174,7 @@ function addLogToTable(log) {
 
 function showChanges(oldValues, newValues, event) {
     let content = '';
-    
+
     if (event === 'created') {
         content = '<h6>New Record Created:</h6>';
         content += '<div class="row"><div class="col-12">';
@@ -1211,7 +1200,7 @@ function showChanges(oldValues, newValues, event) {
         content += '<pre class="bg-light p-3 rounded" style="border-radius: 12px;">' + JSON.stringify(oldValues, null, 2) + '</pre>';
         content += '</div></div>';
     }
-    
+
     document.getElementById('changesContent').innerHTML = content;
     new bootstrap.Modal(document.getElementById('changesModal')).show();
 }
