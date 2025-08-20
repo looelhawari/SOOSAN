@@ -71,16 +71,28 @@
             box-sizing: border-box;
         }
 
+        html {
+            /* Improve zoom handling */
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
         body {
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             font-family: 'Inter', sans-serif;
             overflow-x: hidden;
+            /* Improve zoom handling */
+            min-width: 320px;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         /* Enhanced Sidebar */
         .admin-sidebar {
             width: var(--sidebar-width);
-            min-height: 100vh;
+            height: 100vh;
+            max-height: 100vh;
             background: linear-gradient(180deg, var(--admin-dark) 0%, #2d3748 100%);
             color: white;
             position: fixed;
@@ -90,6 +102,50 @@
             transition: var(--transition);
             box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
+            overflow-x: hidden;
+            /* Enhanced scrolling behavior */
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+            /* Flexbox for better content distribution */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Custom scrollbar for webkit browsers */
+        .admin-sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .admin-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .admin-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            transition: background 0.3s ease;
+        }
+
+        .admin-sidebar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Ensure smooth scrolling and proper focus management */
+        .admin-sidebar {
+            scroll-behavior: smooth;
+            /* Improve accessibility */
+            outline: none;
+        }
+
+        .admin-sidebar:focus-within {
+            scrollbar-color: rgba(255, 255, 255, 0.5) transparent;
+        }
+
+        /* Performance optimization for scrolling */
+        .sidebar-nav .nav-link {
+            will-change: transform, background-color;
+            transform: translateZ(0); /* Force hardware acceleration */
         }
 
         .admin-sidebar::before {
@@ -162,6 +218,7 @@
             text-align: center;
             position: relative;
             overflow: hidden;
+            flex-shrink: 0; /* Prevent brand from shrinking */
         }
 
         .sidebar-brand::before {
@@ -197,6 +254,17 @@
         /* Enhanced Sidebar Navigation */
         .sidebar-nav {
             padding: 1rem 0;
+            flex: 1; /* Take remaining space */
+            overflow-y: auto;
+            overflow-x: hidden;
+            /* Enhanced scrolling */
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Hide scrollbar in navigation */
+            min-height: 0; /* Allow flexbox to shrink */
+        }
+
+        .sidebar-nav::-webkit-scrollbar {
+            display: none; /* Hide scrollbar in navigation */
         }
 
         .sidebar-nav .nav-link {
@@ -211,6 +279,9 @@
             border-radius: 0;
             margin: 0.25rem 1rem;
             border-radius: var(--border-radius-sm);
+            /* Prevent text wrapping */
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .sidebar-nav .nav-link::before {
@@ -520,10 +591,134 @@
             }
         }
 
-        @media (max-width: 768px) {
+        /* Zoom-level responsive handling */
+        @media (min-resolution: 144dpi), (min-resolution: 1.5dppx) {
+            /* High DPI displays */
+            .admin-sidebar {
+                scrollbar-width: auto;
+            }
+
+            .admin-sidebar::-webkit-scrollbar {
+                width: 8px;
+            }
+        }
+
+        /* Browser zoom handling - when content appears zoomed */
+        @media (max-width: 1600px) and (min-width: 1200px) {
+            /* Zoom levels 110%-125% on standard screens */
+            :root {
+                --sidebar-width: 260px;
+            }
+
+            .admin-sidebar {
+                width: 260px;
+            }
+
+            .sidebar-nav .nav-link {
+                padding: 0.875rem 1.25rem;
+                font-size: 0.9rem;
+            }
+
+            .sidebar-brand {
+                padding: 1.75rem 1.25rem;
+            }
+
+            .sidebar-brand h4 {
+                font-size: 1.15rem;
+            }
+        }
+
+        @media (max-width: 1400px) and (min-width: 1024px) {
+            /* Zoom levels 125%-150% on standard screens */
+            :root {
+                --sidebar-width: 240px;
+            }
+
+            .admin-sidebar {
+                width: 240px;
+            }
+
+            .sidebar-nav .nav-link {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .sidebar-nav .nav-link i {
+                width: 20px;
+                margin-right: 0.625rem;
+                font-size: 1rem;
+            }
+
+            .sidebar-brand {
+                padding: 1.5rem 1rem;
+            }
+
+            .sidebar-brand h4 {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 1200px) and (min-width: 992px) {
+            /* Zoom levels 150%-175% on standard screens */
+            :root {
+                --sidebar-width: 220px;
+            }
+
+            .admin-sidebar {
+                width: 220px;
+            }
+
+            .sidebar-nav .nav-link {
+                padding: 0.625rem 0.875rem;
+                font-size: 0.8rem;
+            }
+
+            .sidebar-nav .nav-link i {
+                width: 18px;
+                margin-right: 0.5rem;
+                font-size: 0.9rem;
+            }
+
+            .sidebar-brand {
+                padding: 1.25rem 0.875rem;
+            }
+
+            .sidebar-brand h4 {
+                font-size: 1rem;
+            }
+        }
+
+        /* Ultra-high zoom fallback */
+        @media (max-width: 992px) and (min-width: 768px) {
+            /* Zoom levels 175%+ or small screens */
             .admin-sidebar {
                 transform: translateX(-100%);
                 width: 280px;
+                /* Ensure scrolling works even when hidden */
+                overflow-y: auto;
+                overflow-x: hidden;
+            }
+
+            .admin-content {
+                margin-left: 0;
+            }
+
+            .admin-navbar {
+                left: 0;
+            }
+
+            .admin-sidebar.show {
+                transform: translateX(0);
+            }
+        }
+
+        /* Extreme zoom handling (200%+ zoom levels) */
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(-100%);
+                width: min(280px, 85vw); /* Responsive width */
+                /* Enhanced scrolling for mobile/high zoom */
+                overscroll-behavior-y: contain;
             }
 
             .admin-content {
@@ -535,12 +730,6 @@
                 left: 0;
                 padding: 0.75rem 1rem;
                 min-height: 70px;
-                flex-direction: row;
-                align-items: center;
-            }
-
-            .admin-navbar h5 {
-                font-size: 1.1rem !important;
             }
 
             .admin-sidebar.show {
@@ -550,104 +739,41 @@
 
             .sidebar-brand {
                 padding: 1.5rem 1rem;
-            }
-
-            .sidebar-brand h4 {
-                font-size: 1.1rem;
+                min-height: 100px;
             }
 
             .sidebar-nav .nav-link {
                 padding: 0.75rem 1rem;
                 margin: 0.125rem 0.5rem;
-            }
-
-            .sidebar-nav .nav-link i {
-                width: 20px;
-                margin-right: 0.5rem;
-            }
-
-            /* Mobile navbar adjustments */
-            .admin-navbar .d-flex {
-                gap: 0.5rem !important;
-            }
-
-            .dropdown-toggle {
-                padding: 0.375rem 0.75rem !important;
-                font-size: 0.875rem !important;
-            }
-
-            .notification-bell-btn {
-                width: 36px;
-                height: 36px;
-            }
-
-            .avatar-circle {
-                width: 36px;
-                height: 36px;
-                font-size: 14px;
-            }
-
-            /* Hide text on mobile, show icons */
-            .mobile-hide {
-                display: none !important;
-            }
-
-            .mobile-show {
-                display: inline-block !important;
+                font-size: 0.9rem;
             }
         }
 
+        /* Ultra-mobile or extreme zoom (250%+ zoom levels) */
         @media (max-width: 576px) {
-            .admin-navbar {
-                padding: 0.5rem 0.75rem;
-                min-height: 60px;
-            }
-
-            .admin-navbar h5 {
-                font-size: 1rem !important;
-            }
-
-            .admin-content {
-                padding-top: 60px;
-            }
-
-            .dropdown-toggle {
-                padding: 0.25rem 0.5rem !important;
-                font-size: 0.8rem !important;
-            }
-
-            .notification-bell-btn {
-                width: 32px;
-                height: 32px;
-            }
-
-            .avatar-circle {
-                width: 32px;
-                height: 32px;
-                font-size: 12px;
+            .admin-sidebar {
+                width: min(260px, 90vw);
             }
 
             .sidebar-brand {
                 padding: 1rem 0.75rem;
+                min-height: 80px;
+            }
+
+            .sidebar-brand h4 {
+                font-size: 1rem;
             }
 
             .sidebar-nav .nav-link {
                 padding: 0.5rem 0.75rem;
                 font-size: 0.875rem;
             }
+
+            .sidebar-nav .nav-link i {
+                width: 18px;
+                font-size: 0.9rem;
+            }
         }
-
-        @media (max-width: 375px) {
-            .admin-navbar {
-                padding: 0.375rem 0.5rem;
-            }
-
-            .admin-navbar h5 {
-                font-size: 0.9rem !important;
-            }
-
-            .dropdown-toggle span {
-                display: none;
             }
         }
 
@@ -810,9 +936,6 @@
             }
         }
     </style>
-
-
-
     @stack('styles')
 </head>
 
@@ -934,7 +1057,7 @@
                     <a href="{{ route('admin.deleted-items.index') }}"
                         class="nav-link {{ request()->routeIs('admin.deleted-items.*') ? 'active' : '' }}">
                         <i class="fas fa-trash-restore"></i>
-                        {{ __('admin.deleted_items') }}                 
+                        {{ __('admin.deleted_items') }}
                     </a>
                 @endif
 
@@ -1292,28 +1415,28 @@
         const SessionManager = {
             checkInterval: null,
             warningShown: false,
-            
+
             init: function() {
                 // Start session monitoring
                 this.startSessionCheck();
-                
+
                 // Handle logout cleanup
                 this.handleLogoutCleanup();
-                
+
                 // Handle browser close/refresh
                 this.handleBeforeUnload();
-                
+
                 // Check for session warnings
                 this.checkSessionWarnings();
             },
-            
+
             startSessionCheck: function() {
                 // Check session every 2 minutes
                 this.checkInterval = setInterval(() => {
                     this.checkSession();
                 }, 120000);
             },
-            
+
             checkSession: function() {
                 fetch('{{ route('admin.session.check') }}', {
                     method: 'GET',
@@ -1330,7 +1453,7 @@
                     } else {
                         // Update session data in localStorage
                         this.updateSessionData(data);
-                        
+
                         // Show warning if session is about to expire
                         if (data.session_remaining && data.session_remaining <= 5 && !this.warningShown) {
                             this.showSessionWarning(data.session_remaining);
@@ -1341,7 +1464,7 @@
                     console.error('Session check failed:', error);
                 });
             },
-            
+
             updateSessionData: function(data) {
                 try {
                     localStorage.setItem('admin_session_data', JSON.stringify({
@@ -1353,10 +1476,10 @@
                     console.log('Error updating session data:', e);
                 }
             },
-            
+
             showSessionWarning: function(minutesRemaining) {
                 this.warningShown = true;
-                
+
                 const warningModal = document.createElement('div');
                 warningModal.className = 'modal fade';
                 warningModal.id = 'sessionWarningModal';
@@ -1385,12 +1508,12 @@
                         </div>
                     </div>
                 `;
-                
+
                 document.body.appendChild(warningModal);
                 const modal = new bootstrap.Modal(warningModal);
                 modal.show();
             },
-            
+
             extendSession: function() {
                 // Make a simple request to extend session
                 fetch('{{ route('admin.dashboard') }}', {
@@ -1407,7 +1530,7 @@
                         modal.hide();
                     }
                     this.warningShown = false;
-                    
+
                     // Show success message
                     this.showAlert('Session extended successfully!', 'success');
                 })
@@ -1416,48 +1539,48 @@
                     this.handleSessionExpired();
                 });
             },
-            
+
             handleSessionExpired: function() {
                 // Clear intervals
                 if (this.checkInterval) {
                     clearInterval(this.checkInterval);
                 }
-                
+
                 // Clear local storage
                 this.clearSessionData();
-                
+
                 // Show expiry message and redirect
                 this.showAlert('Your session has expired. Please login again.', 'danger');
-                
+
                 setTimeout(() => {
                     window.location.href = '{{ route('admin.login') }}';
                 }, 2000);
             },
-            
+
             logout: function() {
                 // Clear intervals
                 if (this.checkInterval) {
                     clearInterval(this.checkInterval);
                 }
-                
+
                 // Submit logout form
                 const form = document.createElement('form');
                 form.method = 'POST';
                 form.action = '{{ route('admin.logout') }}';
-                
+
                 const csrfToken = document.createElement('input');
                 csrfToken.type = 'hidden';
                 csrfToken.name = '_token';
                 csrfToken.value = '{{ csrf_token() }}';
                 form.appendChild(csrfToken);
-                
+
                 // Mark for local storage cleanup
                 sessionStorage.setItem('clear_local_storage', 'true');
-                
+
                 document.body.appendChild(form);
                 form.submit();
             },
-            
+
             clearSessionData: function() {
                 try {
                     localStorage.removeItem('admin_session_data');
@@ -1466,7 +1589,7 @@
                     console.log('Error clearing session data:', e);
                 }
             },
-            
+
             handleLogoutCleanup: function() {
                 // Check for logout cleanup flags
                 if (sessionStorage.getItem('clear_local_storage')) {
@@ -1481,7 +1604,7 @@
                     }
                 }
             },
-            
+
             handleBeforeUnload: function() {
                 window.addEventListener('beforeunload', () => {
                     // Update last activity time
@@ -1494,7 +1617,7 @@
                     }
                 });
             },
-            
+
             checkSessionWarnings: function() {
                 // Check for session warnings from server
                 @if(session('session_warning'))
@@ -1504,7 +1627,7 @@
                     }
                 @endif
             },
-            
+
             showAlert: function(message, type = 'info') {
                 const alert = document.createElement('div');
                 alert.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
@@ -1513,9 +1636,9 @@
                     ${message}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 `;
-                
+
                 document.body.appendChild(alert);
-                
+
                 // Auto remove after 5 seconds
                 setTimeout(() => {
                     if (alert.parentElement) {
