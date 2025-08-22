@@ -50,7 +50,7 @@
         @enderror
     </div>
     <div class="d-flex justify-content-end align-items-center pt-3 border-top">
-        <button type="submit" class="btn btn-success btn-lg px-4 fw-semibold shadow-sm">
+        <button type="submit" class="btn btn-success btn-lg px-4 fw-semibold shadow-sm" style="background-color: #198754 !important; border-color: #198754 !important;">
             <i class="fas fa-save me-2"></i>{{ __('common.update_password_btn') }}
         </button>
     </div>

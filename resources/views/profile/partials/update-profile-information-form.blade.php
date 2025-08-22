@@ -5,26 +5,26 @@
     <div class="row mb-4">
         <div class="col-12 text-center mb-3">
             <div class="position-relative d-inline-block">
-                <img id="profileImagePreview" 
-                     src="{{ $user->image_url ? asset($user->image_url) : asset('images/fallback.webp') }}" 
-                     alt="Profile Image" 
-                     class="rounded-circle shadow" 
+                <img id="profileImagePreview"
+                     src="{{ $user->image_url ? asset($user->image_url) : asset('images/fallback.webp') }}"
+                     alt="Profile Image"
+                     class="rounded-circle shadow"
                      style="width: 120px; height: 120px; object-fit: cover; border: 4px solid var(--primary-color); background: #fff;"
                      onerror="this.onerror=null;this.src='{{ asset('images/fallback.webp') }}';">
-                
+
                 <!-- Image Upload Button -->
                 <div class="position-absolute" style="bottom: 5px; right: 5px;">
                     <label for="profile_image" class="btn btn-primary btn-sm rounded-circle p-2" style="width: 40px; height: 40px; cursor: pointer;">
                         <i class="fas fa-camera"></i>
                     </label>
-                    <input type="file" 
-                           id="profile_image" 
-                           name="profile_image" 
-                           class="d-none @error('profile_image') is-invalid @enderror" 
+                    <input type="file"
+                           id="profile_image"
+                           name="profile_image"
+                           class="d-none @error('profile_image') is-invalid @enderror"
                            accept="image/*">
                 </div>
             </div>
-            
+
             <!-- Image Actions -->
             <div class="mt-3">
                 @if($user->image_url)
@@ -37,7 +37,7 @@
                     {{ __('common.supported_formats') }}
                 </small>
             </div>
-            
+
             @error('profile_image')
                 <div class="alert alert-danger mt-2 p-2">
                     <i class="fas fa-exclamation-circle me-1"></i>{{ $message }}
@@ -54,12 +54,12 @@
                 <span class="input-group-text bg-light border-end-0">
                     <i class="fas fa-user text-muted"></i>
                 </span>
-                <input type="text" 
-                       id="name" 
-                       name="name" 
-                       class="form-control border-start-0 @error('name') is-invalid @enderror" 
-                       value="{{ old('name', $user->name) }}" 
-                       required 
+                <input type="text"
+                       id="name"
+                       name="name"
+                       class="form-control border-start-0 @error('name') is-invalid @enderror"
+                       value="{{ old('name', $user->name) }}"
+                       required
                        autocomplete="name"
                        style="padding-left: 0;">
                 @error('name')
@@ -78,12 +78,12 @@
                 <span class="input-group-text bg-light border-end-0">
                     <i class="fas fa-envelope text-muted"></i>
                 </span>
-                <input type="email" 
-                       id="email" 
-                       name="email" 
-                       class="form-control border-start-0 @error('email') is-invalid @enderror" 
-                       value="{{ old('email', $user->email) }}" 
-                       required 
+                <input type="email"
+                       id="email"
+                       name="email"
+                       class="form-control border-start-0 @error('email') is-invalid @enderror"
+                       value="{{ old('email', $user->email) }}"
+                       required
                        autocomplete="username"
                        style="padding-left: 0;">
                 @error('email')
@@ -180,7 +180,7 @@
                 </div>
             @endif
         </div>
-        <button type="submit" class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm">
+        <button type="submit" class="btn btn-primary btn-lg px-4 fw-semibold shadow-sm" style="background-color: #0d6efd !important; color: #fff !important; border-color: #0d6efd !important;">
             <i class="fas fa-save me-2"></i>{{ __('common.save_changes') }}
         </button>
     </div>

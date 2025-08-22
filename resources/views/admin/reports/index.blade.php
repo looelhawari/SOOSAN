@@ -951,12 +951,12 @@
                                     <div class="stat-label">{{ __('reports.products_sold') }}</div>
                                 </div>
                             </div>
-                            <div class="col-6">
+                            <!-- <div class="col-6">
                                 <div class="stat-item">
                                     <div class="stat-value">${{ number_format($stats['sales']['avg_sale'], 2) }}</div>
                                     <div class="stat-label">{{ __('reports.avg_sale') }}</div>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                     <button class="download-btn sales-btn" style="background:#fff;color:#ed8936;border:1px solid #ed8936" onclick="downloadSalesReportPDF()">
@@ -1608,17 +1608,8 @@ window.downloadSalesReportPDF = function() {
                 console.log('Saving PDF...');
                 const fileName = `soosan-sales-performance-report-${new Date().toISOString().split('T')[0]}.pdf`;
                 doc.save(fileName);
-                console.log('Sales PDF generated successfully');
-
-                // Show success message
-                if (typeof showToast === 'function') {
-                    showToast('Sales PDF report downloaded successfully!');
-                } else {
-                    alert('Sales PDF report downloaded successfully!');
-                }
 
             } catch (error) {
-                console.error('Error generating sales PDF:', error);
                 alert('Error generating PDF: ' + error.message);
             }
         })

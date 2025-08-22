@@ -1275,13 +1275,29 @@
                                         <span class="modern-detail-value">{{ $product->type }}</span>
                                     </div>
                                 @endif
-                                @if ($product->body_weight)
-                                    <div class="modern-detail-item">
-                                        <i class="fas fa-weight-hanging"></i>
-                                        <span class="modern-detail-label">{{ __('products.weight') }}:</span>
-                                        <span class="modern-detail-value">{{ $product->body_weight }}</span>
-                                    </div>
-                                @endif
+                                <!-- Operating Weight - Always shown -->
+                                <div class="modern-detail-item">
+                                    <i class="fas fa-balance-scale"></i>
+                                    <span class="modern-detail-label">{{ __('products.operating_weight') }}:</span>
+                                    <span class="modern-detail-value">
+                                        @php
+                                            $ow = $product->operating_weight;
+                                            if ($ow === null || $ow === '') {
+                                                $op_weight_display = '- kg';
+                                            } elseif (preg_match('/^([\d.,]+)\s*~\s*([\d.,]+)/', $ow, $m)) {
+                                                $min_val = floatval(str_replace(',', '', $m[1]));
+                                                $max_val = floatval(str_replace(',', '', $m[2]));
+                                                $op_weight_display = number_format($min_val * 0.45359237, 0, '.', ',') . ' ~ ' . number_format($max_val * 0.45359237, 0, '.', ',') . ' kg';
+                                            } elseif (is_numeric(str_replace(',', '', $ow))) {
+                                                $numeric_val = floatval(str_replace(',', '', $ow));
+                                                $op_weight_display = number_format($numeric_val * 0.45359237, 0, '.', ',') . ' kg';
+                                            } else {
+                                                $op_weight_display = '- kg';
+                                            }
+                                        @endphp
+                                        {{ $op_weight_display }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
 

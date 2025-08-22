@@ -197,7 +197,6 @@
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-9">
-
                     <!-- Profile Information Section -->
                     <div class="profile-section">
                         <div class="profile-section-header">
