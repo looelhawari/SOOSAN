@@ -1298,7 +1298,7 @@
                             <form method="POST" action="{{ route('admin.products.destroy', $product) }}"
                                 style="display: contents;"
                                 onsubmit="return confirm('{{ __('products.delete_confirmation') }}')">
-                                @csrf
+                                    @csrf
                                 @method('DELETE')
                                 <button type="submit" class="modern-action-btn delete">
                                     <i class="fas fa-trash"></i>

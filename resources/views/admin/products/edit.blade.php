@@ -1298,531 +1298,531 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Form elements
-    const editProductForm = document.getElementById('editProductForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const formProgress = document.getElementById('formProgress');
+    document.addEventListener('DOMContentLoaded', function() {
+        // Form elements
+        const editProductForm = document.getElementById('editProductForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const formProgress = document.getElementById('formProgress');
 
-    // File upload elements
-    const fileInput = document.getElementById('product_image');
-    const fileUpload = document.getElementById('fileUpload');
-    const imagePreview = document.getElementById('imagePreview');
+        // File upload elements
+        const fileInput = document.getElementById('product_image');
+        const fileUpload = document.getElementById('fileUpload');
+        const imagePreview = document.getElementById('imagePreview');
 
-    // Required fields for progress tracking
-    const requiredFields = ['model_name', 'category_id'];
+        // Required fields for progress tracking
+        const requiredFields = ['model_name', 'category_id'];
 
-    // Progress tracking
-    function updateProgress() {
-        const filledFields = requiredFields.filter(field => {
+        // Progress tracking
+        function updateProgress() {
+            const filledFields = requiredFields.filter(field => {
+                const element = document.getElementById(field);
+                return element && element.value.trim() !== '';
+            });
+
+            const progress = (filledFields.length / requiredFields.length) * 100;
+            formProgress.style.width = progress + '%';
+
+            if (progress === 100) {
+                formProgress.style.background = 'var(--success-gradient)';
+            } else {
+                formProgress.style.background = 'var(--primary-gradient)';
+            }
+        }
+
+        function validateField(field) {
             const element = document.getElementById(field);
-            return element && element.value.trim() !== '';
-        });
-
-        const progress = (filledFields.length / requiredFields.length) * 100;
-        formProgress.style.width = progress + '%';
-
-        if (progress === 100) {
-            formProgress.style.background = 'var(--success-gradient)';
-        } else {
-            formProgress.style.background = 'var(--primary-gradient)';
+            if (!element.value.trim()) {
+                element.classList.add('is-invalid');
+                element.classList.add('error-shake');
+                setTimeout(() => element.classList.remove('error-shake'), 500);
+                return false;
+            } else {
+                element.classList.remove('is-invalid');
+                element.classList.add('success-pulse');
+                setTimeout(() => element.classList.remove('success-pulse'), 600);
+                return true;
+            }
         }
-    }
 
-    function validateField(field) {
-        const element = document.getElementById(field);
-        if (!element.value.trim()) {
-            element.classList.add('is-invalid');
-            element.classList.add('error-shake');
-            setTimeout(() => element.classList.remove('error-shake'), 500);
-            return false;
-        } else {
-            element.classList.remove('is-invalid');
-            element.classList.add('success-pulse');
-            setTimeout(() => element.classList.remove('success-pulse'), 600);
-            return true;
+        function validateForm() {
+            let isValid = true;
+            requiredFields.forEach(field => {
+                if (!validateField(field)) {
+                    isValid = false;
+                }
+            });
+            return isValid;
         }
-    }
 
-    function validateForm() {
-        let isValid = true;
+        // Real-time validation and progress updates
         requiredFields.forEach(field => {
-            if (!validateField(field)) {
-                isValid = false;
-            }
-        });
-        return isValid;
-    }
+            const element = document.getElementById(field);
+            if (element) {
+                element.addEventListener('input', function() {
+                    updateProgress();
+                    if (this.classList.contains('is-invalid')) {
+                        validateField(field);
+                    }
+                });
 
-    // Real-time validation and progress updates
-    requiredFields.forEach(field => {
-        const element = document.getElementById(field);
-        if (element) {
-            element.addEventListener('input', function() {
-                updateProgress();
-                if (this.classList.contains('is-invalid')) {
+                element.addEventListener('blur', function() {
                     validateField(field);
+                });
+            }
+        });
+
+        // File upload functionality
+        if (fileInput && fileUpload && imagePreview) {
+        fileUpload.addEventListener('click', function(e) {
+            if (e.target === fileInput) return;
+            fileInput.click();
+        });
+
+            fileInput.addEventListener('change', function() {
+                handleFileSelect(this.files[0]);
+            });
+
+        fileUpload.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            fileUpload.classList.add('dragover');
+        });
+
+        fileUpload.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            fileUpload.classList.remove('dragover');
+        });
+
+        fileUpload.addEventListener('drop', function(e) {
+            e.preventDefault();
+            fileUpload.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFileSelect(files[0]);
                 }
             });
 
-            element.addEventListener('blur', function() {
-                validateField(field);
-            });
-        }
-    });
+            function handleFileSelect(file) {
+                if (!file) return;
 
-    // File upload functionality
-    if (fileInput && fileUpload && imagePreview) {
-    fileUpload.addEventListener('click', function(e) {
-        if (e.target === fileInput) return;
-        fileInput.click();
-    });
+                if (!file.type.startsWith('image/')) {
+                    alert('{{ __('products.invalid_file_type') }}');
+                    return;
+                }
 
-        fileInput.addEventListener('change', function() {
-            handleFileSelect(this.files[0]);
-        });
-
-    fileUpload.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        fileUpload.classList.add('dragover');
-    });
-
-    fileUpload.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        fileUpload.classList.remove('dragover');
-    });
-
-    fileUpload.addEventListener('drop', function(e) {
-        e.preventDefault();
-        fileUpload.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFileSelect(files[0]);
-            }
-        });
-
-        function handleFileSelect(file) {
-            if (!file) return;
-
-            if (!file.type.startsWith('image/')) {
-                alert('{{ __('products.invalid_file_type') }}');
-                return;
-            }
-
-            if (file.size > 10 * 1024 * 1024) {
-                alert('{{ __('products.file_too_large') }}');
-                return;
-    }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-                imagePreview.innerHTML = `
-                    <div class="image-preview-item">
-                <img src="${e.target.result}" alt="Preview">
-                        <button type="button" class="image-remove-btn" onclick="removeImage()">×</button>
-                    </div>
-            `;
-        };
-        reader.readAsDataURL(file);
-        }
-    }
-
-    // Auto-save to localStorage (for form recovery)
-    const formInputs = document.querySelectorAll('input, select, textarea');
-
-    formInputs.forEach(input => {
-        // Load saved data
-        const savedValue = localStorage.getItem(`editProductForm_${input.name}`);
-        if (savedValue && !input.value && input.name !== '_token') {
-            input.value = savedValue;
+                if (file.size > 10 * 1024 * 1024) {
+                    alert('{{ __('products.file_too_large') }}');
+                    return;
         }
 
-        // Save data on change
-        input.addEventListener('change', function() {
-            if (this.name !== '_token') {
-                localStorage.setItem(`editProductForm_${this.name}`, this.value);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                    imagePreview.innerHTML = `
+                        <div class="image-preview-item">
+                    <img src="${e.target.result}" alt="Preview">
+                            <button type="button" class="image-remove-btn" onclick="removeImage()">×</button>
+                        </div>
+                `;
+            };
+            reader.readAsDataURL(file);
             }
-        });
-    });
+        }
 
-    // Clear saved data on successful submission
-    editProductForm.addEventListener('submit', function() {
-        setTimeout(() => {
-            formInputs.forEach(input => {
-                if (input.name !== '_token') {
-                    localStorage.removeItem(`editProductForm_${input.name}`);
+        // Auto-save to localStorage (for form recovery)
+        const formInputs = document.querySelectorAll('input, select, textarea');
+
+        formInputs.forEach(input => {
+            // Load saved data
+            const savedValue = localStorage.getItem(`editProductForm_${input.name}`);
+            if (savedValue && !input.value && input.name !== '_token') {
+                input.value = savedValue;
+            }
+
+            // Save data on change
+            input.addEventListener('change', function() {
+                if (this.name !== '_token') {
+                    localStorage.setItem(`editProductForm_${this.name}`, this.value);
                 }
             });
-        }, 1000);
-    });
+        });
 
-    // SI to Imperial Unit Conversion Functions (Exact factors from show.blade.php)
-    function convertSIToImperial() {
-        // Conversion factors matching exactly those used in show.blade.php
-        const conversions = {
-            // Weight: kg to lb (factor: 1/0.45359237)
-            body_weight: { factor: 2.204622621849, siUnit: 'kg', impUnit: 'lb' },
-            operating_weight: { factor: 2.204622621849, siUnit: 'kg', impUnit: 'lb' },
+        // Clear saved data on successful submission
+        editProductForm.addEventListener('submit', function() {
+            setTimeout(() => {
+                formInputs.forEach(input => {
+                    if (input.name !== '_token') {
+                        localStorage.removeItem(`editProductForm_${input.name}`);
+                    }
+                });
+            }, 1000);
+        });
 
-            // Length: mm to inches (factor: 1/25.4)
-            overall_length: { factor: 0.03937007874, siUnit: 'mm', impUnit: 'in' },
-            overall_width: { factor: 0.03937007874, siUnit: 'mm', impUnit: 'in' },
-            overall_height: { factor: 0.03937007874, siUnit: 'mm', impUnit: 'in' },
-            rod_diameter: { factor: 0.03937007874, siUnit: 'mm', impUnit: 'in' },
+        // SI to Imperial Unit Conversion Functions (Exact factors from show.blade.php)
+        function convertSIToImperial() {
+            // Conversion factors matching exactly those used in show.blade.php
+            const conversions = {
+                // Weight: kg to lb (factor: 1/0.45359237)
+                body_weight: { factor: 2.204622621849, siUnit: 'kg', impUnit: 'lb' },
+                operating_weight: { factor: 2.204622621849, siUnit: 'kg', impUnit: 'lb' },
 
-            // Oil flow: l/min to gal/min (factor: 1/3.785411784)
-            required_oil_flow: { factor: 0.264172052358, siUnit: 'l/min', impUnit: 'gal/min' },
+                // Length: mm to inches (factor: 1/25.4)
+                overall_length: { factor: 0.03937007874, siUnit: 'mm', impUnit: 'in' },
+                overall_width: { factor: 0.03937007874, siUnit: 'mm', impUnit: 'in' },
+                overall_height: { factor: 0.03937007874, siUnit: 'mm', impUnit: 'in' },
+                rod_diameter: { factor: 0.03937007874, siUnit: 'mm', impUnit: 'in' },
 
-            // Pressure: kgf/cm² to psi (factor: 1/0.0703069578296)
-            operating_pressure: { factor: 14.223343307087, siUnit: 'kgf/cm²', impUnit: 'psi' },
+                // Oil flow: l/min to gal/min (factor: 1/3.785411784)
+                required_oil_flow: { factor: 0.264172052358, siUnit: 'l/min', impUnit: 'gal/min' },
 
-            // Applicable carrier: ton to lb (factor: 1/0.00045359237)
-            applicable_carrier: { factor: 2204.622621849, siUnit: 'ton', impUnit: 'lb' }
+                // Pressure: kgf/cm² to psi (factor: 1/0.0703069578296)
+                operating_pressure: { factor: 14.223343307087, siUnit: 'kgf/cm²', impUnit: 'psi' },
 
-            // Note: impact_rate and hose_diameter remain unchanged (BPM and inches respectively)
-        };
+                // Applicable carrier: ton to lb (factor: 1/0.00045359237)
+                applicable_carrier: { factor: 2204.622621849, siUnit: 'ton', impUnit: 'lb' }
 
-        Object.keys(conversions).forEach(fieldName => {
-            const field = document.getElementById(fieldName);
-            if (field && field.value.trim()) {
-                const conversion = conversions[fieldName];
-                const siValue = field.value.trim();
+                // Note: impact_rate and hose_diameter remain unchanged (BPM and inches respectively)
+            };
 
-                // Handle range values (e.g., "20~40", "20-40", or "20 - 40")
-                if (siValue.includes('~') || siValue.includes('-')) {
-                    const separator = siValue.includes('~') ? '~' : '-';
-                    const parts = siValue.split(separator).map(part => part.trim());
+            Object.keys(conversions).forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                if (field && field.value.trim()) {
+                    const conversion = conversions[fieldName];
+                    const siValue = field.value.trim();
 
-                    if (parts.length === 2) {
-                        const min = parseFloat(parts[0]);
-                        const max = parseFloat(parts[1]);
+                    // Handle range values (e.g., "20~40", "20-40", or "20 - 40")
+                    if (siValue.includes('~') || siValue.includes('-')) {
+                        const separator = siValue.includes('~') ? '~' : '-';
+                        const parts = siValue.split(separator).map(part => part.trim());
 
-                        if (!isNaN(min) && !isNaN(max)) {
-                            let minImperial, maxImperial;
+                        if (parts.length === 2) {
+                            const min = parseFloat(parts[0]);
+                            const max = parseFloat(parts[1]);
 
-                            // Special formatting for different units
-                            if (fieldName === 'operating_pressure') {
-                                // Pressure: format as whole numbers with commas for thousands
-                                minImperial = Math.round(min * conversion.factor).toLocaleString();
-                                maxImperial = Math.round(max * conversion.factor).toLocaleString();
-                            } else if (fieldName === 'applicable_carrier') {
-                                // Carrier: format as whole numbers with commas
-                                minImperial = Math.round(min * conversion.factor).toLocaleString();
-                                maxImperial = Math.round(max * conversion.factor).toLocaleString();
-                            } else {
-                                // Other units: 1 decimal place
-                                minImperial = (min * conversion.factor).toFixed(1);
-                                maxImperial = (max * conversion.factor).toFixed(1);
+                            if (!isNaN(min) && !isNaN(max)) {
+                                let minImperial, maxImperial;
+
+                                // Special formatting for different units
+                                if (fieldName === 'operating_pressure') {
+                                    // Pressure: format as whole numbers with commas for thousands
+                                    minImperial = Math.round(min * conversion.factor).toLocaleString();
+                                    maxImperial = Math.round(max * conversion.factor).toLocaleString();
+                                } else if (fieldName === 'applicable_carrier') {
+                                    // Carrier: format as whole numbers with commas
+                                    minImperial = Math.round(min * conversion.factor).toLocaleString();
+                                    maxImperial = Math.round(max * conversion.factor).toLocaleString();
+                                } else {
+                                    // Other units: 1 decimal place
+                                    minImperial = (min * conversion.factor).toFixed(1);
+                                    maxImperial = (max * conversion.factor).toFixed(1);
+                                }
+
+                                field.value = `${minImperial} ${separator} ${maxImperial}`;
                             }
-
-                            field.value = `${minImperial} ${separator} ${maxImperial}`;
                         }
                     }
-                }
-                // Handle single numeric values
-                else if (!isNaN(parseFloat(siValue))) {
-                    const numericValue = parseFloat(siValue);
-                    let imperialValue;
+                    // Handle single numeric values
+                    else if (!isNaN(parseFloat(siValue))) {
+                        const numericValue = parseFloat(siValue);
+                        let imperialValue;
 
-                    // Special formatting for different units
-                    if (fieldName === 'operating_pressure') {
-                        // Pressure: format as whole numbers with commas
-                        imperialValue = Math.round(numericValue * conversion.factor).toLocaleString();
+                        // Special formatting for different units
+                        if (fieldName === 'operating_pressure') {
+                            // Pressure: format as whole numbers with commas
+                            imperialValue = Math.round(numericValue * conversion.factor).toLocaleString();
+                        } else if (fieldName === 'applicable_carrier') {
+                            // Carrier: format as whole numbers with commas
+                            imperialValue = Math.round(numericValue * conversion.factor).toLocaleString();
+                        } else {
+                            // Other units: 1 decimal place
+                            imperialValue = (numericValue * conversion.factor).toFixed(1);
+                        }
+
+                        field.value = imperialValue;
+                    }
+                    // Non-numeric values remain unchanged
+                }
+            });
+        }
+
+        // Function to convert current Imperial values back to SI for editing
+        function convertImperialToSIForEditing() {
+            // Reverse conversion factors for editing (Imperial to SI) - exact factors from show.blade.php
+            const reverseConversions = {
+                // Weight: lb to kg
+                body_weight: { factor: 0.45359237, impUnit: 'lb', siUnit: 'kg' },
+                operating_weight: { factor: 0.45359237, impUnit: 'lb', siUnit: 'kg' },
+
+                // Length: inches to mm
+                overall_length: { factor: 25.4, impUnit: 'in', siUnit: 'mm' },
+                overall_width: { factor: 25.4, impUnit: 'in', siUnit: 'mm' },
+                overall_height: { factor: 25.4, impUnit: 'in', siUnit: 'mm' },
+                rod_diameter: { factor: 25.4, impUnit: 'in', siUnit: 'mm' },
+
+                // Oil flow: gal/min to l/min
+                required_oil_flow: { factor: 3.785411784, impUnit: 'gal/min', siUnit: 'l/min' },
+
+                // Pressure: psi to kgf/cm²
+                operating_pressure: { factor: 0.0703069578296, impUnit: 'psi', siUnit: 'kgf/cm²' },
+
+                // Applicable carrier: lb to ton
+                applicable_carrier: { factor: 0.00045359237, impUnit: 'lb', siUnit: 'ton' }
+            };
+
+            Object.keys(reverseConversions).forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                if (field && field.value.trim()) {
+                    const conversion = reverseConversions[fieldName];
+                    const imperialValue = field.value.trim();
+
+                    // Handle range values (e.g., "20~40", "20-40", or "1,280 ~ 1,707")
+                    if (imperialValue.includes('~') || imperialValue.includes('-')) {
+                        const separator = imperialValue.includes('~') ? '~' : '-';
+                        const parts = imperialValue.split(separator).map(part => part.trim());
+
+                        if (parts.length === 2) {
+                            // Remove commas from numbers before parsing
+                            const min = parseFloat(parts[0].replace(/,/g, ''));
+                            const max = parseFloat(parts[1].replace(/,/g, ''));
+
+                            if (!isNaN(min) && !isNaN(max)) {
+                                let minSI, maxSI;
+
+                                // Special formatting for different units
+                                if (fieldName === 'operating_pressure' || fieldName === 'applicable_carrier') {
+                                    // Pressure and carrier: 1 decimal place
+                                    minSI = (min * conversion.factor).toFixed(1);
+                                    maxSI = (max * conversion.factor).toFixed(1);
+                                } else {
+                                    // Other units: 1 decimal place
+                                    minSI = (min * conversion.factor).toFixed(1);
+                                    maxSI = (max * conversion.factor).toFixed(1);
+                                }
+
+                                field.value = `${minSI} ${separator} ${maxSI}`;
+                            }
+                        }
+                    }
+                    // Handle single numeric values
+                    else if (!isNaN(parseFloat(imperialValue.replace(/,/g, '')))) {
+                        const numericValue = parseFloat(imperialValue.replace(/,/g, ''));
+                        const siValue = (numericValue * conversion.factor).toFixed(1);
+                        field.value = siValue;
+                    }
+                    // Non-numeric values remain unchanged
+                }
+            });
+        }
+
+        // Add unit labels and conversion info to help users
+        function addUnitLabels() {
+            // const unitLabels = {
+            //     body_weight: 'Enter in kg (will be converted to lb)',
+            //     operating_weight: 'Enter in kg (will be converted to lb)',
+            //     overall_length: 'Enter in mm (will be converted to inches)',
+            //     overall_width: 'Enter in mm (will be converted to inches)',
+            //     overall_height: 'Enter in mm (will be converted to inches)',
+            //     rod_diameter: 'Enter in mm (will be converted to inches)',
+            //     required_oil_flow: 'Enter in l/min (will be converted to gal/min)',
+            //     operating_pressure: 'Enter in kgf/cm² (will be converted to psi)',
+            //     applicable_carrier: 'Enter in ton (will be converted to lb)',
+            //     impact_rate: 'Enter in BPM (no conversion needed)',
+            //     impact_rate_soft_rock: 'Enter in BPM (no conversion needed)',
+            //     hose_diameter: 'Enter in inches (no conversion needed)'
+            // };
+
+            Object.keys(unitLabels).forEach(fieldName => {
+                const field = document.getElementById(fieldName);
+                if (field) {
+                    // Update placeholder to show SI unit input expected
+                    const currentPlaceholder = field.getAttribute('placeholder');
+                    field.setAttribute('data-original-placeholder', currentPlaceholder);
+
+                    // Add unit info to placeholder based on exact format from screenshots
+                    if (fieldName === 'body_weight') {
+                        field.setAttribute('placeholder', 'e.g., 54 kg');
+                    } else if (fieldName === 'operating_weight') {
+                        field.setAttribute('placeholder', 'e.g., 104 kg');
+                    } else if (fieldName === 'overall_length') {
+                        field.setAttribute('placeholder', 'e.g., 1135 mm');
+                    } else if (fieldName === 'overall_width') {
+                        field.setAttribute('placeholder', 'e.g., 264 mm');
+                    } else if (fieldName === 'overall_height') {
+                        field.setAttribute('placeholder', 'e.g., 296 mm');
+                    } else if (fieldName === 'rod_diameter') {
+                        field.setAttribute('placeholder', 'e.g., 40 mm');
+                    } else if (fieldName === 'required_oil_flow') {
+                        field.setAttribute('placeholder', 'e.g., 15 - 35 l/min');
+                    } else if (fieldName === 'operating_pressure') {
+                        field.setAttribute('placeholder', 'e.g., 90 ~ 120 kgf/cm²');
                     } else if (fieldName === 'applicable_carrier') {
-                        // Carrier: format as whole numbers with commas
-                        imperialValue = Math.round(numericValue * conversion.factor).toLocaleString();
-                    } else {
-                        // Other units: 1 decimal place
-                        imperialValue = (numericValue * conversion.factor).toFixed(1);
+                        field.setAttribute('placeholder', 'e.g., 0.8 ~ 2.5 ton');
+                    } else if (fieldName === 'impact_rate') {
+                        field.setAttribute('placeholder', 'e.g., 800 ~ 1530 BPM');
+                    } else if (fieldName === 'impact_rate_soft_rock') {
+                        field.setAttribute('placeholder', 'e.g., 800 ~ 1200 BPM');
+                    } else if (fieldName === 'hose_diameter') {
+                        field.setAttribute('placeholder', 'e.g., 3/8, 1/2 in');
                     }
 
-                    field.value = imperialValue;
+                    // Add title attribute for additional guidance
+                    field.setAttribute('title', unitLabels[fieldName]);
+
+                    // Add a small helper text below the field
+                    const helpText = document.createElement('small');
+                    helpText.className = 'form-text text-muted mt-1';
+                    helpText.textContent = unitLabels[fieldName];
+                    helpText.style.fontSize = '0.75rem';
+                    helpText.style.fontStyle = 'italic';
+
+                    // Insert after the field
+                    field.parentNode.insertBefore(helpText, field.nextSibling);
                 }
-                // Non-numeric values remain unchanged
-            }
+            });
+        }
+
+
+
+        // Enhanced input interactions
+        document.querySelectorAll('.modern-input, .modern-select, .modern-textarea').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.closest('.modern-form-group').style.transform = 'translateY(-1px)';
+                this.style.borderColor = '#667eea';
+            });
+
+            input.addEventListener('blur', function() {
+                this.closest('.modern-form-group').style.transform = 'translateY(0)';
+                if (!this.classList.contains('is-invalid')) {
+                    this.style.borderColor = '#e9ecef';
+                }
+            });
         });
-    }
 
-    // Function to convert current Imperial values back to SI for editing
-    function convertImperialToSIForEditing() {
-        // Reverse conversion factors for editing (Imperial to SI) - exact factors from show.blade.php
-        const reverseConversions = {
-            // Weight: lb to kg
-            body_weight: { factor: 0.45359237, impUnit: 'lb', siUnit: 'kg' },
-            operating_weight: { factor: 0.45359237, impUnit: 'lb', siUnit: 'kg' },
+        // Initialize progress
+        updateProgress();
 
-            // Length: inches to mm
-            overall_length: { factor: 25.4, impUnit: 'in', siUnit: 'mm' },
-            overall_width: { factor: 25.4, impUnit: 'in', siUnit: 'mm' },
-            overall_height: { factor: 25.4, impUnit: 'in', siUnit: 'mm' },
-            rod_diameter: { factor: 25.4, impUnit: 'in', siUnit: 'mm' },
+        // Animate form elements on load
+        const formGroups = document.querySelectorAll('.modern-form-group');
+        formGroups.forEach((group, index) => {
+            group.style.opacity = '0';
+            group.style.transform = 'translateY(20px)';
 
-            // Oil flow: gal/min to l/min
-            required_oil_flow: { factor: 3.785411784, impUnit: 'gal/min', siUnit: 'l/min' },
+            setTimeout(() => {
+                group.style.transition = 'all 0.6s ease';
+                group.style.opacity = '1';
+                group.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
 
-            // Pressure: psi to kgf/cm²
-            operating_pressure: { factor: 0.0703069578296, impUnit: 'psi', siUnit: 'kgf/cm²' },
+        // Touch device optimizations
+        if ('ontouchstart' in window) {
+            document.querySelectorAll('.modern-btn').forEach(btn => {
+                btn.addEventListener('touchstart', function() {
+                    this.style.transform = 'scale(0.95)';
+                });
 
-            // Applicable carrier: lb to ton
-            applicable_carrier: { factor: 0.00045359237, impUnit: 'lb', siUnit: 'ton' }
+                btn.addEventListener('touchend', function() {
+                    setTimeout(() => {
+                        this.style.transform = '';
+                    }, 100);
+                });
+            });
+        }
+
+        // Form submission handling
+        editProductForm.addEventListener('submit', function(e) {
+            if (!validateForm()) {
+                    e.preventDefault();
+
+                // Scroll to first invalid field
+                const firstInvalid = document.querySelector('.is-invalid');
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalid.focus();
+                }
+
+                // Show error notification
+                showNotification('{{ __('products.please_correct_errors') }}', 'error');
+                    return;
+                }
+
+            // Perform SI to Imperial conversion before submission
+            convertSIToImperial();
+
+            // Show loading state
+                submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i><span class="mobile-text-hide">{{ __('products.updating') }}</span><span class="d-md-none">{{ __('products.updating') }}</span>';
+            editProductForm.classList.add('loading');
+
+            // Show conversion notification
+            showNotification('Converting SI units to Imperial and updating...', 'info');
+        });
+
+        // Convert existing Imperial values to SI for editing when page loads
+        convertImperialToSIForEditing();
+
+        // Initialize unit labels
+        addUnitLabels();
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 300px;
+                border-radius: 0.5rem;
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 5000);
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 's') {
+                    e.preventDefault();
+                    editProductForm.dispatchEvent(new Event('submit'));
+                    }
+                }
+            });
+
+        // Intersection Observer for scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
         };
 
-        Object.keys(reverseConversions).forEach(fieldName => {
-            const field = document.getElementById(fieldName);
-            if (field && field.value.trim()) {
-                const conversion = reverseConversions[fieldName];
-                const imperialValue = field.value.trim();
-
-                // Handle range values (e.g., "20~40", "20-40", or "1,280 ~ 1,707")
-                if (imperialValue.includes('~') || imperialValue.includes('-')) {
-                    const separator = imperialValue.includes('~') ? '~' : '-';
-                    const parts = imperialValue.split(separator).map(part => part.trim());
-
-                    if (parts.length === 2) {
-                        // Remove commas from numbers before parsing
-                        const min = parseFloat(parts[0].replace(/,/g, ''));
-                        const max = parseFloat(parts[1].replace(/,/g, ''));
-
-                        if (!isNaN(min) && !isNaN(max)) {
-                            let minSI, maxSI;
-
-                            // Special formatting for different units
-                            if (fieldName === 'operating_pressure' || fieldName === 'applicable_carrier') {
-                                // Pressure and carrier: 1 decimal place
-                                minSI = (min * conversion.factor).toFixed(1);
-                                maxSI = (max * conversion.factor).toFixed(1);
-                            } else {
-                                // Other units: 1 decimal place
-                                minSI = (min * conversion.factor).toFixed(1);
-                                maxSI = (max * conversion.factor).toFixed(1);
-                            }
-
-                            field.value = `${minSI} ${separator} ${maxSI}`;
-                        }
-                    }
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
                 }
-                // Handle single numeric values
-                else if (!isNaN(parseFloat(imperialValue.replace(/,/g, '')))) {
-                    const numericValue = parseFloat(imperialValue.replace(/,/g, ''));
-                    const siValue = (numericValue * conversion.factor).toFixed(1);
-                    field.value = siValue;
-                }
-                // Non-numeric values remain unchanged
-            }
-        });
-    }
-
-    // Add unit labels and conversion info to help users
-    function addUnitLabels() {
-        // const unitLabels = {
-        //     body_weight: 'Enter in kg (will be converted to lb)',
-        //     operating_weight: 'Enter in kg (will be converted to lb)',
-        //     overall_length: 'Enter in mm (will be converted to inches)',
-        //     overall_width: 'Enter in mm (will be converted to inches)',
-        //     overall_height: 'Enter in mm (will be converted to inches)',
-        //     rod_diameter: 'Enter in mm (will be converted to inches)',
-        //     required_oil_flow: 'Enter in l/min (will be converted to gal/min)',
-        //     operating_pressure: 'Enter in kgf/cm² (will be converted to psi)',
-        //     applicable_carrier: 'Enter in ton (will be converted to lb)',
-        //     impact_rate: 'Enter in BPM (no conversion needed)',
-        //     impact_rate_soft_rock: 'Enter in BPM (no conversion needed)',
-        //     hose_diameter: 'Enter in inches (no conversion needed)'
-        // };
-
-        Object.keys(unitLabels).forEach(fieldName => {
-            const field = document.getElementById(fieldName);
-            if (field) {
-                // Update placeholder to show SI unit input expected
-                const currentPlaceholder = field.getAttribute('placeholder');
-                field.setAttribute('data-original-placeholder', currentPlaceholder);
-
-                // Add unit info to placeholder based on exact format from screenshots
-                if (fieldName === 'body_weight') {
-                    field.setAttribute('placeholder', 'e.g., 54 kg');
-                } else if (fieldName === 'operating_weight') {
-                    field.setAttribute('placeholder', 'e.g., 104 kg');
-                } else if (fieldName === 'overall_length') {
-                    field.setAttribute('placeholder', 'e.g., 1135 mm');
-                } else if (fieldName === 'overall_width') {
-                    field.setAttribute('placeholder', 'e.g., 264 mm');
-                } else if (fieldName === 'overall_height') {
-                    field.setAttribute('placeholder', 'e.g., 296 mm');
-                } else if (fieldName === 'rod_diameter') {
-                    field.setAttribute('placeholder', 'e.g., 40 mm');
-                } else if (fieldName === 'required_oil_flow') {
-                    field.setAttribute('placeholder', 'e.g., 15 - 35 l/min');
-                } else if (fieldName === 'operating_pressure') {
-                    field.setAttribute('placeholder', 'e.g., 90 ~ 120 kgf/cm²');
-                } else if (fieldName === 'applicable_carrier') {
-                    field.setAttribute('placeholder', 'e.g., 0.8 ~ 2.5 ton');
-                } else if (fieldName === 'impact_rate') {
-                    field.setAttribute('placeholder', 'e.g., 800 ~ 1530 BPM');
-                } else if (fieldName === 'impact_rate_soft_rock') {
-                    field.setAttribute('placeholder', 'e.g., 800 ~ 1200 BPM');
-                } else if (fieldName === 'hose_diameter') {
-                    field.setAttribute('placeholder', 'e.g., 3/8, 1/2 in');
-                }
-
-                // Add title attribute for additional guidance
-                field.setAttribute('title', unitLabels[fieldName]);
-
-                // Add a small helper text below the field
-                const helpText = document.createElement('small');
-                helpText.className = 'form-text text-muted mt-1';
-                helpText.textContent = unitLabels[fieldName];
-                helpText.style.fontSize = '0.75rem';
-                helpText.style.fontStyle = 'italic';
-
-                // Insert after the field
-                field.parentNode.insertBefore(helpText, field.nextSibling);
-            }
-        });
-    }
-
-
-
-    // Enhanced input interactions
-    document.querySelectorAll('.modern-input, .modern-select, .modern-textarea').forEach(input => {
-        input.addEventListener('focus', function() {
-            this.closest('.modern-form-group').style.transform = 'translateY(-1px)';
-            this.style.borderColor = '#667eea';
-        });
-
-        input.addEventListener('blur', function() {
-            this.closest('.modern-form-group').style.transform = 'translateY(0)';
-            if (!this.classList.contains('is-invalid')) {
-                this.style.borderColor = '#e9ecef';
-            }
-        });
-    });
-
-    // Initialize progress
-    updateProgress();
-
-    // Animate form elements on load
-    const formGroups = document.querySelectorAll('.modern-form-group');
-    formGroups.forEach((group, index) => {
-        group.style.opacity = '0';
-        group.style.transform = 'translateY(20px)';
-
-        setTimeout(() => {
-            group.style.transition = 'all 0.6s ease';
-            group.style.opacity = '1';
-            group.style.transform = 'translateY(0)';
-        }, index * 50);
-    });
-
-    // Touch device optimizations
-    if ('ontouchstart' in window) {
-        document.querySelectorAll('.modern-btn').forEach(btn => {
-            btn.addEventListener('touchstart', function() {
-                this.style.transform = 'scale(0.95)';
             });
+        }, observerOptions);
 
-            btn.addEventListener('touchend', function() {
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 100);
+        // Observe form sections for scroll animations
+        document.querySelectorAll('.animate-stagger').forEach(element => {
+            observer.observe(element);
             });
         });
+
+    // Function to remove image preview
+    function removeImage() {
+        document.getElementById('product_image').value = '';
+        document.getElementById('imagePreview').innerHTML = '';
     }
-
-    // Form submission handling
-    editProductForm.addEventListener('submit', function(e) {
-        if (!validateForm()) {
-                e.preventDefault();
-
-            // Scroll to first invalid field
-            const firstInvalid = document.querySelector('.is-invalid');
-            if (firstInvalid) {
-                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                firstInvalid.focus();
-            }
-
-            // Show error notification
-            showNotification('{{ __('products.please_correct_errors') }}', 'error');
-                return;
-            }
-
-        // Perform SI to Imperial conversion before submission
-        convertSIToImperial();
-
-        // Show loading state
-            submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i><span class="mobile-text-hide">{{ __('products.updating') }}</span><span class="d-md-none">{{ __('products.updating') }}</span>';
-        editProductForm.classList.add('loading');
-
-        // Show conversion notification
-        showNotification('Converting SI units to Imperial and updating...', 'info');
-    });
-
-    // Convert existing Imperial values to SI for editing when page loads
-    convertImperialToSIForEditing();
-
-    // Initialize unit labels
-    addUnitLabels();
-
-    // Notification system
-    function showNotification(message, type = 'info') {
-        const notification = document.createElement('div');
-        notification.className = `alert alert-${type === 'error' ? 'danger' : type} alert-dismissible fade show`;
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            min-width: 300px;
-            border-radius: 0.5rem;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-        `;
-        notification.innerHTML = `
-            <i class="fas fa-${type === 'error' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
-            ${message}
-            <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
-        `;
-
-        document.body.appendChild(notification);
-
-        setTimeout(() => {
-            notification.remove();
-        }, 5000);
-    }
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        if (e.ctrlKey || e.metaKey) {
-            if (e.key === 's') {
-                e.preventDefault();
-                editProductForm.dispatchEvent(new Event('submit'));
-                }
-            }
-        });
-
-    // Intersection Observer for scroll animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-            }
-        });
-    }, observerOptions);
-
-    // Observe form sections for scroll animations
-    document.querySelectorAll('.animate-stagger').forEach(element => {
-        observer.observe(element);
-        });
-    });
-
-// Function to remove image preview
-function removeImage() {
-    document.getElementById('product_image').value = '';
-    document.getElementById('imagePreview').innerHTML = '';
-}
 </script>
 @endsection

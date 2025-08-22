@@ -449,6 +449,8 @@ return [
     'fill_product_details' => 'املأ تفاصيل المنتج أدناه',
     'add_new_product_to_catalog' => 'إضافة منتج جديد لمعدات الحفر إلى الكتالوج',
     'update_product_information' => 'تحديث معلومات المنتج والإعدادات',
+    'product_details_and_specifications' => 'تفاصيل ومواصفات المنتج',
+    'view_public' => 'عرض المنتج ',
 
     // Mobile responsive text
     'mobile_back' => 'رجوع',

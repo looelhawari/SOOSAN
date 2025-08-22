@@ -108,6 +108,8 @@ return [
     'product_name' => 'Product Name',
     'product_title' => 'Product Title',
     'product_description' => 'Product Description',
+    'product_details_and_specifications' => 'Product Details & Specifications',
+    'view_public' => 'View Product',
     'product_details' => 'Product Details',
     'product_specifications' => 'Product Specifications',
     'product_features' => 'Product Features',

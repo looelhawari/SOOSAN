@@ -717,43 +717,100 @@ $unit = 'si';
                         <table class="table specs-table mb-0">
                             <tbody>
                                 @php
-                                    function display_range_unit_pair_lbft_default($val, $unit_si, $unit_imp, $conv_si = null) {
-                                        if (is_string($val) && strpos($val, '~') !== false) {
-                                            [$min, $max] = array_map('trim', explode('~', $val));
-                                            if (is_numeric($min) && is_numeric($max)) {
-                                                $imp = $min . ' ~ ' . $max . ' ' . $unit_imp;
-                                                $si = $conv_si ? $conv_si($min) . ' ~ ' . $conv_si($max) . ' ' . $unit_si : $min . ' ~ ' . $max . ' ' . $unit_si;
-                                                return ['si' => $si, 'imp' => $imp];
-                                            }
-                                        } elseif (is_numeric($val)) {
-                                            $imp = $val . ' ' . $unit_imp;
-                                            $si = $conv_si ? $conv_si($val) . ' ' . $unit_si : $val . ' ' . $unit_si;
-                                            return ['si' => $si, 'imp' => $imp];
-                                        }
-                                        return ['si' => '- ' . $unit_si, 'imp' => '- ' . $unit_imp];
+                                    function nf1($v) {
+                                        return is_numeric($v) ? number_format($v, 1, '.', ',') : $v;
                                     }
+
+                                    function nf0($v) {
+                                        return is_numeric($v) ? number_format($v, 0, '.', ',') : $v;
+                                    }
+
+                                    function spec_row($val, $factor, $si_unit, $imp_unit, $si_decimals = 0) {
+                                        if ($val === null || $val === '' || $val === '-') {
+                                            return ['si' => '- ' . $si_unit, 'imp' => '- ' . $imp_unit];
+                                        }
+                                        if (preg_match('/^([\d.]+)~([\d.]+)/', $val, $m)) {
+                                            $si_min = number_format($m[1] * $factor, $si_decimals, '.', ',');
+                                            $si_max = number_format($m[2] * $factor, $si_decimals, '.', ',');
+                                            $imp_min = number_format($m[1], 0, '.', ',');
+                                            $imp_max = number_format($m[2], 0, '.', ',');
+                                            return ['si' => "$si_min ~ $si_max $si_unit", 'imp' => "$imp_min ~ $imp_max $imp_unit"];
+                                        }
+                                        if (preg_match('/^(\d+)\/(\d+)$/', trim($val), $m)) {
+                                            $dec = $m[1] / $m[2];
+                                            $si_val = number_format($dec * $factor, $si_decimals, '.', ',');
+                                            $imp_val = number_format($dec, 1, '.', ',');
+                                            return ['si' => "$si_val $si_unit", 'imp' => "$imp_val $imp_unit"];
+                                        }
+                                        if (is_numeric($val)) {
+                                            $si_val = number_format($val * $factor, $si_decimals, '.', ',');
+                                            $imp_val = number_format($val, 0, '.', ',');
+                                            return ['si' => "$si_val $si_unit", 'imp' => "$imp_val $imp_unit"];
+                                        }
+                                        return ['si' => $val . " $si_unit", 'imp' => $val . " $imp_unit"];
+                                    }
+
+                                    function bpm_row($val) {
+                                        $dash = '- BPM';
+                                        if ($val === null || $val === '' || $val === '-') return ['si' => $dash, 'imp' => $dash];
+                                        if (preg_match('/^([\d.]+)~([\d.]+)/', $val, $m)) {
+                                            $formatted = nf0($m[1]) . ' ~ ' . nf0($m[2]) . ' BPM';
+                                            return ['si' => $formatted, 'imp' => $formatted];
+                                        }
+                                        if (is_numeric($val)) {
+                                            $formatted = nf0($val) . ' BPM';
+                                            return ['si' => $formatted, 'imp' => $formatted];
+                                        }
+                                        $formatted = $val . ' BPM';
+                                        return ['si' => $formatted, 'imp' => $formatted];
+                                    }
+
+                                    function hose_row($val) {
+                                        if ($val === null || $val === '' || $val === '-') return ['si' => '- mm', 'imp' => '- in'];
+                                        if (is_numeric($val)) {
+                                            $si_val = number_format($val * 25.4, 0, '.', ',');
+                                            return ['si' => "$si_val mm", 'imp' => "$val in"];
+                                        }
+                                        return ['si' => "$val mm", 'imp' => "$val in"];
+                                    }
+
+                                    function op_row($val) {
+                                        $si_unit = 'kgf/cm²';
+                                        $imp_unit = 'psi';
+                                        if ($val === null || $val === '' || $val === '-') return ['si' => '- ' . $si_unit, 'imp' => '- ' . $imp_unit];
+                                        if (preg_match('/^([\d.,]+)~([\d.,]+)/', $val, $m)) {
+                                            $si_min = nf0(floatval(str_replace([','], [''], $m[1])) * 0.070307);
+                                            $si_max = nf0(floatval(str_replace([','], [''], $m[2])) * 0.070307);
+                                            $imp_min = nf0(floatval(str_replace([','], [''], $m[1])));
+                                            $imp_max = nf0(floatval(str_replace([','], [''], $m[2])));
+                                            return ['si' => "$si_min ~ $si_max $si_unit", 'imp' => "$imp_min ~ $imp_max $imp_unit"];
+                                        }
+                                        if (is_numeric(str_replace([','], [''], $val))) {
+                                            $si = nf0(floatval(str_replace([','], [''], $val)) * 0.070307);
+                                            $imp = nf0(floatval(str_replace([','], [''], $val)));
+                                            return ['si' => "$si $si_unit", 'imp' => "$imp $imp_unit"];
+                                        }
+                                        return ['si' => $val . ' ' . $si_unit, 'imp' => $val . ' ' . $imp_unit];
+                                    }
+
                                     $mode = $unit === 'si' ? 'si' : 'imp';
                                     $product = $soldProduct->product;
                                     $specs = [
                                         ['label' => __('common.model_name'), 'icon' => 'fa-barcode', 'value' => ['si' => $product->model_name, 'imp' => $product->model_name]],
                                         ['label' => __('common.line'), 'icon' => 'fa-layer-group', 'value' => ['si' => $product->line, 'imp' => $product->line]],
                                         ['label' => __('common.type'), 'icon' => 'fa-cube', 'value' => ['si' => $product->type, 'imp' => $product->type]],
-                                        ['label' => __('common.body_weight'), 'icon' => 'fa-weight-hanging', 'value' => display_range_unit_pair_lbft_default($product->body_weight, 'kg', __('common.unit_lb'), fn($v) => number_format($v * 0.453592, 1))],
-                                        ['label' => __('common.operating_weight'), 'icon' => 'fa-balance-scale', 'value' => display_range_unit_pair_lbft_default($product->operating_weight, 'kg', __('common.unit_lb'), fn($v) => number_format($v * 0.453592, 1))],
-                                        ['label' => __('common.overall_length'), 'icon' => 'fa-ruler-horizontal', 'value' => display_range_unit_pair_lbft_default($product->overall_length, 'mm', __('common.unit_in'), fn($v) => number_format($v * 25.4, 1))],
-                                        ['label' => __('common.overall_width'), 'icon' => 'fa-ruler-combined', 'value' => display_range_unit_pair_lbft_default($product->overall_width, 'mm', __('common.unit_in'), fn($v) => number_format($v * 25.4, 1))],
-                                        ['label' => __('common.overall_height'), 'icon' => 'fa-ruler-vertical', 'value' => display_range_unit_pair_lbft_default($product->overall_height, 'mm', __('common.unit_in'), fn($v) => number_format($v * 25.4, 1))],
-                                        ['label' => __('common.required_oil_flow'), 'icon' => 'fa-tint', 'value' => display_range_unit_pair_lbft_default($product->required_oil_flow, 'l/min', __('common.unit_gal_min'), fn($v) => number_format($v * 3.78541, 1))],
-                                        ['label' => __('common.operating_pressure'), 'icon' => 'fa-tachometer-alt', 'value' => display_range_unit_pair_lbft_default($product->operating_pressure, 'kgf/cm²', __('common.unit_psi'), fn($v) => number_format($v * 0.070307, 1))],
-                                        ['label' => __('common.impact_rate'), 'icon' => 'fa-bolt', 'value' => $product->impact_rate ? display_range_unit_pair_lbft_default($product->impact_rate, __('common.unit_bpm'), __('common.unit_bpm')) : ['si' => '- ' . __('common.unit_bpm'), 'imp' => '- ' . __('common.unit_bpm')]],
-                                        ['label' => __('common.impact_rate_soft_rock'), 'icon' => 'fa-bolt', 'value' => $product->impact_rate_soft_rock ? display_range_unit_pair_lbft_default($product->impact_rate_soft_rock, __('common.unit_bpm'), __('common.unit_bpm')) : ['si' => '- ' . __('common.unit_bpm'), 'imp' => '- ' . __('common.unit_bpm')]],
-                                        ['label' => __('common.hose_diameter'), 'icon' => 'fa-grip-lines', 'value' => $product->hose_diameter ? (
-                                            is_numeric($product->hose_diameter)
-                                                ? display_range_unit_pair_lbft_default($product->hose_diameter, 'mm', __('common.unit_in'), fn($v) => number_format($v * 25.4, 2))
-                                                : ['si' => $product->hose_diameter . ' ' . __('common.unit_in'), 'imp' => $product->hose_diameter . ' ' . __('common.unit_in')]
-                                        ) : ['si' => '- mm', 'imp' => '- ' . __('common.unit_in')]],
-                                        ['label' => __('common.rod_diameter'), 'icon' => 'fa-grip-lines-vertical', 'value' => $product->rod_diameter ? display_range_unit_pair_lbft_default($product->rod_diameter, 'mm', __('common.unit_in'), fn($v) => number_format($v * 25.4, 1)) : ['si' => '- mm', 'imp' => '- ' . __('common.unit_in')]],
-                                        ['label' => __('common.applicable_carrier'), 'icon' => 'fa-truck', 'value' => display_range_unit_pair_lbft_default($product->applicable_carrier, 'ton', __('common.unit_lb'), fn($v) => number_format($v * 0.000453592, 1))],
+                                        ['label' => __('common.body_weight'), 'icon' => 'fa-weight-hanging', 'value' => spec_row($product->body_weight, 0.45359237, 'kg', __('common.unit_lb'), 0)],
+                                        ['label' => __('common.operating_weight'), 'icon' => 'fa-balance-scale', 'value' => spec_row($product->operating_weight, 0.45359237, 'kg', __('common.unit_lb'), 0)],
+                                        ['label' => __('common.overall_length'), 'icon' => 'fa-ruler-horizontal', 'value' => spec_row($product->overall_length, 25.4, 'mm', __('common.unit_in'), 0)],
+                                        ['label' => __('common.overall_width'), 'icon' => 'fa-ruler-combined', 'value' => spec_row($product->overall_width, 25.4, 'mm', __('common.unit_in'), 0)],
+                                        ['label' => __('common.overall_height'), 'icon' => 'fa-ruler-vertical', 'value' => spec_row($product->overall_height, 25.4, 'mm', __('common.unit_in'), 0)],
+                                        ['label' => __('common.required_oil_flow'), 'icon' => 'fa-tint', 'value' => spec_row($product->required_oil_flow, 3.785411784, 'l/min', __('common.unit_gal_min'), 0)],
+                                        ['label' => __('common.operating_pressure'), 'icon' => 'fa-tachometer-alt', 'value' => op_row($product->operating_pressure)],
+                                        ['label' => __('common.impact_rate'), 'icon' => 'fa-bolt', 'value' => bpm_row($product->impact_rate)],
+                                        ['label' => __('common.impact_rate_soft_rock'), 'icon' => 'fa-bolt', 'value' => bpm_row($product->impact_rate_soft_rock)],
+                                        ['label' => __('common.hose_diameter'), 'icon' => 'fa-grip-lines', 'value' => hose_row($product->hose_diameter)],
+                                        ['label' => __('common.rod_diameter'), 'icon' => 'fa-grip-lines-vertical', 'value' => spec_row($product->rod_diameter, 25.4, 'mm', __('common.unit_in'), 0)],
+                                        ['label' => __('common.applicable_carrier'), 'icon' => 'fa-truck', 'value' => spec_row($product->applicable_carrier, 0.00045359237, 'ton', __('common.unit_lb'), 1)],
                                     ];
                                 @endphp
                                 @foreach($specs as $spec)
