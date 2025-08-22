@@ -5,19 +5,19 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>SOOSAN-EGYPT</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-        
+
         <!-- Global Styles -->
         <link href="{{ asset('css/global-styles.css') }}" rel="stylesheet">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
-        
+
         <style>
             :root {
                 --primary-color: #2563eb;
@@ -31,7 +31,7 @@
                 --transition-duration: 0.4s;
                 --border-radius: 12px;
             }
-            
+
             body {
                 font-family: 'Inter', sans-serif;
                 background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
@@ -39,7 +39,7 @@
                 position: relative;
                 overflow-x: hidden;
             }
-            
+
             body::before {
                 content: '';
                 position: absolute;
@@ -50,7 +50,7 @@
                 background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="auth-pattern" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23auth-pattern)"/></svg>');
                 opacity: 0.5;
             }
-            
+
             .auth-container {
                 min-height: 100vh;
                 display: flex;
@@ -61,23 +61,23 @@
                 position: relative;
                 z-index: 2;
             }
-            
+
             .auth-logo {
                 margin-bottom: 2rem;
                 animation: fadeInDown 0.8s ease-out;
             }
-            
+
             .auth-logo img {
                 height: 60px;
                 filter: brightness(0) invert(1);
                 transition: all 0.3s ease;
             }
-            
+
             .auth-logo:hover img {
                 transform: scale(1.05);
                 filter: brightness(0) invert(1) drop-shadow(0 4px 8px rgba(255,255,255,0.3));
             }
-            
+
             .auth-card {
                 width: 100%;
                 max-width: 450px;
@@ -91,7 +91,7 @@
                 overflow: hidden;
                 animation: slideUp 0.8s ease-out;
             }
-            
+
             .auth-card::before {
                 content: '';
                 position: absolute;
@@ -101,7 +101,7 @@
                 height: 4px;
                 background: linear-gradient(90deg, var(--accent-color), var(--primary-color));
             }
-            
+
             .auth-title {
                 text-align: center;
                 color: var(--text-color);
@@ -109,19 +109,19 @@
                 font-weight: 700;
                 margin-bottom: 0.5rem;
             }
-            
+
             .auth-subtitle {
                 text-align: center;
                 color: var(--text-muted);
                 margin-bottom: 2rem;
                 font-size: 1rem;
             }
-            
+
             /* Enhanced form styles */
             .form-group {
                 margin-bottom: 1.5rem;
             }
-            
+
             .form-label {
                 display: block;
                 color: var(--text-color);
@@ -129,7 +129,7 @@
                 margin-bottom: 0.5rem;
                 font-size: 0.95rem;
             }
-            
+
             .form-input {
                 width: 100%;
                 padding: 1rem 1.25rem;
@@ -140,14 +140,14 @@
                 background: white;
                 color: var(--text-color);
             }
-            
+
             .form-input:focus {
                 outline: none;
                 border-color: var(--primary-color);
                 box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
                 transform: translateY(-1px);
             }
-            
+
             .form-error {
                 color: #dc2626;
                 font-size: 0.875rem;
@@ -156,14 +156,14 @@
                 align-items: center;
                 gap: 0.25rem;
             }
-            
+
             .checkbox-group {
                 display: flex;
                 align-items: center;
                 gap: 0.75rem;
                 margin: 1.5rem 0;
             }
-            
+
             .checkbox-input {
                 width: 18px;
                 height: 18px;
@@ -174,12 +174,12 @@
                 transition: all 0.3s ease;
                 position: relative;
             }
-            
+
             .checkbox-input:checked {
                 background: var(--primary-color);
                 border-color: var(--primary-color);
             }
-            
+
             .checkbox-input:checked::after {
                 content: '✓';
                 position: absolute;
@@ -190,13 +190,13 @@
                 font-size: 12px;
                 font-weight: bold;
             }
-            
+
             .checkbox-label {
                 color: var(--text-muted);
                 font-size: 0.9rem;
                 cursor: pointer;
             }
-            
+
             .auth-button {
                 width: 100%;
                 background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
@@ -211,16 +211,16 @@
                 position: relative;
                 overflow: hidden;
             }
-            
+
             .auth-button:hover {
                 transform: translateY(-2px);
                 box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
             }
-            
+
             .auth-button:active {
                 transform: translateY(0);
             }
-            
+
             .auth-button::before {
                 content: '';
                 position: absolute;
@@ -231,11 +231,11 @@
                 background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
                 transition: left 0.5s ease;
             }
-            
+
             .auth-button:hover::before {
                 left: 100%;
             }
-            
+
             .auth-link {
                 color: var(--primary-color);
                 text-decoration: none;
@@ -243,12 +243,12 @@
                 transition: all 0.3s ease;
                 font-size: 0.9rem;
             }
-            
+
             .auth-link:hover {
                 color: var(--secondary-color);
                 text-decoration: underline;
             }
-            
+
             .auth-actions {
                 display: flex;
                 justify-content: space-between;
@@ -257,7 +257,7 @@
                 flex-wrap: wrap;
                 gap: 1rem;
             }
-            
+
             .status-message {
                 background: linear-gradient(135deg, #dcfce7, #bbf7d0);
                 color: #166534;
@@ -267,7 +267,7 @@
                 border-left: 4px solid var(--accent-color);
                 font-size: 0.9rem;
             }
-            
+
             /* Animations */
             @keyframes fadeInDown {
                 from {
@@ -279,7 +279,7 @@
                     transform: translateY(0);
                 }
             }
-            
+
             @keyframes slideUp {
                 from {
                     opacity: 0;
@@ -290,17 +290,17 @@
                     transform: translateY(0);
                 }
             }
-            
+
             /* Mobile responsive */
             @media (max-width: 768px) {
                 .auth-container {
                     padding: 1rem;
                 }
-                
+
                 .auth-card {
                     padding: 2rem;
                 }
-                
+
                 .auth-actions {
                     flex-direction: column;
                     text-align: center;
@@ -313,7 +313,7 @@
         <div class="position-fixed top-0 end-0 p-3" style="z-index: 1060;">
             <x-language-toggle style="background: rgba(255, 255, 255, 0.9); padding: 0.5rem; border-radius: 12px; backdrop-filter: blur(10px);" />
         </div>
-        
+
         <div class="auth-container">
             <div class="auth-logo">
                 <img src="{{ asset('images/logo.png') }}" alt="SoosanEgypt" onerror="this.style.display='none';">
@@ -324,7 +324,7 @@
                 {{ $slot }}
             </div>
         </div>
-        
+
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // Enhanced form interactions
@@ -335,12 +335,12 @@
                         this.style.transform = 'translateY(-2px)';
                         this.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.15)';
                     });
-                    
+
                     input.addEventListener('blur', function() {
                         this.style.transform = 'translateY(0)';
                         this.style.boxShadow = 'none';
                     });
-                    
+
                     // Real-time validation feedback
                     input.addEventListener('input', function() {
                         if (this.value.trim() !== '') {
@@ -350,7 +350,7 @@
                         }
                     });
                 });
-                
+
                 // Enhanced button interactions
                 const buttons = document.querySelectorAll('.auth-button');
                 buttons.forEach(button => {
@@ -361,7 +361,7 @@
                         const size = Math.max(rect.width, rect.height);
                         const x = e.clientX - rect.left - size / 2;
                         const y = e.clientY - rect.top - size / 2;
-                        
+
                         ripple.style.cssText = `
                             position: absolute;
                             width: ${size}px;
@@ -374,15 +374,15 @@
                             animation: ripple 0.6s ease-out;
                             pointer-events: none;
                         `;
-                        
+
                         this.appendChild(ripple);
-                        
+
                         setTimeout(() => {
                             ripple.remove();
                         }, 600);
                     });
                 });
-                
+
                 // Add ripple animation
                 const style = document.createElement('style');
                 style.textContent = `
@@ -394,7 +394,7 @@
                     }
                 `;
                 document.head.appendChild(style);
-                
+
                 // Enhanced checkbox interactions
                 const checkboxes = document.querySelectorAll('.checkbox-input');
                 checkboxes.forEach(checkbox => {

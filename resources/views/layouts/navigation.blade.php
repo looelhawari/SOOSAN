@@ -1,13 +1,13 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="{{ route('dashboard') }}">
-            {{ config('app.name', 'Laravel') }}
+            SoosanEgypt
         </a>
-        
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
-        
+
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
@@ -16,19 +16,19 @@
                     </a>
                 </li>
             </ul>
-            
+
             <ul class="navbar-nav">
                 <!-- Language Toggle -->
                 <li class="nav-item">
                     <x-language-toggle class="d-flex align-items-center" />
                 </li>
-                
+
                 @auth
                     <!-- Notifications -->
                     <li class="nav-item dropdown">
                         <button class="btn btn-link nav-link position-relative dropdown-toggle" type="button" data-bs-toggle="dropdown" id="notificationDropdown" aria-expanded="false">
                             <i class="fas fa-bell"></i>
-                            <span class="notification-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" 
+                            <span class="notification-badge position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
                                   style="display: {{ auth()->user()->unreadNotifications->count() > 0 ? 'inline-block' : 'none' }};"
                                   data-count="{{ auth()->user()->unreadNotifications->count() }}">
                                 {{ auth()->user()->unreadNotifications->count() }}
@@ -43,7 +43,7 @@
                             </h6></li>
                             @forelse(auth()->user()->unreadNotifications->take(5) as $notification)
                                 <li>
-                                    <a class="dropdown-item py-2 notification-item {{ !$notification->read_at ? 'unread' : '' }}" 
+                                    <a class="dropdown-item py-2 notification-item {{ !$notification->read_at ? 'unread' : '' }}"
                                        href="{{ $notification->data['url'] ?? route('notifications.index') }}"
                                        data-notification-id="{{ $notification->id }}"
                                        onclick="markNotificationAsRead('{{ $notification->id }}')">
@@ -86,7 +86,7 @@
                             @endif
                         </ul>
                     </li>
-                    
+
                     <!-- User Menu -->
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">

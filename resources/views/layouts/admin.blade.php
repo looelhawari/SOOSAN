@@ -14,7 +14,7 @@
     <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/logo2.png') }}">
 
     <!-- SEO Meta Tags -->
-    <title>@yield('title', 'Admin Panel') - {{ config('app.name', 'SoosanEgypt Dashboard') }}</title>
+    <title>@yield('title', 'Admin Panel') - SOOSAN</title>
     <meta name="description" content="@yield('description', 'SoosanEgypt Admin Dashboard - Manage drilling equipment, products, and business operations.')">
     <meta name="keywords" content="@yield('keywords', 'admin dashboard, drilling equipment management, SoosanEgypt, business operations')">
     <meta name="robots" content="noindex, nofollow">

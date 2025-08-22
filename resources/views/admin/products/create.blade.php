@@ -1437,19 +1437,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Form submission handling
-    createProductForm.addEventListener('submit', function(e) {
-        if (!validateForm()) {
+        createProductForm.addEventListener('submit', function(e) {
+            if (!validateForm()) {
                 e.preventDefault();
 
-            // Scroll to first invalid field
-            const firstInvalid = document.querySelector('.is-invalid');
-            if (firstInvalid) {
-                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                firstInvalid.focus();
-            }
+                // Scroll to first invalid field
+                const firstInvalid = document.querySelector('.is-invalid');
+                if (firstInvalid) {
+                    firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    firstInvalid.focus();
+                }
 
-            // Show error notification
-            showNotification('{{ __('products.please_correct_errors') }}', 'error');
+                // Show error notification
+                showNotification('error');
                 return;
             }
 
@@ -1457,12 +1457,9 @@ document.addEventListener('DOMContentLoaded', function() {
         convertSIToImperial();
 
         // Show loading state
-                submitBtn.disabled = true;
+        submitBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i><span class="mobile-text-hide">{{ __('products.saving') }}</span><span class="d-md-none">{{ __('products.saving') }}</span>';
         createProductForm.classList.add('loading');
-
-        // Show conversion notification
-        showNotification('Converting SI units to Imperial and saving...', 'info');
     });
 
     // Enhanced input interactions

@@ -1751,9 +1751,6 @@
                 submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i><span class="mobile-text-hide">{{ __('products.updating') }}</span><span class="d-md-none">{{ __('products.updating') }}</span>';
             editProductForm.classList.add('loading');
-
-            // Show conversion notification
-            showNotification('Converting SI units to Imperial and updating...', 'info');
         });
 
         // Convert existing Imperial values to SI for editing when page loads
