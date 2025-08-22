@@ -455,19 +455,19 @@
                     <form action="{{ route('admin.users.update', $user) }}" method="POST" id="editUserForm">
                         @csrf
                         @method('PUT')
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="modern-form-group">
                                     <label for="name" class="modern-label">
                                         {{ __('users.name') }} <span class="text-danger">*</span>
                                     </label>
-                                    <input 
-                                        type="text" 
-                                        class="modern-input @error('name') is-invalid @enderror" 
-                                        id="name" 
-                                        name="name" 
-                                        value="{{ old('name', $user->name) }}" 
+                                    <input
+                                        type="text"
+                                        class="modern-input @error('name') is-invalid @enderror"
+                                        id="name"
+                                        name="name"
+                                        value="{{ old('name', $user->name) }}"
                                         required
                                         placeholder="{{ __('users.name_placeholder') }}"
                                     >
@@ -476,18 +476,18 @@
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <div class="modern-form-group">
                                     <label for="email" class="modern-label">
                                         {{ __('users.email') }} <span class="text-danger">*</span>
                                     </label>
-                                    <input 
-                                        type="email" 
-                                        class="modern-input @error('email') is-invalid @enderror" 
-                                        id="email" 
-                                        name="email" 
-                                        value="{{ old('email', $user->email) }}" 
+                                    <input
+                                        type="email"
+                                        class="modern-input @error('email') is-invalid @enderror"
+                                        id="email"
+                                        name="email"
+                                        value="{{ old('email', $user->email) }}"
                                         required
                                         placeholder="{{ __('users.email_placeholder') }}"
                                     >
@@ -497,17 +497,17 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="modern-form-group">
                                     <label for="password" class="modern-label">
                                         {{ __('users.new_password') }}
                                     </label>
-                                    <input 
-                                        type="password" 
-                                        class="modern-input @error('password') is-invalid @enderror" 
-                                        id="password" 
+                                    <input
+                                        type="password"
+                                        class="modern-input @error('password') is-invalid @enderror"
+                                        id="password"
                                         name="password"
                                         placeholder="{{ __('users.new_password_placeholder') }}"
                                     >
@@ -517,23 +517,23 @@
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <div class="modern-form-group">
                                     <label for="password_confirmation" class="modern-label">
                                         {{ __('users.confirm_password') }}
                                     </label>
-                                    <input 
-                                        type="password" 
-                                        class="modern-input" 
-                                        id="password_confirmation" 
+                                    <input
+                                        type="password"
+                                        class="modern-input"
+                                        id="password_confirmation"
                                         name="password_confirmation"
                                         placeholder="{{ __('users.confirm_password_placeholder') }}"
                                     >
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="modern-form-group">
@@ -554,16 +554,18 @@
                                     @enderror
                                 </div>
                             </div>
-                            
+
                             <div class="col-md-6">
                                 <div class="modern-form-group">
                                     <label class="modern-label">{{ __('users.account_status') }}</label>
                                     <div class="modern-checkbox">
-                                        <input 
-                                            class="form-check-input" 
-                                            type="checkbox" 
-                                            id="is_verified" 
-                                            name="is_verified" 
+                                        <input type="hidden" name="is_verified" value="0">
+                                        <input
+                                            class="form-check-input"
+                                            type="checkbox"
+                                            id="is_verified"
+                                            name="is_verified"
+                                            value="1"
                                             {{ old('is_verified', $user->is_verified) ? 'checked' : '' }}
                                         >
                                         <label class="form-check-label" for="is_verified">
@@ -575,7 +577,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="row mt-4">
                             <div class="col-12">
                                 <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
@@ -604,7 +606,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('editUserForm');
     const passwordField = document.getElementById('password');
     const confirmPasswordField = document.getElementById('password_confirmation');
-    
+
     form.addEventListener('submit', function(e) {
         if (passwordField.value && passwordField.value !== confirmPasswordField.value) {
             e.preventDefault();
@@ -613,7 +615,7 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmPasswordField.classList.add('is-invalid');
         }
     });
-    
+
     // Password confirmation validation
     confirmPasswordField.addEventListener('input', function() {
         if (passwordField.value && this.value && passwordField.value !== this.value) {
@@ -624,14 +626,14 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.remove('is-invalid');
         }
     });
-    
+
     // Enhanced focus effects
     const inputs = document.querySelectorAll('.modern-input, .modern-select');
     inputs.forEach(input => {
         input.addEventListener('focus', function() {
             this.parentElement.classList.add('focused');
         });
-        
+
         input.addEventListener('blur', function() {
             this.parentElement.classList.remove('focused');
         });
@@ -644,7 +646,7 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = true;
             const originalContent = submitBtn.innerHTML;
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span class="mobile-text">{{ __('users.updating') }}</span>';
-            
+
             // Reset after 5 seconds as fallback
             setTimeout(() => {
                 submitBtn.disabled = false;
@@ -656,7 +658,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Real-time validation feedback
     const nameField = document.getElementById('name');
     const emailField = document.getElementById('email');
-    
+
     nameField.addEventListener('input', function() {
         if (this.value.length < 2) {
             this.classList.add('is-invalid');
@@ -664,7 +666,7 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.remove('is-invalid');
         }
     });
-    
+
     emailField.addEventListener('input', function() {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(this.value)) {

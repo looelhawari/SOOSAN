@@ -732,20 +732,16 @@ $unit = 'si';
                                         if (preg_match('/^([\d.]+)~([\d.]+)/', $val, $m)) {
                                             $si_min = number_format($m[1] * $factor, $si_decimals, '.', ',');
                                             $si_max = number_format($m[2] * $factor, $si_decimals, '.', ',');
-                                            $imp_min = number_format($m[1], 0, '.', ',');
-                                            $imp_max = number_format($m[2], 0, '.', ',');
-                                            return ['si' => "$si_min ~ $si_max $si_unit", 'imp' => "$imp_min ~ $imp_max $imp_unit"];
+                                            return ['si' => "$si_min ~ $si_max $si_unit", 'imp' => nf1($m[1]) . ' ~ ' . nf1($m[2]) . " $imp_unit"];
                                         }
                                         if (preg_match('/^(\d+)\/(\d+)$/', trim($val), $m)) {
                                             $dec = $m[1] / $m[2];
                                             $si_val = number_format($dec * $factor, $si_decimals, '.', ',');
-                                            $imp_val = number_format($dec, 1, '.', ',');
-                                            return ['si' => "$si_val $si_unit", 'imp' => "$imp_val $imp_unit"];
+                                            return ['si' => "$si_val $si_unit", 'imp' => "$val $imp_unit"];
                                         }
                                         if (is_numeric($val)) {
                                             $si_val = number_format($val * $factor, $si_decimals, '.', ',');
-                                            $imp_val = number_format($val, 0, '.', ',');
-                                            return ['si' => "$si_val $si_unit", 'imp' => "$imp_val $imp_unit"];
+                                            return ['si' => "$si_val $si_unit", 'imp' => nf1($val) . " $imp_unit"];
                                         }
                                         return ['si' => $val . " $si_unit", 'imp' => $val . " $imp_unit"];
                                     }
@@ -766,29 +762,22 @@ $unit = 'si';
                                     }
 
                                     function hose_row($val) {
-                                        if ($val === null || $val === '' || $val === '-') return ['si' => '- mm', 'imp' => '- in'];
-                                        if (is_numeric($val)) {
-                                            $si_val = number_format($val * 25.4, 0, '.', ',');
-                                            return ['si' => "$si_val mm", 'imp' => "$val in"];
-                                        }
-                                        return ['si' => "$val mm", 'imp' => "$val in"];
+                                        if ($val === null || $val === '' || $val === '-') return ['si' => '- in', 'imp' => '- in'];
+                                        return ['si' => "$val in", 'imp' => "$val in"];
                                     }
 
                                     function op_row($val) {
                                         $si_unit = 'kgf/cm²';
-                                        $imp_unit = 'psi';
+                                        $imp_unit = 'lb-ft';
                                         if ($val === null || $val === '' || $val === '-') return ['si' => '- ' . $si_unit, 'imp' => '- ' . $imp_unit];
                                         if (preg_match('/^([\d.,]+)~([\d.,]+)/', $val, $m)) {
                                             $si_min = nf0(floatval(str_replace([','], [''], $m[1])) * 0.070307);
                                             $si_max = nf0(floatval(str_replace([','], [''], $m[2])) * 0.070307);
-                                            $imp_min = nf0(floatval(str_replace([','], [''], $m[1])));
-                                            $imp_max = nf0(floatval(str_replace([','], [''], $m[2])));
-                                            return ['si' => "$si_min ~ $si_max $si_unit", 'imp' => "$imp_min ~ $imp_max $imp_unit"];
+                                            return ['si' => "$si_min ~ $si_max $si_unit", 'imp' => nf1($m[1]) . ' ~ ' . nf1($m[2]) . " $imp_unit"];
                                         }
                                         if (is_numeric(str_replace([','], [''], $val))) {
                                             $si = nf0(floatval(str_replace([','], [''], $val)) * 0.070307);
-                                            $imp = nf0(floatval(str_replace([','], [''], $val)));
-                                            return ['si' => "$si $si_unit", 'imp' => "$imp $imp_unit"];
+                                            return ['si' => "$si $si_unit", 'imp' => nf1($val) . " $imp_unit"];
                                         }
                                         return ['si' => $val . ' ' . $si_unit, 'imp' => $val . ' ' . $imp_unit];
                                     }

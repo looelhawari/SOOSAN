@@ -287,7 +287,7 @@
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h1>{{ __('users.create_user') }}</h1>
-                
+
             </div>
             <div class="col-md-4 text-md-end">
                 <a href="{{ route('admin.users.index') }}" class="modern-btn modern-btn-secondary">
@@ -306,7 +306,7 @@
                 <h5>
                     <i class="fas fa-user-plus"></i>
                     {{ __('users.create_user') }}
-                   
+
                 </h5>
             </div>
             <div class="card-body p-4">
@@ -318,12 +318,12 @@
                         <div class="col-md-6">
                             <div class="modern-form-group">
                                 <label for="name" class="modern-label">{{ __('users.name') }} <span class="text-danger">*</span></label>
-                                <input 
-                                    type="text" 
-                                    class="modern-input @error('name') is-invalid @enderror" 
-                                    id="name" 
-                                    name="name" 
-                                    value="{{ old('name') }}" 
+                                <input
+                                    type="text"
+                                    class="modern-input @error('name') is-invalid @enderror"
+                                    id="name"
+                                    name="name"
+                                    value="{{ old('name') }}"
                                     placeholder="{{ __('users.enter_name') }}"
                                     required
                                 >
@@ -337,12 +337,12 @@
                         <div class="col-md-6">
                             <div class="modern-form-group">
                                 <label for="email" class="modern-label">{{ __('users.email') }} <span class="text-danger">*</span></label>
-                                <input 
-                                    type="email" 
-                                    class="modern-input @error('email') is-invalid @enderror" 
-                                    id="email" 
-                                    name="email" 
-                                    value="{{ old('email') }}" 
+                                <input
+                                    type="email"
+                                    class="modern-input @error('email') is-invalid @enderror"
+                                    id="email"
+                                    name="email"
+                                    value="{{ old('email') }}"
                                     placeholder="{{ __('users.enter_email') }}"
                                     required
                                 >
@@ -356,11 +356,11 @@
                         <div class="col-md-6">
                             <div class="modern-form-group">
                                 <label for="password" class="modern-label">{{ __('users.password') }} <span class="text-danger">*</span></label>
-                                <input 
-                                    type="password" 
-                                    class="modern-input @error('password') is-invalid @enderror" 
-                                    id="password" 
-                                    name="password" 
+                                <input
+                                    type="password"
+                                    class="modern-input @error('password') is-invalid @enderror"
+                                    id="password"
+                                    name="password"
                                     placeholder="{{ __('users.enter_password') }}"
                                     required
                                 >
@@ -374,11 +374,11 @@
                         <div class="col-md-6">
                             <div class="modern-form-group">
                                 <label for="password_confirmation" class="modern-label">{{ __('users.confirm_password') }} <span class="text-danger">*</span></label>
-                                <input 
-                                    type="password" 
-                                    class="modern-input" 
-                                    id="password_confirmation" 
-                                    name="password_confirmation" 
+                                <input
+                                    type="password"
+                                    class="modern-input"
+                                    id="password_confirmation"
+                                    name="password_confirmation"
                                     placeholder="{{ __('users.confirm_password') }}"
                                     required
                                 >
@@ -405,11 +405,12 @@
                             <div class="modern-form-group">
                                 <label class="modern-label">{{ __('users.verification_status') }}</label>
                                 <div class="modern-checkbox">
-                                    <input 
-                                        class="form-check-input" 
-                                        type="checkbox" 
-                                        id="is_verified" 
-                                        name="is_verified" 
+                                    <input type="hidden" name="is_verified" value="0">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        id="is_verified"
+                                        name="is_verified"
                                         value="1"
                                         {{ old('is_verified') ? 'checked' : '' }}
                                     >
@@ -446,7 +447,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('createUserForm');
     const passwordField = document.getElementById('password');
     const confirmPasswordField = document.getElementById('password_confirmation');
-    
+
     form.addEventListener('submit', function(e) {
         if (passwordField.value && passwordField.value !== confirmPasswordField.value) {
             e.preventDefault();
@@ -454,7 +455,7 @@ document.addEventListener('DOMContentLoaded', function() {
             confirmPasswordField.focus();
         }
     });
-    
+
     // Password confirmation validation
     confirmPasswordField.addEventListener('input', function() {
         if (passwordField.value && this.value && passwordField.value !== this.value) {
@@ -463,14 +464,14 @@ document.addEventListener('DOMContentLoaded', function() {
             this.setCustomValidity('');
         }
     });
-    
+
     // Enhanced focus effects
     const inputs = document.querySelectorAll('.modern-input, .modern-select');
     inputs.forEach(input => {
         input.addEventListener('focus', function() {
             this.parentElement.classList.add('focused');
         });
-        
+
         input.addEventListener('blur', function() {
             this.parentElement.classList.remove('focused');
         });

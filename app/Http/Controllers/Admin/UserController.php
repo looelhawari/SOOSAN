@@ -50,7 +50,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'role' => 'required|in:admin,employee',
-            'is_verified' => 'boolean',
+            'is_verified' => 'nullable|boolean',
         ]);
 
         User::create([
@@ -90,7 +90,7 @@ class UserController extends Controller
             ],
             'password' => 'nullable|string|min:8|confirmed',
             'role' => 'required|in:admin,employee',
-            'is_verified' => 'boolean',
+            'is_verified' => 'nullable|boolean',
         ]);
 
         $user->update([
