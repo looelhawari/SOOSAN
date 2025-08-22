@@ -917,7 +917,7 @@
 
                     <button class="download-btn owners-btn" style="background:#fff;color:#48bb78;border:1px solid #48bb78" onclick="downloadOwnersReportPDF()">
                         <i class="fas fa-file-pdf"></i>
-                        <span class="mobile-text">Download as PDF (jsPDF)</span>
+                        <span class="mobile-text">{{ __('reports.download_pdf') }}</span>
                     </button>
                 </div>
             </div>
@@ -961,7 +961,7 @@
                     </div>
                     <button class="download-btn sales-btn" style="background:#fff;color:#ed8936;border:1px solid #ed8936" onclick="downloadSalesReportPDF()">
                         <i class="fas fa-file-pdf"></i>
-                        <span class="mobile-text">Download as PDF (jsPDF)</span>
+                        <span class="mobile-text">{{ __('reports.download_pdf') }}</span>
                     </button>
                 </div>
             </div>
@@ -1628,7 +1628,6 @@ window.downloadSalesReportPDF = function() {
                 fallbackDoc.text('Please try again or contact support.', 20, 70);
                 fallbackDoc.text('Error details: ' + error.message, 20, 90);
                 fallbackDoc.save('soosan-sales-report-error.pdf');
-                console.log('Fallback PDF generated');
             } catch (fallbackError) {
                 console.error('Even fallback PDF failed:', fallbackError);
                 alert('Critical PDF generation error. Please refresh the page and try again.');
@@ -2058,12 +2057,50 @@ window.downloadOwnersReportPDF = function() {
             // Date
             doc.setFontSize(10);
             const currentDate = new Date().toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
             });
-            doc.text(`Generated: ${currentDate}`, pageWidth - 150, 35);
+            // doc.text(`Generated: ${currentDate}`, pageWidth - 150, 35);
+
+            // Draw logo at top right if available
+            if (logoLoaded && logoImg.complete) {
+            try {
+                doc.addImage(logoImg, 'PNG', pageWidth - 150, 10, 110, 50);
+            } catch (e) {
+                // Ignore logo errors
+            }
+            }
         }
+
+        // Load logo and continue with PDF generation
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
+
+        let logoLoaded = false;
+        const logoTimeout = setTimeout(() => {
+            if (!logoLoaded) {
+            console.log('Logo timeout, continuing without logo');
+            continueWithOwnersGeneration();
+            }
+        }, 3000);
+
+        logoImg.onload = function() {
+            logoLoaded = true;
+            clearTimeout(logoTimeout);
+            continueWithOwnersGeneration();
+        };
+
+        logoImg.onerror = function() {
+            logoLoaded = true;
+            clearTimeout(logoTimeout);
+            console.log('Logo failed to load, continuing without logo');
+            continueWithOwnersGeneration();
+        };
+
+        logoImg.src = '/images/logo2.png';
+
+        function continueWithOwnersGeneration() {
 
         let currentY = 100; // Start below header
 
@@ -2137,7 +2174,6 @@ window.downloadOwnersReportPDF = function() {
             const analysis = data.analysis || {};
             doc.text(`Total Owners: ${owners.length}`, margin + 15, currentY + 45);
             doc.text(`Total Revenue: $${(Number(analysis.total_revenue) || 0).toLocaleString()}`, margin + 150, currentY + 45);
-            doc.text(`Avg Revenue/Owner: $${(Number(analysis.average_revenue_per_owner) || 0).toFixed(2)}`, margin + 300, currentY + 45);
 
             currentY += 80;
 
@@ -2261,6 +2297,8 @@ window.downloadOwnersReportPDF = function() {
             // Save the PDF
             doc.save(`owners-report-${new Date().toISOString().split('T')[0]}.pdf`);
         }
+
+        } // End of continueWithOwnersGeneration function
 
     } catch (error) {
         console.error('Error in downloadOwnersReportPDF:', error);
