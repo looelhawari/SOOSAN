@@ -2031,334 +2031,249 @@ if ('ontouchstart' in window) {
     });
 }
 
-// Owners Report PDF function with real data
+// Owners Report PDF function with individual owner sections
 window.downloadOwnersReportPDF = function() {
     try {
         const { jsPDF } = window.jspdf;
-        const doc = new jsPDF('l', 'pt', 'a4');
+        const doc = new jsPDF('p', 'pt', 'a4'); // Portrait orientation
         const pageWidth = doc.internal.pageSize.getWidth();
         const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 40;
+        const contentWidth = pageWidth - (margin * 2);
 
-        doc.setFillColor(72, 187, 120);
-        doc.rect(0, 0, pageWidth, 120);
+        // Modern color scheme
+        const primaryColor = [72, 187, 120]; // Green
+        const secondaryColor = [45, 55, 72]; // Dark gray
+        const lightGray = [247, 250, 252];
+        const borderColor = [226, 232, 240];
 
-        doc.setFontSize(32);
-        doc.setFont('helvetica', 'bold');
-        doc.setTextColor(255, 255, 255);
-        doc.text('SoosanEgypt', 40, 40);
+        // Header function
+        function addHeader() {
+            // Header background
+            doc.setFillColor(...primaryColor);
+            doc.rect(0, 0, pageWidth, 80, 'F');
 
-        doc.setFontSize(24);
-        doc.setFont('helvetica', 'bold');
-        doc.text('Comprehensive Owners Analysis Report', 40, 70);
+            // Company name
+            doc.setFontSize(24);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(255, 255, 255);
+            doc.text('SOOSAN EGYPT', margin, 35);
 
-        // Date
-        doc.setFontSize(12);
-        doc.setFont('helvetica', 'normal');
-        doc.text('Generated on: ' + new Date().toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        }), 40, 95);
+            // Report title
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'normal');
+            doc.text('Owners & Products Report', margin, 55);
 
-        const logoImg = new Image();
-        logoImg.crossOrigin = 'anonymous';
+            // Date
+            doc.setFontSize(10);
+            const currentDate = new Date().toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            doc.text(`Generated: ${currentDate}`, pageWidth - 150, 35);
+        }
 
-        let logoLoaded = false;
-        const logoTimeout = setTimeout(() => {
-            if (!logoLoaded) {
-                console.log('Logo timeout, continuing without logo');
-                continueWithPDFGeneration();
-            }
-        }, 3000);
+        let currentY = 100; // Start below header
 
-        logoImg.onload = function() {
-            logoLoaded = true;
-            clearTimeout(logoTimeout);
-            try {
-                // Add transparent logo to top right corner
-                doc.addImage(logoImg, 'PNG', pageWidth - 180, 10, 160, 80);
-                console.log('Logo added successfully');
-            } catch (e) {
-                console.log('Logo loading failed:', e);
-            }
-            continueWithPDFGeneration();
+        // Get owners data
+        const csrfToken = document.querySelector('meta[name="csrf-token"]');
+        const headers = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         };
 
-        logoImg.onerror = function() {
-            logoLoaded = true;
-            clearTimeout(logoTimeout);
-            console.log('Logo failed to load, continuing without logo');
-            continueWithPDFGeneration();
-        };
+        if (csrfToken) {
+            headers['X-CSRF-TOKEN'] = csrfToken.getAttribute('content');
+        }
 
-        // Use logo2.png (transparent background, no black)
-        logoImg.src = '/images/logo2.png';
+        // Get selected time period for filtering
+        const selectedPeriod = document.querySelector('.filter-option.active').dataset.period;
+        let url = `/admin/reports/owners-data?period=${selectedPeriod}`;
 
-        function continueWithPDFGeneration() {
-            let y = 140; // Start tables closer to header
-
-            const csrfToken = document.querySelector('meta[name="csrf-token"]');
-            const headers = {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            };
-
-            if (csrfToken) {
-                headers['X-CSRF-TOKEN'] = csrfToken.getAttribute('content');
+        // Add custom date range if selected
+        if (selectedPeriod === 'custom') {
+            const startDate = document.getElementById('customStartDate').value;
+            const endDate = document.getElementById('customEndDate').value;
+            if (startDate && endDate) {
+                url += `&start_date=${startDate}&end_date=${endDate}`;
             }
+        }
 
-            // Get selected time period for filtering
-            const selectedPeriod = document.querySelector('.filter-option.active').dataset.period;
-            let url = `/admin/reports/owners-data?period=${selectedPeriod}`;
-
-            // Add custom date range if selected
-            if (selectedPeriod === 'custom') {
-                const startDate = document.getElementById('customStartDate').value;
-                const endDate = document.getElementById('customEndDate').value;
-                if (startDate && endDate) {
-                    url += `&start_date=${startDate}&end_date=${endDate}`;
-                }
+        fetch(url, {
+            method: 'GET',
+            headers: headers
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Owners data received:', data);
+            generateOwnersReport(data);
+        })
+        .catch(error => {
+            console.error('Failed to fetch owners data:', error);
+            alert('Failed to fetch owners data. Please check your connection and try again.');
+        });
 
-            fetch(url, {
-                method: 'GET',
-                headers: headers
-            })
-            .then(response => {
-                console.log('Response status:', response.status);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log('Owners data received:', data);
-                generateOwnersReport(data);
-            })
-            .catch(error => {
-                console.error('Failed to fetch owners data:', error);
-                alert('Failed to fetch owners data. Please check your connection and try again.');
+        function generateOwnersReport(data) {
+            addHeader();
+
+            const owners = data.owners || [];
+
+            if (owners.length === 0) {
+                doc.setFontSize(14);
+                doc.setTextColor(...secondaryColor);
+                doc.text('No owners data available for the selected period.', margin, currentY);
+                doc.save('owners-report.pdf');
                 return;
+            }
+
+            // Summary section
+            doc.setFillColor(...lightGray);
+            doc.rect(margin, currentY, contentWidth, 60, 'F');
+
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.setTextColor(...secondaryColor);
+            doc.text('Summary Overview', margin + 15, currentY + 25);
+
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            const analysis = data.analysis || {};
+            doc.text(`Total Owners: ${owners.length}`, margin + 15, currentY + 45);
+            doc.text(`Total Revenue: $${(Number(analysis.total_revenue) || 0).toLocaleString()}`, margin + 150, currentY + 45);
+            doc.text(`Avg Revenue/Owner: $${(Number(analysis.average_revenue_per_owner) || 0).toFixed(2)}`, margin + 300, currentY + 45);
+
+            currentY += 80;
+
+            // Process each owner
+            owners.forEach((owner, index) => {
+                // Check if we need a new page
+                if (currentY > pageHeight - 200) {
+                    doc.addPage();
+                    addHeader();
+                    currentY = 100;
+                }
+
+                // Owner information card
+                const cardHeight = 80;
+
+                // Card background
+                doc.setFillColor(255, 255, 255);
+                doc.rect(margin, currentY, contentWidth, cardHeight, 'F');
+                doc.setDrawColor(...borderColor);
+                doc.setLineWidth(1);
+                doc.rect(margin, currentY, contentWidth, cardHeight, 'S');
+
+                // Owner details
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(...primaryColor);
+                doc.text(`${index + 1}. ${owner.name}`, margin + 15, currentY + 25);
+
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(...secondaryColor);
+
+                // Left column
+                doc.text(`Email: ${owner.email}`, margin + 15, currentY + 45);
+                doc.text(`Phone: ${owner.phone}`, margin + 15, currentY + 60);
+
+                // Right column
+                if (owner.company && owner.company !== 'Individual') {
+                    doc.text(`Company: ${owner.company}`, margin + 250, currentY + 45);
+                }
+                doc.text(`Location: ${owner.city}, ${owner.country}`, margin + 250, currentY + 60);
+
+                currentY += cardHeight + 10;
+
+                // Products table for this owner
+                if (owner.items_owned && owner.items_owned.length > 0) {
+                    const tableData = owner.items_owned.map(item => [
+                        item.product || 'N/A',
+                        item.serial || 'N/A',
+                        item.purchase_date || 'N/A',
+                        `$${(Number(item.price) || 0).toLocaleString()}`
+                    ]);
+
+                    doc.autoTable({
+                        startY: currentY,
+                        head: [['Product Model', 'Serial Number', 'Purchase Date', 'Price']],
+                        body: tableData,
+                        theme: 'grid',
+                        headStyles: {
+                            fillColor: primaryColor,
+                            textColor: [255, 255, 255],
+                            fontStyle: 'bold',
+                            fontSize: 10,
+                            halign: 'center'
+                        },
+                        styles: {
+                            font: 'helvetica',
+                            fontSize: 9,
+                            cellPadding: 6,
+                            halign: 'left',
+                            valign: 'middle'
+                        },
+                        alternateRowStyles: {
+                            fillColor: [249, 250, 251]
+                        },
+                        columnStyles: {
+                            0: { cellWidth: 140 },  // Product Model
+                            1: { cellWidth: 120 },  // Serial Number
+                            2: { cellWidth: 100 },  // Purchase Date
+                            3: { cellWidth: 80, halign: 'right' }   // Price
+                        },
+                        margin: { left: margin, right: margin },
+                        tableLineColor: borderColor,
+                        tableLineWidth: 0.5
+                    });
+
+                    currentY = doc.lastAutoTable.finalY + 20;
+
+                    // Total for this owner
+                    doc.setFillColor(...lightGray);
+                    doc.rect(margin, currentY, contentWidth, 25, 'F');
+                    doc.setFontSize(11);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setTextColor(...secondaryColor);
+                    doc.text(`Total Purchases: ${owner.total_purchases} items`, margin + 15, currentY + 16);
+                    doc.text(`Total Spent: $${(Number(owner.total_spent) || 0).toLocaleString()}`, margin + 300, currentY + 16);
+
+                    currentY += 40;
+                } else {
+                    // No products message
+                    doc.setFillColor([255, 251, 235]);
+                    doc.rect(margin, currentY, contentWidth, 30, 'F');
+                    doc.setFontSize(10);
+                    doc.setFont('helvetica', 'italic');
+                    doc.setTextColor([180, 83, 9]);
+                    doc.text('No products purchased yet', margin + 15, currentY + 20);
+                    currentY += 45;
+                }
             });
 
-            function generateOwnersReport(data) {
-                try {
-                // Summary Section
-                doc.setFontSize(16);
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(72, 187, 120);
-                doc.text('EXECUTIVE SUMMARY', 40, y);
-                y += 30;
-
-                // Summary stats
-                const analysis = data.analysis || {};
-                doc.setFontSize(11);
-                doc.setFont('helvetica', 'normal');
-                doc.setTextColor(60, 60, 60);
-
-                doc.text(`Total Owners: ${analysis.total_owners || 0}`, 40, y);
-                doc.text(`Total Revenue: $${(Number(analysis.total_revenue) || 0).toLocaleString()}`, 200, y);
-                y += 20;
-                doc.text(`Average Revenue per Owner: $${(Number(analysis.average_revenue_per_owner) || 0).toFixed(2)}`, 40, y);
-                doc.text(`Owners with Companies: ${analysis.owners_with_companies || 0}`, 200, y);
-                y += 20;
-                doc.text(`Individual Owners: ${analysis.individual_owners || 0}`, 40, y);
-                y += 40;
-
-                // Check if we have owners data
-                const owners = data.owners || [];
-                if (owners.length === 0) {
-                    doc.setFontSize(14);
-                    doc.setFont('helvetica', 'italic');
-                    doc.setTextColor(150, 150, 150);
-                    doc.text('No owners data available.', 40, y);
-                    doc.save('owners-report.pdf');
-                    return;
-                }
-
-                // Owners List
-                doc.setFontSize(16);
-                doc.setFont('helvetica', 'bold');
-                doc.setTextColor(72, 187, 120);
-                doc.text('OWNERS DIRECTORY', 40, y);
-                y += 30;
-
-                // Table for owners
-                const ownersTableData = [];
-                owners.forEach(owner => {
-                    ownersTableData.push([
-                        owner.name || 'N/A',
-                        owner.company || 'Individual',
-                        owner.city || 'N/A',
-                        owner.country || 'N/A',
-                        owner.total_purchases || 0,
-                        `$${(Number(owner.total_spent) || 0).toLocaleString()}`,
-                        owner.registration_date || 'N/A'
-                    ]);
-                });
-
-                doc.autoTable({
-                    startY: y,
-                    head: [['Owner Name', 'Company', 'City', 'Country', 'Purchases', 'Total Spent', 'Registration']],
-                    body: ownersTableData,
-                    theme: 'striped',
-                    headStyles: {
-                        fillColor: [72, 187, 120],
-                        textColor: [255, 255, 255],
-                        fontStyle: 'bold',
-                        fontSize: 9,
-                        halign: 'center'
-                    },
-                    styles: {
-                        font: 'helvetica',
-                        fontSize: 8,
-                        cellPadding: 3,
-                        halign: 'center',
-                        valign: 'middle'
-                    },
-                    alternateRowStyles: {
-                        fillColor: [240, 248, 240]
-                    },
-                    columnStyles: {
-                        0: { cellWidth: 70 },  // Owner Name
-                        1: { cellWidth: 70 },  // Company
-                        2: { cellWidth: 50 },  // City
-                        3: { cellWidth: 50 },  // Country
-                        4: { cellWidth: 30 },  // Purchases
-                        5: { cellWidth: 50 },  // Total Spent
-                        6: { cellWidth: 50 }   // Registration
-                    },
-                    margin: { left: 20, right: 20 }
-                });
-
-                y = doc.lastAutoTable.finalY + 30;
-
-                // Add new page if needed
-                if (y > pageHeight - 100) {
-                    doc.addPage();
-                    y = 40;
-                }
-
-                // Country Analysis
-                if (analysis.countries && Object.keys(analysis.countries).length > 0) {
-                    doc.setFontSize(16);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(72, 187, 120);
-                    doc.text('COUNTRY ANALYSIS', 40, y);
-                    y += 30;
-
-                    const countryData = [];
-                    Object.entries(analysis.countries).forEach(([country, stats]) => {
-                        countryData.push([
-                            country,
-                            stats.count || 0,
-                            `$${(Number(stats.revenue) || 0).toLocaleString()}`
-                        ]);
-                    });
-
-                    doc.autoTable({
-                        startY: y,
-                        head: [['Country', 'Owners Count', 'Total Revenue']],
-                        body: countryData,
-                        theme: 'striped',
-                        headStyles: {
-                            fillColor: [72, 187, 120],
-                            textColor: [255, 255, 255],
-                            fontStyle: 'bold',
-                            fontSize: 10,
-                            halign: 'center'
-                        },
-                        styles: {
-                            font: 'helvetica',
-                            fontSize: 9,
-                            cellPadding: 4,
-                            halign: 'center'
-                        },
-                        columnStyles: {
-                            0: { cellWidth: 80 },
-                            1: { cellWidth: 60 },
-                            2: { cellWidth: 80 }
-                        },
-                        margin: { left: 80, right: 80 }
-                    });
-
-                    y = doc.lastAutoTable.finalY + 30;
-                }
-
-                // Add new page if needed
-                if (y > pageHeight - 100) {
-                    doc.addPage();
-                    y = 40;
-                }
-
-                // Top Companies Analysis (if available)
-                if (analysis.companies && Object.keys(analysis.companies).length > 0) {
-                    doc.setFontSize(16);
-                    doc.setFont('helvetica', 'bold');
-                    doc.setTextColor(72, 187, 120);
-                    doc.text('TOP COMPANIES ANALYSIS', 40, y);
-                    y += 30;
-
-                    const companyData = [];
-                    Object.entries(analysis.companies).forEach(([company, stats]) => {
-                        companyData.push([
-                            company,
-                            stats.count || 0,
-                            `$${(Number(stats.revenue) || 0).toLocaleString()}`
-                        ]);
-                    });
-
-                    doc.autoTable({
-                        startY: y,
-                        head: [['Company', 'Owners Count', 'Total Revenue']],
-                        body: companyData,
-                        theme: 'striped',
-                        headStyles: {
-                            fillColor: [72, 187, 120],
-                            textColor: [255, 255, 255],
-                            fontStyle: 'bold',
-                            fontSize: 10,
-                            halign: 'center'
-                        },
-                        styles: {
-                            font: 'helvetica',
-                            fontSize: 9,
-                            cellPadding: 4,
-                            halign: 'center'
-                        },
-                        columnStyles: {
-                            0: { cellWidth: 100 },
-                            1: { cellWidth: 60 },
-                            2: { cellWidth: 80 }
-                        },
-                        margin: { left: 60, right: 60 }
-                    });
-                }
-
-                // Footer
-                const pageCount = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= pageCount; i++) {
-                    doc.setPage(i);
-                    doc.setFontSize(8);
-                    doc.setTextColor(150, 150, 150);
-                    doc.text('SoosanEgypt - Owners Analysis Report', 40, pageHeight - 20);
-                    doc.text(`Page ${i} of ${pageCount}`, pageWidth - 60, pageHeight - 20);
-                }
-
-                // Save the PDF
-                doc.save('soosan-owners-analysis-report.pdf');
-                } catch (error) {
-                    console.error('Error generating owners PDF:', error);
-                    alert('Error generating PDF: ' + error.message);
-                }
+            // Add page numbers
+            const pageCount = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= pageCount; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(150, 150, 150);
+                doc.text(`Page ${i} of ${pageCount}`, pageWidth - 60, pageHeight - 20);
+                doc.text('SOOSAN EGYPT - Confidential', margin, pageHeight - 20);
             }
+
+            // Save the PDF
+            doc.save(`owners-report-${new Date().toISOString().split('T')[0]}.pdf`);
         }
 
     } catch (error) {
         console.error('Error in downloadOwnersReportPDF:', error);
-        alert('Error starting PDF generation: ' + error.message);
+        alert('An error occurred while generating the PDF. Please try again.');
     }
 };
 

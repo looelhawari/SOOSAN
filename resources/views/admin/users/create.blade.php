@@ -352,7 +352,7 @@
                             </div>
                         </div>
 
-                        <!-- Password -->
+                        <!-- Password -->   
                         <div class="col-md-6">
                             <div class="modern-form-group">
                                 <label for="password" class="modern-label">{{ __('users.password') }} <span class="text-danger">*</span></label>
