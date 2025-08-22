@@ -64,106 +64,148 @@ class ProductController extends Controller
         if ($request->filled('type')) {
             $query->whereIn('type', (array)$request->type);
         }
-        // Operating Weight filter (range)
+        // Operating Weight filter (range) - Convert SI to Imperial for database comparison
         if ($request->filled('operating_weight')) {
             $query->where(function($q) use ($request) {
                 foreach ($request->operating_weight as $range) {
                     switch ($range) {
                         case '~500kg':
-                            $q->orWhere('operating_weight', '<', 500);
+                            // 500kg = 1102.31 lb
+                            $q->orWhere(function($sub) {
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(operating_weight, '~', 1), ',', '') AS DECIMAL(10,2)) < 1102.31");
+                            });
                             break;
                         case '500~1400kg':
-                            $q->orWhereBetween('operating_weight', [500, 1400]);
+                            // 500kg = 1102.31 lb, 1400kg = 3086.47 lb
+                            $q->orWhere(function($sub) {
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(operating_weight, '~', 1), ',', '') AS DECIMAL(10,2)) >= 1102.31")
+                                    ->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(operating_weight, '~', -1), ',', '') AS DECIMAL(10,2)) <= 3086.47");
+                            });
                             break;
                         case '1400-2000kg':
-                            $q->orWhereBetween('operating_weight', [1400, 2000]);
+                            // 1400kg = 3086.47 lb, 2000kg = 4409.24 lb
+                            $q->orWhere(function($sub) {
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(operating_weight, '~', 1), ',', '') AS DECIMAL(10,2)) >= 3086.47")
+                                    ->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(operating_weight, '~', -1), ',', '') AS DECIMAL(10,2)) <= 4409.24");
+                            });
                             break;
                         case '2000-3000kg':
-                            $q->orWhereBetween('operating_weight', [2000, 3000]);
+                            // 2000kg = 4409.24 lb, 3000kg = 6613.87 lb
+                            $q->orWhere(function($sub) {
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(operating_weight, '~', 1), ',', '') AS DECIMAL(10,2)) >= 4409.24")
+                                    ->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(operating_weight, '~', -1), ',', '') AS DECIMAL(10,2)) <= 6613.87");
+                            });
                             break;
                         case '3000-5000kg':
-                            $q->orWhereBetween('operating_weight', [3000, 5000]);
+                            // 3000kg = 6613.87 lb, 5000kg = 11023.11 lb
+                            $q->orWhere(function($sub) {
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(operating_weight, '~', 1), ',', '') AS DECIMAL(10,2)) >= 6613.87")
+                                    ->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(operating_weight, '~', -1), ',', '') AS DECIMAL(10,2)) <= 11023.11");
+                            });
                             break;
                         case '5000kg~':
-                            $q->orWhere('operating_weight', '>=', 5000);
+                            // 5000kg = 11023.11 lb
+                            $q->orWhere(function($sub) {
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(operating_weight, '~', -1), ',', '') AS DECIMAL(10,2)) > 11023.11");
+                            });
                             break;
                     }
                 }
             });
         }
-        // Required Oil Flow filter (range)
+        // Required Oil Flow filter (range) - Convert SI to Imperial for database comparison
         if ($request->filled('required_oil_flow')) {
             $query->where(function($q) use ($request) {
                 foreach ($request->required_oil_flow as $range) {
                     switch ($range) {
                         case '~35l/min':
-                            $q->orWhereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', 1) AS DECIMAL(8,2)) < 35");
+                            // 35 l/min = 9.25 gal/min
+                            $q->orWhere(function($sub) {
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(required_oil_flow, '~', 1), ',', '') AS DECIMAL(10,2)) < 9.25");
+                            });
                             break;
                         case '35-55l/min':
+                            // 35 l/min = 9.25 gal/min, 55 l/min = 14.53 gal/min
                             $q->orWhere(function($sub) {
-                                $sub->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', 1) AS DECIMAL(8,2)) >= 35")
-                                    ->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', -1) AS DECIMAL(8,2)) <= 55");
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(required_oil_flow, '~', 1), ',', '') AS DECIMAL(10,2)) >= 9.25")
+                                    ->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(required_oil_flow, '~', -1), ',', '') AS DECIMAL(10,2)) <= 14.53");
                             });
                             break;
                         case '55-70l/min':
+                            // 55 l/min = 14.53 gal/min, 70 l/min = 18.49 gal/min
                             $q->orWhere(function($sub) {
-                                $sub->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', 1) AS DECIMAL(8,2)) >= 55")
-                                    ->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', -1) AS DECIMAL(8,2)) <= 70");
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(required_oil_flow, '~', 1), ',', '') AS DECIMAL(10,2)) >= 14.53")
+                                    ->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(required_oil_flow, '~', -1), ',', '') AS DECIMAL(10,2)) <= 18.49");
                             });
                             break;
                         case '70-95l/min':
+                            // 70 l/min = 18.49 gal/min, 95 l/min = 25.09 gal/min
                             $q->orWhere(function($sub) {
-                                $sub->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', 1) AS DECIMAL(8,2)) >= 70")
-                                    ->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', -1) AS DECIMAL(8,2)) <= 95");
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(required_oil_flow, '~', 1), ',', '') AS DECIMAL(10,2)) >= 18.49")
+                                    ->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(required_oil_flow, '~', -1), ',', '') AS DECIMAL(10,2)) <= 25.09");
                             });
                             break;
                         case '95-165l/min':
+                            // 95 l/min = 25.09 gal/min, 165 l/min = 43.59 gal/min
                             $q->orWhere(function($sub) {
-                                $sub->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', 1) AS DECIMAL(8,2)) >= 95")
-                                    ->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', -1) AS DECIMAL(8,2)) <= 165");
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(required_oil_flow, '~', 1), ',', '') AS DECIMAL(10,2)) >= 25.09")
+                                    ->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(required_oil_flow, '~', -1), ',', '') AS DECIMAL(10,2)) <= 43.59");
                             });
                             break;
                         case '165l/min~':
-                            $q->orWhereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', -1) AS DECIMAL(8,2)) > 165");
+                            // 165 l/min = 43.59 gal/min
+                            $q->orWhere(function($sub) {
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(required_oil_flow, '~', -1), ',', '') AS DECIMAL(10,2)) > 43.59");
+                            });
                             break;
                     }
                 }
             });
         }
-        // Applicable Carrier filter (range)
+        // Applicable Carrier filter (range) - Convert SI to Imperial for database comparison
         if ($request->filled('applicable_carrier')) {
             $query->where(function($q) use ($request) {
                 foreach ($request->applicable_carrier as $range) {
                     switch ($range) {
                         case '~5ton':
-                            $q->orWhereRaw("CAST(SUBSTRING_INDEX(applicable_carrier, '~', 1) AS DECIMAL(8,2)) < 5");
+                            // 5 ton = 11023.11 lb
+                            $q->orWhere(function($sub) {
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(applicable_carrier, '~', 1), ',', '') AS DECIMAL(10,2)) < 11023.11");
+                            });
                             break;
                         case '5-14ton':
+                            // 5 ton = 11023.11 lb, 14 ton = 30864.67 lb
                             $q->orWhere(function($sub) {
-                                $sub->whereRaw("CAST(SUBSTRING_INDEX(applicable_carrier, '~', 1) AS DECIMAL(8,2)) >= 5")
-                                    ->whereRaw("CAST(SUBSTRING_INDEX(applicable_carrier, '~', -1) AS DECIMAL(8,2)) <= 14");
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(applicable_carrier, '~', 1), ',', '') AS DECIMAL(10,2)) >= 11023.11")
+                                    ->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(applicable_carrier, '~', -1), ',', '') AS DECIMAL(10,2)) <= 30864.67");
                             });
                             break;
                         case '14-20ton':
+                            // 14 ton = 30864.67 lb, 20 ton = 44092.45 lb
                             $q->orWhere(function($sub) {
-                                $sub->whereRaw("CAST(SUBSTRING_INDEX(applicable_carrier, '~', 1) AS DECIMAL(8,2)) >= 14")
-                                    ->whereRaw("CAST(SUBSTRING_INDEX(applicable_carrier, '~', -1) AS DECIMAL(8,2)) <= 20");
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(applicable_carrier, '~', 1), ',', '') AS DECIMAL(10,2)) >= 30864.67")
+                                    ->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(applicable_carrier, '~', -1), ',', '') AS DECIMAL(10,2)) <= 44092.45");
                             });
                             break;
                         case '20-30ton':
+                            // 20 ton = 44092.45 lb, 30 ton = 66138.68 lb
                             $q->orWhere(function($sub) {
-                                $sub->whereRaw("CAST(SUBSTRING_INDEX(applicable_carrier, '~', 1) AS DECIMAL(8,2)) >= 20")
-                                    ->whereRaw("CAST(SUBSTRING_INDEX(applicable_carrier, '~', -1) AS DECIMAL(8,2)) <= 30");
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(applicable_carrier, '~', 1), ',', '') AS DECIMAL(10,2)) >= 44092.45")
+                                    ->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(applicable_carrier, '~', -1), ',', '') AS DECIMAL(10,2)) <= 66138.68");
                             });
                             break;
                         case '30-50ton':
+                            // 30 ton = 66138.68 lb, 50 ton = 110231.13 lb
                             $q->orWhere(function($sub) {
-                                $sub->whereRaw("CAST(SUBSTRING_INDEX(applicable_carrier, '~', 1) AS DECIMAL(8,2)) >= 30")
-                                    ->whereRaw("CAST(SUBSTRING_INDEX(applicable_carrier, '~', -1) AS DECIMAL(8,2)) <= 50");
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(applicable_carrier, '~', 1), ',', '') AS DECIMAL(10,2)) >= 66138.68")
+                                    ->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(applicable_carrier, '~', -1), ',', '') AS DECIMAL(10,2)) <= 110231.13");
                             });
                             break;
                         case '50ton~':
-                            $q->orWhereRaw("CAST(SUBSTRING_INDEX(applicable_carrier, '~', -1) AS DECIMAL(8,2)) > 50");
+                            // 50 ton = 110231.13 lb
+                            $q->orWhere(function($sub) {
+                                $sub->whereRaw("CAST(REPLACE(SUBSTRING_INDEX(applicable_carrier, '~', -1), ',', '') AS DECIMAL(10,2)) > 110231.13");
+                            });
                             break;
                     }
                 }
@@ -174,14 +216,16 @@ class ProductController extends Controller
         $sort = $request->get('sort', 'none');
         if ($sort === 'carrier-desc') {
             // Sort by applicable_carrier (high to low) - DESC using maximum value
-            $query->orderByRaw('CAST(SUBSTRING_INDEX(applicable_carrier, "~", -1) AS DECIMAL(10,2)) DESC');
+            $query->orderByRaw('CAST(REPLACE(SUBSTRING_INDEX(applicable_carrier, "~", -1), ",", "") AS DECIMAL(10,2)) DESC');
         } elseif ($sort === 'carrier-asc') {
             // Sort by applicable_carrier (low to high) - ASC using minimum value
-            $query->orderByRaw('CAST(SUBSTRING_INDEX(applicable_carrier, "~", 1) AS DECIMAL(10,2)) ASC');
+            $query->orderByRaw('CAST(REPLACE(SUBSTRING_INDEX(applicable_carrier, "~", 1), ",", "") AS DECIMAL(10,2)) ASC');
         } elseif ($sort === 'weight-desc') {
-            $query->orderByRaw('operating_weight * 0.453592 DESC');
+            // Sort by operating weight (high to low) - use Imperial values directly
+            $query->orderByRaw('CAST(REPLACE(SUBSTRING_INDEX(operating_weight, "~", -1), ",", "") AS DECIMAL(10,2)) DESC');
         } elseif ($sort === 'weight-asc') {
-            $query->orderByRaw('operating_weight * 0.453592 ASC');
+            // Sort by operating weight (low to high) - use Imperial values directly
+            $query->orderByRaw('CAST(REPLACE(SUBSTRING_INDEX(operating_weight, "~", 1), ",", "") AS DECIMAL(10,2)) ASC');
         }
         $products = $query->paginate(12)->appends($request->except('page'));
         $lines = $filterOptions['lines'];

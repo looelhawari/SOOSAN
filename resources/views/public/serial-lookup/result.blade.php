@@ -774,8 +774,10 @@ $unit = 'si';
                                     function bpm_row($val) {
                                         $dash = '- BPM';
                                         if ($val === null || $val === '' || $val === '-') return ['si' => $dash, 'imp' => $dash];
-                                        if (preg_match('/^([\d.]+)~([\d.]+)/', $val, $m)) {
-                                            $formatted = nf0($m[1]) . ' ~ ' . nf0($m[2]) . ' BPM';
+                                        if (preg_match('/^([\d.,]+)\s*~\s*([\d.,]+)/', $val, $m)) {
+                                            $min_val = str_replace(',', '', $m[1]);
+                                            $max_val = str_replace(',', '', $m[2]);
+                                            $formatted = nf0($min_val) . ' ~ ' . nf0($max_val) . ' BPM';
                                             return ['si' => $formatted, 'imp' => $formatted];
                                         }
                                         if (is_numeric($val)) {

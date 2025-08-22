@@ -700,9 +700,11 @@
                                                         <li class="attribute-row">
                                                             <span
                                                                 class="attribute-label">{{ __('common.required_oil_flow') }}:</span>
-                                                            <span
-                                                                class="attribute-value">{{ $product->required_oil_flow }}
-                                                                {{ __('common.unit_gal_min') }}</span>
+                                                            <span class="attribute-value unit-oil-flow"
+                                                                data-galmin="{{ $product->required_oil_flow }}">
+                                                                {{ $product->required_oil_flow }}
+                                                                {{ __('common.unit_gal_min') }}
+                                                            </span>
                                                         </li>
                                                         <li class="attribute-row">
                                                             <span
@@ -1109,7 +1111,26 @@
                             productsGrid.style.display = "";
                             productsLoading.style.display = "none";
                             finishProgressBar();
-                            window.convertUnits && convertUnits();
+
+                            // Preserve unit state after AJAX update
+                            if (window.convertUnits) {
+                                convertUnits();
+
+                                // Restore active button state
+                                const siBtn = document.getElementById("siBtn");
+                                const imperialBtn = document.getElementById("imperialBtn");
+                                const unitInput = document.getElementById("unitInput");
+
+                                if (unitInput && siBtn && imperialBtn) {
+                                    if (unitInput.value === "imperial") {
+                                        imperialBtn.classList.add("active");
+                                        siBtn.classList.remove("active");
+                                    } else {
+                                        siBtn.classList.add("active");
+                                        imperialBtn.classList.remove("active");
+                                    }
+                                }
+                            }
 
                             if (window.history && window.history.pushState) {
                                 window.history.pushState({}, "", fullUrl);
@@ -1129,20 +1150,20 @@
                 const imperialBtn = document.getElementById("imperialBtn");
                 const unitInput = document.getElementById("unitInput");
 
-                if (siBtn) {
+                if (siBtn && unitInput) {
                     siBtn.addEventListener("click", function() {
                         unitInput.value = "si";
                         siBtn.classList.add("active");
-                        imperialBtn.classList.remove("active");
+                        imperialBtn?.classList.remove("active");
                         convertUnits();
                     });
                 }
 
-                if (imperialBtn) {
+                if (imperialBtn && unitInput) {
                     imperialBtn.addEventListener("click", function() {
                         unitInput.value = "imperial";
                         imperialBtn.classList.add("active");
-                        siBtn.classList.remove("active");
+                        siBtn?.classList.remove("active");
                         convertUnits();
                     });
                 }
@@ -1192,11 +1213,10 @@
                             searchInput.focus();
                             // Add visual feedback
                             searchInput.style.borderColor = '#dc3545';
-                            searchInput.placeholder = '{{ __('common.search_required') }}';
+                            searchInput.placeholder = "{{ __('common.search_required') }}";
                             setTimeout(() => {
                                 searchInput.style.borderColor = '';
-                                searchInput.placeholder =
-                                    '{{ __('common.products_search_placeholder') }}';
+                                searchInput.placeholder = "{{ __('common.products_search_placeholder') }}";
                             }, 3000);
                             return false;
                         }
@@ -1229,7 +1249,7 @@
                 }
 
                 // Unit conversion
-                function convertUnits() {
+                window.convertUnits = function() {
                     const isImperial = document
                         .getElementById("imperialBtn")
                         ?.classList.contains("active");
@@ -1237,76 +1257,89 @@
                     document
                         .querySelectorAll(".unit-operating-weight")
                         .forEach(function(el) {
-                            const lb = parseFloat(el.dataset.lb);
-                            if (!isNaN(lb)) {
-                                el.textContent = isImperial ?
-                                    lb.toFixed(1) + " lb" :
-                                    (lb * 0.453592).toFixed(1) + " kg";
+                            const lbData = el.dataset.lb?.replace(/\s/g, '').split("~") || [];
+                            if (lbData.length === 2) {
+                                const min = parseFloat(lbData[0].replace(/,/g, ''));
+                                const max = parseFloat(lbData[1].replace(/,/g, ''));
+                                if (!isNaN(min) && !isNaN(max)) {
+                                    el.textContent = isImperial ?
+                                        min.toLocaleString(undefined, {maximumFractionDigits: 0}) + " ~ " + max.toLocaleString(undefined, {maximumFractionDigits: 0}) + " lb" :
+                                        (min * 0.45359237).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " ~ " + (max * 0.45359237).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " kg";
+                                } else {
+                                    el.textContent = isImperial ? "- lb" : "- kg";
+                                }
+                            } else if (lbData.length === 1) {
+                                const lb = parseFloat(lbData[0].replace(/,/g, ''));
+                                if (!isNaN(lb)) {
+                                    el.textContent = isImperial ?
+                                        lb.toLocaleString(undefined, {maximumFractionDigits: 0}) + " lb" :
+                                        (lb * 0.45359237).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " kg";
+                                } else {
+                                    el.textContent = isImperial ? "- lb" : "- kg";
+                                }
                             } else {
                                 el.textContent = isImperial ? "- lb" : "- kg";
                             }
                         });
 
                     document.querySelectorAll(".unit-oil-flow").forEach(function(el) {
-                        const galmin = el.dataset.galmin?.split("~") || [];
+                        const galmin = el.dataset.galmin?.replace(/\s/g, '').split("~") || [];
                         if (galmin.length === 2) {
-                            const min = parseFloat(galmin[0]);
-                            const max = parseFloat(galmin[1]);
+                            const min = parseFloat(galmin[0].replace(/,/g, ''));
+                            const max = parseFloat(galmin[1].replace(/,/g, ''));
                             if (!isNaN(min) && !isNaN(max)) {
                                 el.textContent = isImperial ?
-                                    min.toFixed(1) + "~" + max.toFixed(1) + " gal/min" :
-                                    (min * 3.78541).toFixed(1) +
-                                    "~" +
-                                    (max * 3.78541).toFixed(1) +
+                                    min.toFixed(1) + " ~ " + max.toFixed(1) + " gal/min" :
+                                    (min * 3.785411784).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                                    " ~ " +
+                                    (max * 3.785411784).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
                                     " l/min";
                             } else {
                                 el.textContent = isImperial ? "- gal/min" : "- l/min";
                             }
                         } else if (galmin.length === 1) {
-                            const val = parseFloat(galmin[0]);
+                            const val = parseFloat(galmin[0].replace(/,/g, ''));
                             if (!isNaN(val)) {
                                 el.textContent = isImperial ?
                                     val.toFixed(1) + " gal/min" :
-                                    (val * 3.78541).toFixed(1) + " l/min";
+                                    (val * 3.785411784).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " l/min";
                             } else {
                                 el.textContent = isImperial ? "- gal/min" : "- l/min";
                             }
+                        } else {
+                            el.textContent = isImperial ? "- gal/min" : "- l/min";
                         }
                     });
 
                     document.querySelectorAll(".unit-carrier").forEach(function(el) {
-                        const lb = el.dataset.lb?.split("~") || [];
+                        const lb = el.dataset.lb?.replace(/\s/g, '').split("~") || [];
                         if (lb.length === 2) {
-                            const min = parseFloat(lb[0]);
-                            const max = parseFloat(lb[1]);
+                            const min = parseFloat(lb[0].replace(/,/g, ''));
+                            const max = parseFloat(lb[1].replace(/,/g, ''));
                             if (!isNaN(min) && !isNaN(max)) {
                                 el.textContent = isImperial ?
-                                    min.toLocaleString(undefined, {
-                                        maximumFractionDigits: 1,
-                                    }) +
-                                    "~" +
-                                    max.toLocaleString(undefined, {
-                                        maximumFractionDigits: 1,
-                                    }) +
+                                    min.toLocaleString(undefined, {maximumFractionDigits: 0}) +
+                                    " ~ " +
+                                    max.toLocaleString(undefined, {maximumFractionDigits: 0}) +
                                     " lb" :
-                                    (min * 0.000453592).toFixed(1) +
-                                    "~" +
-                                    (max * 0.000453592).toFixed(1) +
+                                    (min * 0.00045359237).toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
+                                    " ~ " +
+                                    (max * 0.00045359237).toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g, ",") +
                                     " ton";
                             } else {
                                 el.textContent = isImperial ? "- lb" : "- ton";
                             }
                         } else if (lb.length === 1) {
-                            const val = parseFloat(lb[0]);
+                            const val = parseFloat(lb[0].replace(/,/g, ''));
                             if (!isNaN(val)) {
                                 el.textContent = isImperial ?
-                                    val.toLocaleString(undefined, {
-                                        maximumFractionDigits: 1,
-                                    }) + " lb" :
-                                    (val * 0.000453592).toFixed(1) + " ton";
+                                    val.toLocaleString(undefined, {maximumFractionDigits: 0}) + " lb" :
+                                    (val * 0.00045359237).toFixed(1).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " ton";
                             } else {
                                 el.textContent = isImperial ? "- lb" : "- ton";
                             }
+                        } else {
+                            el.textContent = isImperial ? "- lb" : "- ton";
                         }
                     });
                 }

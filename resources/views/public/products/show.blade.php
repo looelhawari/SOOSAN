@@ -886,9 +886,24 @@
                     <div class="spec-card">
                         <div class="spec-value">
                             @php
+                                // Use existing nf0 and nf1 functions from specs table section
                                 $ow = $product->operating_weight;
-                                $ow_si = $ow ? number_format($ow * 0.45359237, 1) . ' kg' : '- kg';
-                                $ow_imperial = $ow ? number_format($ow, 1) . ' lb' : '- lb';
+                                if ($ow === null || $ow === '') {
+                                    $ow_si = '- kg';
+                                    $ow_imperial = '- lb';
+                                } elseif (preg_match('/^([\d.,]+)\s*~\s*([\d.,]+)/', $ow, $m)) {
+                                    $min_val = floatval(str_replace(',', '', $m[1]));
+                                    $max_val = floatval(str_replace(',', '', $m[2]));
+                                    $ow_si = number_format($min_val * 0.45359237, 0, '.', ',') . ' ~ ' . number_format($max_val * 0.45359237, 0, '.', ',') . ' kg';
+                                    $ow_imperial = number_format($min_val, 0, '.', ',') . ' ~ ' . number_format($max_val, 0, '.', ',') . ' lb';
+                                } elseif (is_numeric(str_replace(',', '', $ow))) {
+                                    $numeric_val = floatval(str_replace(',', '', $ow));
+                                    $ow_si = number_format($numeric_val * 0.45359237, 0, '.', ',') . ' kg';
+                                    $ow_imperial = number_format($numeric_val, 0, '.', ',') . ' lb';
+                                } else {
+                                    $ow_si = '- kg';
+                                    $ow_imperial = '- lb';
+                                }
                             @endphp
                             <span class="unit-value" data-si="{{ $ow_si }}" data-imperial="{{ $ow_imperial }}">{{ $ow_si }}</span>
                         </div>
@@ -902,12 +917,15 @@
                                 if ($rof === null || $rof === '') {
                                     $rof_si = '- l/min';
                                     $rof_imperial = '- gal/min';
-                                } elseif (preg_match('/^([\d.]+)~([\d.]+)/', $rof, $m)) {
-                                    $rof_si = number_format($m[1] * 3.785411784, 1) . ' ~ ' . number_format($m[2] * 3.785411784, 1) . ' l/min';
-                                    $rof_imperial = number_format($m[1], 1) . ' ~ ' . number_format($m[2], 1) . ' gal/min';
-                                } elseif (is_numeric($rof)) {
-                                    $rof_si = number_format($rof * 3.785411784, 1) . ' l/min';
-                                    $rof_imperial = number_format($rof, 1) . ' gal/min';
+                                } elseif (preg_match('/^([\d.,]+)\s*~\s*([\d.,]+)/', $rof, $m)) {
+                                    $min_val = floatval(str_replace(',', '', $m[1]));
+                                    $max_val = floatval(str_replace(',', '', $m[2]));
+                                    $rof_si = number_format($min_val * 3.785411784, 0, '.', ',') . ' ~ ' . number_format($max_val * 3.785411784, 0, '.', ',') . ' l/min';
+                                    $rof_imperial = number_format($min_val, 1, '.', ',') . ' ~ ' . number_format($max_val, 1, '.', ',') . ' gal/min';
+                                } elseif (is_numeric(str_replace(',', '', $rof))) {
+                                    $numeric_val = floatval(str_replace(',', '', $rof));
+                                    $rof_si = number_format($numeric_val * 3.785411784, 0, '.', ',') . ' l/min';
+                                    $rof_imperial = number_format($numeric_val, 1, '.', ',') . ' gal/min';
                                 } else {
                                     $rof_si = '- l/min';
                                     $rof_imperial = '- gal/min';
@@ -925,12 +943,15 @@
                                 if ($ac === null || $ac === '') {
                                     $ac_si = '- ton';
                                     $ac_imperial = '- lb';
-                                } elseif (preg_match('/^([\d.]+)~([\d.]+)/', $ac, $m)) {
-                                    $ac_si = number_format($m[1] * 0.00045359237, 1) . ' ~ ' . number_format($m[2] * 0.00045359237, 1) . ' ton';
-                                    $ac_imperial = number_format($m[1], 1) . ' ~ ' . number_format($m[2], 1) . ' lb';
-                                } elseif (is_numeric($ac)) {
-                                    $ac_si = number_format($ac * 0.00045359237, 1) . ' ton';
-                                    $ac_imperial = number_format($ac, 1) . ' lb';
+                                } elseif (preg_match('/^([\d.,]+)\s*~\s*([\d.,]+)/', $ac, $m)) {
+                                    $min_val = floatval(str_replace(',', '', $m[1]));
+                                    $max_val = floatval(str_replace(',', '', $m[2]));
+                                    $ac_si = number_format($min_val * 0.00045359237, 1, '.', ',') . ' ~ ' . number_format($max_val * 0.00045359237, 1, '.', ',') . ' ton';
+                                    $ac_imperial = number_format($min_val, 0, '.', ',') . ' ~ ' . number_format($max_val, 0, '.', ',') . ' lb';
+                                } elseif (is_numeric(str_replace(',', '', $ac))) {
+                                    $numeric_val = floatval(str_replace(',', '', $ac));
+                                    $ac_si = number_format($numeric_val * 0.00045359237, 1, '.', ',') . ' ton';
+                                    $ac_imperial = number_format($numeric_val, 0, '.', ',') . ' lb';
                                 } else {
                                     $ac_si = '- ton';
                                     $ac_imperial = '- lb';
