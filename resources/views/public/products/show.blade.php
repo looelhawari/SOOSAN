@@ -986,17 +986,43 @@
                                 if ($val === null || $val === '' || $val === '-') {
                                     return ['- ' . $si_unit, '- ' . $imp_unit];
                                 }
-                                if (preg_match('/^([\d.]+)~([\d.]+)/', $val, $m)) {
-                                    $si_min = number_format($m[1] * $factor, $si_decimals, '.', ',');
-                                    $si_max = number_format($m[2] * $factor, $si_decimals, '.', ',');
-                                    return ["$si_min ~ $si_max $si_unit", nf1($m[1]) . ' ~ ' . nf1($m[2]) . " $imp_unit"];
+                                if (preg_match('/^([\d.,]+)\s*~\s*([\d.,]+)/', $val, $m)) {
+                                    $min_val = floatval(str_replace(',', '', $m[1]));
+                                    $max_val = floatval(str_replace(',', '', $m[2]));
+
+                                    // Use standard rounding for dimensions (mm, in) to match live site
+                                    if ($si_unit === 'mm') {
+                                        $si_min = round($min_val * $factor);
+                                        $si_max = round($max_val * $factor);
+                                        $si_min_formatted = number_format($si_min, 0, '.', ',');
+                                        $si_max_formatted = number_format($si_max, 0, '.', ',');
+                                    } else {
+                                        $si_min_formatted = number_format($min_val * $factor, $si_decimals, '.', ',');
+                                        $si_max_formatted = number_format($max_val * $factor, $si_decimals, '.', ',');
+                                    }
+
+                                    // Use nf0 for weight units (lb), nf1 for others
+                                    $imp_formatter = ($imp_unit === 'lb') ? 'nf0' : 'nf1';
+                                    return ["$si_min_formatted ~ $si_max_formatted $si_unit", $imp_formatter($min_val) . ' ~ ' . $imp_formatter($max_val) . " $imp_unit"];
                                 }
                                 if (preg_match('/^(\d+)\/(\d+)$/', trim($val), $m)) {
                                     $dec = $m[1] / $m[2];
                                     return [number_format($dec * $factor, $si_decimals, '.', ',') . " $si_unit", $val . " $imp_unit"];
                                 }
-                                if (is_numeric($val)) {
-                                    return [number_format($val * $factor, $si_decimals, '.', ',') . " $si_unit", nf1($val) . " $imp_unit"];
+                                if (is_numeric(str_replace(',', '', $val))) {
+                                    $numeric_val = floatval(str_replace(',', '', $val));
+
+                                    // Use standard rounding for dimensions (mm, in) to match live site
+                                    if ($si_unit === 'mm') {
+                                        $si_value = round($numeric_val * $factor);
+                                        $si_formatted = number_format($si_value, 0, '.', ',');
+                                    } else {
+                                        $si_formatted = number_format($numeric_val * $factor, $si_decimals, '.', ',');
+                                    }
+
+                                    // Use nf0 for weight units (lb), nf1 for others
+                                    $imp_formatter = ($imp_unit === 'lb') ? 'nf0' : 'nf1';
+                                    return ["$si_formatted $si_unit", $imp_formatter($numeric_val) . " $imp_unit"];
                                 }
                                 return [$val . " $si_unit", $val . " $imp_unit"];
                             }
@@ -1017,16 +1043,16 @@
                             }
 
                             function op_row($val) {
-                                $si_unit = 'kgf/cm²'; $imp_unit = 'lb-ft';
+                                $si_unit = 'kgf/cm²'; $imp_unit = 'psi';
                                 if ($val === null || $val === '' || $val === '-') return ['- ' . $si_unit, '- ' . $imp_unit];
-                                if (preg_match('/^([\d.,]+)~([\d.,]+)/', $val, $m)) {
-                                    $si_min = nf0(floatval(str_replace([','], [''], $m[1])) * 0.070307);
-                                    $si_max = nf0(floatval(str_replace([','], [''], $m[2])) * 0.070307);
-                                    return ["$si_min ~ $si_max $si_unit", nf1($m[1]) . ' ~ ' . nf1($m[2]) . " $imp_unit"];
+                                if (preg_match('/^([\d.,]+)\s*~\s*([\d.,]+)/', $val, $m)) {
+                                    $si_min = nf0(floatval(str_replace([','], [''], $m[1])) / 14.2233433);
+                                    $si_max = nf0(floatval(str_replace([','], [''], $m[2])) / 14.2233433);
+                                    return ["$si_min ~ $si_max $si_unit", nf0(str_replace([','], [''], $m[1])) . ' ~ ' . nf0(str_replace([','], [''], $m[2])) . " $imp_unit"];
                                 }
                                 if (is_numeric(str_replace([','], [''], $val))) {
-                                    $si = nf0(floatval(str_replace([','], [''], $val)) * 0.070307);
-                                    return ["$si $si_unit", nf1($val) . " $imp_unit"];
+                                    $si = nf0(floatval(str_replace([','], [''], $val)) / 14.2233433);
+                                    return ["$si $si_unit", nf0(str_replace([','], [''], $val)) . " $imp_unit"];
                                 }
                                 return [$val . ' ' . $si_unit, $val . ' ' . $imp_unit];
                             }

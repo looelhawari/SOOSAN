@@ -748,17 +748,20 @@
                         if ($val === null || $val === '' || $val === '-') {
                             return '- ' . $si_unit;
                         }
-                        if (preg_match('/^([\d.]+)~([\d.]+)/', $val, $m)) {
-                            $si_min = number_format($m[1] * $factor, $si_decimals, '.', ',');
-                            $si_max = number_format($m[2] * $factor, $si_decimals, '.', ',');
+                        if (preg_match('/^([\d.,]+)\s*~\s*([\d.,]+)/', $val, $m)) {
+                            $min_val = floatval(str_replace(',', '', $m[1]));
+                            $max_val = floatval(str_replace(',', '', $m[2]));
+                            $si_min = number_format($min_val * $factor, $si_decimals, '.', ',');
+                            $si_max = number_format($max_val * $factor, $si_decimals, '.', ',');
                             return "$si_min ~ $si_max $si_unit";
                         }
                         if (preg_match('/^(\d+)\/(\d+)$/', trim($val), $m)) {
                             $dec = $m[1] / $m[2];
                             return number_format($dec * $factor, $si_decimals, '.', ',') . " $si_unit";
                         }
-                        if (is_numeric($val)) {
-                            return number_format($val * $factor, $si_decimals, '.', ',') . " $si_unit";
+                        if (is_numeric(str_replace(',', '', $val))) {
+                            $numeric_val = floatval(str_replace(',', '', $val));
+                            return number_format($numeric_val * $factor, $si_decimals, '.', ',') . " $si_unit";
                         }
                         return $val . " $si_unit";
                     }
@@ -781,13 +784,13 @@
                     function op_row($val) {
                         $si_unit = 'kgf/cm²';
                         if ($val === null || $val === '' || $val === '-') return '- ' . $si_unit;
-                        if (preg_match('/^([\d.,]+)~([\d.,]+)/', $val, $m)) {
-                            $si_min = nf0(floatval(str_replace([','], [''], $m[1])) * 0.070307);
-                            $si_max = nf0(floatval(str_replace([','], [''], $m[2])) * 0.070307);
+                        if (preg_match('/^([\d.,]+)\s*~\s*([\d.,]+)/', $val, $m)) {
+                            $si_min = nf0(floatval(str_replace([','], [''], $m[1])) / 14.2233433);
+                            $si_max = nf0(floatval(str_replace([','], [''], $m[2])) / 14.2233433);
                             return "$si_min ~ $si_max $si_unit";
                         }
                         if (is_numeric(str_replace([','], [''], $val))) {
-                            $si = nf0(floatval(str_replace([','], [''], $val)) * 0.070307);
+                            $si = nf0(floatval(str_replace([','], [''], $val)) / 14.2233433);
                             return "$si $si_unit";
                         }
                         return $val . ' ' . $si_unit;
