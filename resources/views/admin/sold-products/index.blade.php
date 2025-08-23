@@ -51,13 +51,20 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(45deg, rgba(255,255,255,0.08) 0%, transparent 50%, rgba(255,255,255,0.04) 100%);
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.08) 0%, transparent 50%, rgba(255, 255, 255, 0.04) 100%);
             animation: shimmer 4s ease-in-out infinite;
         }
 
         @keyframes shimmer {
-            0%, 100% { opacity: 0; }
-            50% { opacity: 1; }
+
+            0%,
+            100% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
         }
 
         /* Enhanced Cards */
@@ -65,7 +72,7 @@
             background: #fff;
             border-radius: var(--border-radius);
             box-shadow: var(--card-shadow);
-            border: 1px solid rgba(0,0,0,0.04);
+            border: 1px solid rgba(0, 0, 0, 0.04);
             margin-bottom: 2.5rem;
             overflow: hidden;
             transition: var(--transition);
@@ -132,7 +139,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             transform: rotate(45deg);
             transition: var(--transition);
             opacity: 0;
@@ -149,8 +156,13 @@
         }
 
         @keyframes slide {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
         }
 
         .stat-value {
@@ -158,7 +170,7 @@
             font-weight: 800;
             margin-bottom: 1rem;
             line-height: 1;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .stat-label {
@@ -188,7 +200,7 @@
             transition: var(--transition);
             font-size: 0.95rem;
             background: #fff;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
 
         .form-control:focus,
@@ -203,7 +215,7 @@
         .form-select:hover {
             border-color: #ced4da;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
 
         .form-label {
@@ -243,7 +255,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -297,7 +309,7 @@
             border-radius: var(--border-radius);
             padding: 2.5rem;
             box-shadow: var(--card-shadow);
-            border: 1px solid rgba(0,0,0,0.04);
+            border: 1px solid rgba(0, 0, 0, 0.04);
             transition: var(--transition);
             height: 100%;
             position: relative;
@@ -350,7 +362,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transform: rotate(45deg);
             transition: var(--transition);
             opacity: 0;
@@ -367,8 +379,13 @@
         }
 
         @keyframes iconShimmer {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
         }
 
         .sale-details {
@@ -440,7 +457,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             transition: left 0.6s;
         }
 
@@ -528,7 +545,7 @@
             z-index: 1;
         }
 
-        .empty-state > * {
+        .empty-state>* {
             position: relative;
             z-index: 2;
         }
@@ -710,6 +727,7 @@
                 opacity: 0;
                 transform: translateY(-15px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -721,6 +739,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -786,7 +805,7 @@
                 margin: -1rem -1rem 1.75rem;
             }
 
-            .modern-page-header .row > div {
+            .modern-page-header .row>div {
                 text-align: center;
                 margin-bottom: 1rem;
             }
@@ -836,7 +855,7 @@
             }
 
             /* Mobile filter adjustments */
-            .filter-mobile-stack .row > div {
+            .filter-mobile-stack .row>div {
                 margin-bottom: 1rem;
             }
 
@@ -948,6 +967,7 @@
 
         /* Touch device optimizations */
         @media (hover: none) and (pointer: coarse) {
+
             .modern-btn:hover,
             .sale-card:hover,
             .stat-card:hover {
@@ -994,7 +1014,8 @@
                     <p class="mb-0 opacity-75">{{ __('sold-products.track_and_manage_description') }}</p>
                 </div>
                 <div class="col-md-4 text-md-end">
-                    <a href="{{ route('admin.sold-products.create') }}" class="modern-btn mobile-icon-only" style="cursor: pointer; z-index: 10; position: relative;">
+                    <a href="{{ route('admin.sold-products.create') }}" class="modern-btn mobile-icon-only"
+                        style="cursor: pointer; z-index: 10; position: relative;">
                         <i class="fas fa-plus mobile-nav-icon"></i>
                         <span class="btn-text">{{ __('sold-products.add_new_sale') }}</span>
                     </a>
@@ -1039,6 +1060,27 @@
             <div class="stat-label">{{ __('sold-products.warranty_voided') }}</div>
         </div>
     </div>
+
+
+    <!-- Detailed Employee Reminder (Enhanced State Card Section) -->
+    <div class="modern-card animate-fade-in-up mb-4">
+        <div class="card-body">
+            <div class="d-flex align-items-start gap-3">
+                <div style="font-size: 2rem; color: #f59e0b;"><i class="fas fa-user-shield"></i></div>
+                <div>
+                    <ul style="color: #92400e; font-size: 1rem; margin: 0 0 0 1rem;">
+                        <li><strong>{{ __('sold-products.owner_reminder_title') }}</strong>
+                            {{ __('sold-products.owner_reminder_body') }}</li>
+                        <li>{{ __('sold-products.owner_reminder_update') }}</li>
+                        <li><a href="{{ route('admin.owners.create') }}"
+                                style="color: #f59e0b; font-weight: bold; text-decoration: underline;">{{ __('sold-products.owner_create_link_text') }}</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Enhanced Filter Section -->
     <div class="modern-card mb-4 animate-fade-in-up">
@@ -1196,7 +1238,8 @@
                     </div>
 
                     <!-- Filter Action Buttons -->
-                    <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top filter-actions-mobile">
+                    <div
+                        class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top filter-actions-mobile">
                         <div class="d-flex gap-2 flex-wrap">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-search me-1"></i>
@@ -1220,15 +1263,19 @@
     </div>
 
     @if (auth()->user()->isEmployee())
-        <!-- Enhanced Employee Notice -->
+        <!-- Detailed Employee Reminder -->
         <div class="employee-notice animate-fade-in-up">
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <i class="fas fa-info-circle" style="color: #f59e0b; font-size: 1.5rem;"></i>
                 <div>
-                    <h4 style="color: #92400e; margin: 0 0 0.5rem 0; font-size: 1.1rem; font-weight: 700;">Employee Access
-                    </h4>
-                    <p style="color: #92400e; margin: 0; font-size: 0.9rem; line-height: 1.5;">You can create new sales and edit existing
-                        ones. Any edits to existing sales will be submitted for admin approval before taking effect.</p>
+                    <h4 style="color: #92400e; margin: 0 0 0.5rem 0; font-size: 1.1rem; font-weight: 700;">
+                        {{ __('sold-products.employee_access') }}</h4>
+                    <p style="color: #92400e; margin: 0; font-size: 0.9rem; line-height: 1.5;">
+                        {{ __('sold-products.employee_access_desc') }}</p>
+                    <ul style="color: #92400e; font-size: 0.9rem; margin: 0.5rem 0 0 1rem;">
+                        <li>{{ __('sold-products.owner_reminder') }}</li>
+                        <li>{!! __('sold-products.owner_create_link', ['url' => route('admin.owners.create')]) !!}</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -1240,17 +1287,21 @@
             <div class="col-lg-6 col-xl-4 mb-4">
                 <div class="sale-card animate-fade-in-up">
                     <div class="sale-icon">
-                        @if($soldProduct->product && $soldProduct->product->image_url)
-                            <img src="{{ $soldProduct->product->image_url }}" alt="{{ $soldProduct->product->model_name }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3); background: #f8fafc; display: block; margin: 0 auto;">
+                        @if ($soldProduct->product && $soldProduct->product->image_url)
+                            <img src="{{ $soldProduct->product->image_url }}"
+                                alt="{{ $soldProduct->product->model_name }}"
+                                style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3); background: #f8fafc; display: block; margin: 0 auto;">
                         @else
-                            <div style="width: 80px; height: 80px; border-radius: 50%; background: #e9ecef; display: flex; align-items: center; justify-content: center; color: #adb5bd; font-size: 2rem; margin: 0 auto;">
+                            <div
+                                style="width: 80px; height: 80px; border-radius: 50%; background: #e9ecef; display: flex; align-items: center; justify-content: center; color: #adb5bd; font-size: 2rem; margin: 0 auto;">
                                 <i class="fas fa-image"></i>
                             </div>
                         @endif
                     </div>
 
                     <div class="text-center">
-                        <h5 class="mb-3" style="font-weight: 700; color: #2d3748;">{{ $soldProduct->product->model_name ?? 'Unknown Model' }}</h5>
+                        <h5 class="mb-3" style="font-weight: 700; color: #2d3748;">
+                            {{ $soldProduct->product->model_name ?? 'Unknown Model' }}</h5>
 
                         <div class="sale-details">
                             <div class="mb-2">
@@ -1325,7 +1376,7 @@
 
                         <div class="d-flex justify-content-center action-buttons-mobile">
                             <a href="{{ route('admin.sold-products.show', $soldProduct) }}"
-                                class="action-btn border-info text-info view" title="View" >
+                                class="action-btn border-info text-info view" title="View">
                                 <i class="fas fa-eye"></i>
                             </a>
                             <a href="{{ route('admin.sold-products.edit', $soldProduct) }}"
@@ -1378,14 +1429,12 @@
             const toggleIcon = document.getElementById('filterToggleIcon');
 
             // Check if filters are active and show them by default
-            const hasActiveFilters = @json(
-                request()->filled('owner_name') ||
-                request()->filled('serial_number') ||
-                request()->filled('warranty_status') ||
-                request()->filled('product_id') ||
-                request()->filled('date_from') ||
-                request()->filled('date_to')
-            );
+            const hasActiveFilters = @json(request()->filled('owner_name') ||
+                    request()->filled('serial_number') ||
+                    request()->filled('warranty_status') ||
+                    request()->filled('product_id') ||
+                    request()->filled('date_from') ||
+                    request()->filled('date_to'));
 
             if (hasActiveFilters) {
                 filterSection.classList.add('show');

@@ -917,7 +917,7 @@
                                     </div>
                                 </td>
                                 <td class="mobile-collapse">
-                                    <span class="font-monospace small">{{ $log->ip_address ?: __('audit-logs.table.na') }}</span>
+                                    <span class="font-monospace small">{{ $log->ip_address ?: __('audit-logs.table.z`na') }}</span>
                                     @if($log->url)
                                         <br><small class="text-muted">{{ Str::limit($log->url, 30) }}</small>
                                     @endif

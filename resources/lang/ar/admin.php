@@ -177,6 +177,11 @@ return [
     
     // Notifications
     'notifications' => 'الإشعارات',
+    'new' => 'جديد',
+    'notifications_pagination_aria' => 'ترقيم صفحات الإشعارات',
+    'pagination_previous' => '«',
+    'pagination_next' => '»',
+    'pagination_ellipsis' => '...',
     'no_notifications' => 'لا توجد إشعارات جديدة',
     'view_all_notifications' => 'عرض جميع الإشعارات',
     'notification_marked_read' => 'تم تعليم الإشعار كمقروء',
@@ -186,4 +191,5 @@ return [
     'notification_sound' => 'تشغيل صوت الإشعار',
     'real_time_notifications' => 'تم تفعيل الإشعارات الفورية',
     'deleted_items' => 'العناصر المحذوفة',
+    ''
 ];

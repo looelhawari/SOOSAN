@@ -171,7 +171,13 @@ return [
     ],
     
     // Notifications
+    'view_all' => 'View All',
     'notifications' => 'Notifications',
+    'new' => 'New',
+    'notifications_pagination_aria' => 'Notifications pagination',
+    'pagination_previous' => '«',
+    'pagination_next' => '»',
+    'pagination_ellipsis' => '...',
     'no_notifications' => 'No new notifications',
     'view_all_notifications' => 'View All Notifications',
     'mark_as_read' => 'Mark as Read',

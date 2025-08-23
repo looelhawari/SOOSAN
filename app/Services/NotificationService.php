@@ -43,7 +43,7 @@ class NotificationService
     public function notifyImportantAuditLog(AuditLog $auditLog)
     {
         // Define what constitutes "important" audit logs
-        $importantEvents = ['deleted', 'login_failed', 'permission_denied', 'data_breach', 'system_error'];
+    $importantEvents = ['deleted', 'login', 'logout', 'login_failed', 'permission_denied', 'data_breach', 'system_error'];
         
         if (in_array($auditLog->event, $importantEvents)) {
             // Get all admin users

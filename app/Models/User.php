@@ -63,7 +63,9 @@ class User extends Authenticatable
     public function createdEmployees()
     {
         return $this->hasMany(User::class, 'created_by');
-    }    // Role helper methods
+    }
+
+    // Role helper methods
     public function isAdmin()
     {
         return $this->role === 'admin';

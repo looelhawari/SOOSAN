@@ -26,27 +26,50 @@ class ImportantAuditLogNotification extends Notification
 
     public function toArray($notifiable)
     {
+        $event = $this->auditLog->event;
+        $eventTranslation = __("audit-logs.table.events.$event");
+        $userName = $this->auditLog->user ? $this->auditLog->user->name : __('audit-logs.table.system');
+        $modelType = $this->auditLog->auditable_type ? class_basename($this->auditLog->auditable_type) : __('audit-logs.table.system');
+
+        $message = match ($event) {
+            'login' => __('audit-logs.table.messages.login', ['user' => $userName]),
+            'logout' => __('audit-logs.table.messages.logout', ['user' => $userName]),
+            'login_failed' => __('audit-logs.table.messages.login_failed', ['user' => $userName]),
+            default => __('audit-logs.table.messages.default'),
+        };
+
         return [
             'type' => 'important_audit_log',
-            'title' => 'Important System Activity',
-            'message' => 'Important system activity detected',
-            'event' => $this->auditLog->event,
-            'model_type' => $this->auditLog->auditable_type ? class_basename($this->auditLog->auditable_type) : 'System',
-            'user_name' => $this->auditLog->user ? $this->auditLog->user->name : 'System',
+            'title' => $eventTranslation,
+            'message' => $message,
+            'event' => $event,
+            'model_type' => $modelType,
+            'user_name' => $userName,
             'audit_log_id' => $this->auditLog->id,
             'created_at' => $this->auditLog->created_at->format('Y-m-d H:i:s'),
-            'icon' => 'fas fa-exclamation-triangle',
-            'color' => 'danger',
+            'icon' => __('audit-logs.table.icon_exclamation'),
+            'color' => __('audit-logs.table.color_danger'),
             'url' => route('admin.audit-logs.show', $this->auditLog->id),
         ];
     }
 
     public function toBroadcast($notifiable)
     {
+        $event = $this->auditLog->event;
+        $eventTranslation = __("audit-logs.table.events.$event");
+        $userName = $this->auditLog->user ? $this->auditLog->user->name : __('audit-logs.table.system');
+        $message = match ($event) {
+            'login' => __('audit-logs.table.messages.login', ['user' => $userName]),
+            'logout' => __('audit-logs.table.messages.logout', ['user' => $userName]),
+            'login_failed' => __('audit-logs.table.messages.login_failed', ['user' => $userName]),
+            default => __('audit-logs.table.messages.default'),
+        };
         return [
             'type' => 'important_audit_log',
-            'title' => 'Important System Activity',
-            'message' => 'Important system activity detected',
+            'title' => $eventTranslation,
+            'message' => $message,
+            'icon' => __('audit-logs.table.icon_exclamation'),
+            'color' => __('audit-logs.table.color_danger'),
             'data' => $this->toArray($notifiable),
         ];
     }

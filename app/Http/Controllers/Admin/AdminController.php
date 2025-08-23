@@ -57,6 +57,21 @@ class AdminController extends Controller
                 }
                 // Reset failed login attempts
                 $request->session()->forget('failed_login_attempts');
+
+                // Log login event in AuditLog
+                \App\Models\AuditLog::create([
+                    'user_id' => $user->id,
+                    'event' => 'login',
+                    'auditable_type' => get_class($user),
+                    'auditable_id' => $user->id,
+                    'old_values' => null,
+                    'new_values' => null,
+                    'ip_address' => $request->ip(),
+                    'user_agent' => $request->header('User-Agent'),
+                    'url' => $request->fullUrl(),
+                    'method' => $request->method(),
+                ]);
+
                 return redirect()->intended(route('admin.dashboard'))
                     ->with('success', 'Welcome back, ' . $user->name . '!');
             }
@@ -91,6 +106,24 @@ class AdminController extends Controller
      */
     public function logout(Request $request)
     {
+        $user = Auth::guard('web')->user();
+
+        // Log logout event in AuditLog
+        if ($user) {
+            \App\Models\AuditLog::create([
+                'user_id' => $user->id,
+                'event' => 'logout',
+                'auditable_type' => get_class($user),
+                'auditable_id' => $user->id,
+                'old_values' => null,
+                'new_values' => null,
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->header('User-Agent'),
+                'url' => $request->fullUrl(),
+                'method' => $request->method(),
+            ]);
+        }
+
         // Clear all session data
         $request->session()->invalidate();
         $request->session()->regenerateToken();
