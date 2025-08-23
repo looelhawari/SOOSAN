@@ -246,6 +246,8 @@ return [
     'service_unavailable' => 'الخدمة غير متوفرة',
     'maintenance_mode' => 'النظام تحت الصيانة',
     'try_again_later' => 'يرجى المحاولة مرة أخرى لاحقاً',
+        // Custom for failed login attempts
+        'multiple_failed_attempts_text' => "إذا نسيت البريد الإلكتروني أو كلمة المرور، يرجى التواصل مع المسؤول على:",
     
     // Laravel Default Messages
     'failed' => 'بيانات الاعتماد هذه لا تتطابق مع سجلاتنا.',

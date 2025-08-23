@@ -246,6 +246,9 @@ return [
     'service_unavailable' => 'Service unavailable',
     'maintenance_mode' => 'System under maintenance',
     'try_again_later' => 'Please try again later',
+
+    // Custom for failed login attempts
+    'multiple_failed_attempts_text' => "If you forgot your email or password, please contact the administrator at:",
     
     // Laravel Default Messages
     'failed' => 'These credentials do not match our records.',

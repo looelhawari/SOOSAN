@@ -44,20 +44,19 @@ class AdminController extends Controller
             // Allow admin or verified employee
             if ($user->isAdmin() || $user->isEmployee()) {
                 $request->session()->regenerate();
-                
                 // Store session security data
                 $request->session()->put('user_agent', $request->header('User-Agent'));
                 $request->session()->put('last_activity', now());
                 $request->session()->put('login_time', now());
                 $request->session()->put('authenticated', true);
                 $request->session()->put('user_id', $user->id);
-                
                 // Handle user preferences
                 if ($request->has('language')) {
                     $request->session()->put('locale', $request->language);
                     app()->setLocale($request->language);
                 }
-                
+                // Reset failed login attempts
+                $request->session()->forget('failed_login_attempts');
                 return redirect()->intended(route('admin.dashboard'))
                     ->with('success', 'Welcome back, ' . $user->name . '!');
             }
@@ -69,8 +68,21 @@ class AdminController extends Controller
             ]);
         }
 
+        // Track failed login attempts
+        $attempts = $request->session()->get('failed_login_attempts', 0) + 1;
+        $request->session()->put('failed_login_attempts', $attempts);
+
+        if ($attempts >= 3) {
+            $helpEmail = 'soosanegypt@madinagp.com';
+            $message = __('auth.multiple_failed_attempts_text') .
+                ' <br><a href="mailto:' . $helpEmail . '" style="color:#764ba2;font-weight:bold;">' . $helpEmail . '</a>';
+            throw ValidationException::withMessages([
+                'email' => $message,
+            ]);
+        }
+
         throw ValidationException::withMessages([
-            'email' => 'The provided credentials do not match our records.',
+            'email' => __('auth.incorrect_credentials'),
         ]);
     }
 

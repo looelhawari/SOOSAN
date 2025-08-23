@@ -40,7 +40,11 @@
                                         placeholder="{{ __('auth.enter_your_email') }}" aria-describedby="email-help">
                                     @error('email')
                                         <div class="invalid-feedback">
-                                            {{ $message }}
+                                            @if(Str::contains($message, 'mailto:'))
+                                                {!! $message !!}
+                                            @else
+                                                {{ $message }}
+                                            @endif
                                         </div>
                                     @enderror
                                 </div>
