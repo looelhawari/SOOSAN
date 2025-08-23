@@ -373,6 +373,12 @@
                         </div>
                         <div class="info-row">
                             <span class="info-label">
+                                <i class="fas fa-layer-group text-primary"></i>
+                                {{ __('sold-products.quantity') }}:
+                            </span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">
                                 <i class="fas fa-dollar-sign text-success"></i>
                                 {{ __('sold-products.purchase_price') }}:
                             </span>

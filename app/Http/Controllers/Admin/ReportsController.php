@@ -551,6 +551,7 @@ class ReportsController extends Controller
 
         // Get all sold products with warranty information
         $soldProducts = SoldProduct::with(['product', 'owner', 'employee'])
+            ->whereHas('product') // Only include sold products that have valid product relationships
             ->select([
                 'id',
                 'product_id',
@@ -583,7 +584,7 @@ class ReportsController extends Controller
             }
 
             $productData = [
-                'model_name' => $soldProduct->product->model_name ?? 'N/A',
+                'model_name' => $soldProduct->product->model_name ?? 'Unknown Model',
                 'serial_number' => $soldProduct->serial_number ?? 'N/A',
                 'owner_name' => $soldProduct->owner->name ?? 'N/A',
                 'purchase_date' => $soldProduct->sale_date ? $soldProduct->sale_date->format('Y-m-d') : 'N/A',
@@ -744,6 +745,7 @@ class ReportsController extends Controller
         // Get sold products with date filtering and complete information
         $soldProducts = SoldProduct::with(['product.category', 'owner', 'user'])
             ->whereNotNull('sale_date') // Only get products with actual sale dates
+            ->whereHas('product') // Only include sold products that have valid product relationships
             ->whereBetween('sale_date', [$dateRange['start'], $dateRange['end']]) // Apply date filtering
             ->orderBy('sale_date', 'desc')
             ->get()
@@ -757,7 +759,7 @@ class ReportsController extends Controller
                 }
 
                 return [
-                    'model_name' => $sale->product->model_name ?? 'N/A',
+                    'model_name' => $sale->product->model_name ?? 'Unknown Model',
                     'serial_number' => $sale->serial_number ?? 'N/A',
                     'quantity' => $sale->quantity ?? 1, // Default to 1 if quantity is null
                     'purchase_date' => $sale->sale_date ? $sale->sale_date->format('Y-m-d') : 'N/A',

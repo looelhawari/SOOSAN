@@ -14,7 +14,8 @@ class SoldProductController extends Controller
 {
     public function index(Request $request)
     {
-        $query = SoldProduct::with(['product', 'owner', 'employee']);
+        $query = SoldProduct::with(['product', 'owner', 'employee'])
+            ->whereHas('product'); // Only include sold products that have valid product relationships
 
         // Apply filters
         if ($request->filled('owner_name')) {

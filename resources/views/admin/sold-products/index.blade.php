@@ -1250,7 +1250,7 @@
                     </div>
 
                     <div class="text-center">
-                        <h5 class="mb-3" style="font-weight: 700; color: #2d3748;">{{ $soldProduct->product->model_name ?? 'N/A' }}</h5>
+                        <h5 class="mb-3" style="font-weight: 700; color: #2d3748;">{{ $soldProduct->product->model_name ?? 'Unknown Model' }}</h5>
 
                         <div class="sale-details">
                             <div class="mb-2">
