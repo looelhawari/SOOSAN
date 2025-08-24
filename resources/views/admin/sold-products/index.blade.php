@@ -1250,7 +1250,7 @@
                     </div>
 
                     <div class="text-center">
-                        <h5 class="mb-3" style="font-weight: 700; color: #2d3748;">{{ $soldProduct->product->model_name ?? 'Unknown Model' }}</h5>
+                        <h5 class="mb-3" style="font-weight: 700; color: #2d3748;">{{ $soldProduct->product->model_name ?? 'N/A' }}</h5>
 
                         <div class="sale-details">
                             <div class="mb-2">
@@ -1275,7 +1275,7 @@
                         </div>
 
                         <div class="price-display mb-3">
-                            ${{ number_format($soldProduct->purchase_price ?? 0, 2) }}
+                            {{ number_format($soldProduct->purchase_price ?? 0, 2) }} {{ __('sold-products.currency') }}
                         </div>
 
                         <div class="mb-3">
