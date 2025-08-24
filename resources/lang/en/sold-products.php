@@ -25,6 +25,7 @@ return [
     'monthly_sales' => 'Monthly Sales',
     'yearly_sales' => 'Yearly Sales',
     'average_sale_value' => 'Average Sale Value',
+    'currency' => 'EGP',
 
     // Actions
     'add_new_sale' => 'Add New Sale',
