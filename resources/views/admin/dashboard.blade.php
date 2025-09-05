@@ -13,12 +13,12 @@
         overflow: hidden;
         background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
     }
-    
+
     .dashboard-card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 40px rgba(0,0,0,0.15);
     }
-    
+
     .stats-card {
         position: relative;
         padding: 1.5rem;
@@ -27,7 +27,7 @@
         border-radius: 15px;
         overflow: hidden;
     }
-    
+
     .stats-card::before {
         content: '';
         position: absolute;
@@ -38,42 +38,42 @@
         background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
         z-index: 1;
     }
-    
+
     .stats-card > * {
         position: relative;
         z-index: 2;
     }
-    
+
     .stats-card.primary {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     }
-    
+
     .stats-card.success {
         background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
     }
-    
+
     .stats-card.warning {
         background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
     }
-    
+
     .stats-card.danger {
         background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
     }
-    
+
     .stats-card.info {
         background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
     }
-    
+
     .chart-container {
         position: relative;
         height: 350px;
         padding: 20px;
     }
-    
+
     .chart-container.small {
         height: 250px;
     }
-    
+
     .metric-card {
         background: white;
         border-radius: 10px;
@@ -82,30 +82,30 @@
         box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         transition: all 0.3s ease;
     }
-    
+
     .metric-card:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
-    
+
     .growth-indicator {
         font-size: 0.85rem;
         font-weight: 600;
     }
-    
+
     .growth-indicator.positive {
         color: #48bb78;
     }
-    
+
     .growth-indicator.negative {
         color: #f56565;
     }
-    
+
     .activity-feed {
         max-height: 400px;
         overflow-y: auto;
     }
-    
+
     .activity-item {
         border-left: 3px solid #e2e8f0;
         padding: 0.75rem;
@@ -114,12 +114,12 @@
         border-radius: 0 8px 8px 0;
         transition: all 0.3s ease;
     }
-    
+
     .activity-item:hover {
         border-left-color: #667eea;
         background: #f7fafc;
     }
-    
+
     .real-time-indicator {
         display: inline-block;
         width: 10px;
@@ -129,7 +129,7 @@
         animation: pulse 2s infinite;
         margin-right: 5px;
     }
-    
+
     @keyframes pulse {
         0% { box-shadow: 0 0 0 0 rgba(72, 187, 120, 0.7); }
         70% { box-shadow: 0 0 0 10px rgba(72, 187, 120, 0); }
@@ -176,7 +176,7 @@
                 @endif
             </div>
         </div>
-        
+
         <div class="col-lg-3 col-md-6">
             <div class="stats-card success">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -194,7 +194,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-3 col-md-6">
             <div class="stats-card warning">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -207,12 +207,11 @@
                     </div>
                 </div>
                 <div class="opacity-75">
-                    <i class="fas fa-dollar-sign me-1"></i>
-                    ${{ number_format($stats['total_revenue'] ?? 0, 2) }}
+                    {{ number_format($stats['total_revenue'] ?? 0, 2) }} {{ __('sold-products.currency') }}
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-3 col-md-6">
             <div class="stats-card danger">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -249,7 +248,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-3 col-md-6">
             <div class="stats-card success">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -267,7 +266,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-3 col-md-6">
             <div class="stats-card warning">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -285,7 +284,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-lg-3 col-md-6">
             <div class="stats-card info">
                 <div class="d-flex justify-content-between align-items-center mb-2">
@@ -321,10 +320,10 @@
                         <div class="btn-group" role="group">
                             <input type="radio" class="btn-check" name="salesPeriod" id="daily" checked>
                             <label class="btn btn-outline-primary btn-sm" for="daily">{{ __('dashboard.daily') }}</label>
-                            
+
                             <input type="radio" class="btn-check" name="salesPeriod" id="weekly">
                             <label class="btn btn-outline-primary btn-sm" for="weekly">{{ __('dashboard.weekly') }}</label>
-                            
+
                             <input type="radio" class="btn-check" name="salesPeriod" id="monthly">
                             <label class="btn btn-outline-primary btn-sm" for="monthly">{{ __('dashboard.monthly') }}</label>
                         </div>
@@ -335,31 +334,30 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Revenue Metrics -->
         <div class="col-lg-4">
             <div class="dashboard-card h-100">
                 <div class="card-header bg-transparent border-0 p-4">
                     <h5 class="mb-0">
-                        <i class="fas fa-dollar-sign me-2 text-success"></i>
-                        {{ __('dashboard.revenue_metrics') }}
+                    {{ __('dashboard.revenue_metrics') }} {{ __('sold-products.currency') }}
                     </h5>
                 </div>
                 <div class="card-body p-4">
                     <div class="metric-card mb-3">
                         <h3 class="text-success mb-1" data-counter="{{ $realtime['today_revenue'] ?? 0 }}">
-                            ${{ number_format($realtime['today_revenue'] ?? 0, 2) }}
+                            {{ number_format($realtime['today_revenue'] ?? 0, 2) }} {{ __('sold-products.currency') }}
                         </h3>
                         <p class="text-muted mb-0">{{ __('dashboard.todays_revenue') }}</p>
                     </div>
-                    
+
                     <div class="metric-card mb-3">
                         <h4 class="text-primary mb-1">
-                            ${{ number_format($stats['avg_sale_price'] ?? 0, 2) }}
+                            {{ number_format($stats['avg_sale_price'] ?? 0, 2) }} {{ __('sold-products.currency') }}
                         </h4>
                         <p class="text-muted mb-0">{{ __('dashboard.average_sale_price') }}</p>
                     </div>
-                    
+
                     @if(isset($analytics['growth_metrics']))
                     <div class="metric-card">
                         <div class="d-flex justify-content-between align-items-center">
@@ -379,7 +377,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Performance Analytics -->
     <div class="row g-4 mb-4">
         <!-- Product Performance -->
@@ -396,7 +394,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Team Performance -->
         <div class="col-lg-6">
             <div class="dashboard-card">
@@ -412,7 +410,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Geographic & Category Analytics -->
     <div class="row g-4 mb-4">
         <!-- Sales by Region -->
@@ -429,7 +427,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Product Categories -->
         <div class="col-lg-6">
             <div class="dashboard-card">
@@ -445,7 +443,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- System Monitoring -->
     <div class="row g-4 mb-4">
         <!-- Recent Activity Feed -->
@@ -499,7 +497,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- System Health & Quick Stats -->
         <div class="col-lg-4">
             <div class="dashboard-card h-100">
@@ -520,7 +518,7 @@
                             <i class="fas fa-database text-primary fa-2x"></i>
                         </div>
                     </div>
-                    
+
                     <div class="metric-card mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -530,7 +528,7 @@
                             <i class="fas fa-table text-success fa-2x"></i>
                         </div>
                     </div>
-                    
+
                     <div class="metric-card mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -540,7 +538,7 @@
                             <i class="fas fa-file-alt text-warning fa-2x"></i>
                         </div>
                     </div>
-                    
+
                     <div class="metric-card">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
@@ -555,7 +553,7 @@
             </div>
         </div>
     </div>
-    
+
 @else
     <!-- Employee Dashboard -->
     <div class="row g-4 mb-4">
@@ -573,7 +571,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Quick Actions -->
         <div class="col-lg-4">
             <div class="dashboard-card h-100">
@@ -602,7 +600,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- My Recent Activity -->
     <div class="row g-4">
         <div class="col-12">
@@ -1139,7 +1137,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Real-time data updates
 function refreshDashboard() {
     const lastUpdateEl = document.getElementById('lastUpdate');
-    
+
     fetch('{{ route("admin.dashboard.realtime") }}')
         .then(response => response.json())
         .then(data => {
@@ -1148,12 +1146,12 @@ function refreshDashboard() {
                 const target = parseInt(el.getAttribute('data-counter'));
                 animateNumber(el, target);
             });
-            
+
             // Update timestamp
             if (lastUpdateEl) {
                 lastUpdateEl.textContent = new Date().toLocaleTimeString();
             }
-            
+
             // Show success notification
             showNotification('Dashboard updated successfully', 'success');
         })
@@ -1168,7 +1166,7 @@ function animateNumber(element, target) {
     const start = parseInt(element.textContent.replace(/,/g, '')) || 0;
     const increment = (target - start) / 30;
     let current = start;
-    
+
     const timer = setInterval(() => {
         current += increment;
         if ((increment > 0 && current >= target) || (increment < 0 && current <= target)) {
@@ -1188,9 +1186,9 @@ function showNotification(message, type = 'info') {
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
-    
+
     document.body.appendChild(notification);
-    
+
     setTimeout(() => {
         notification.remove();
     }, 5000);
