@@ -616,7 +616,7 @@
                                     </button>
                                 </div>
 
-                                @foreach ([[__('common.line'), $lines, 'line'], [__('common.type'), $types, 'type'], [__('common.operating_weight'), $operating_weights, 'operating_weight'], [__('common.required_oil_flow'), $required_oil_flows, 'required_oil_flow'], [__('common.applicable_carrier'), $applicable_carriers, 'applicable_carrier']] as $i => [$label, $options, $name])
+                                @foreach ([[__('common.line'), $lines, 'line'], [__('common.type'), $types, 'type'], [__('common.operating_weight'), $operating_weights, 'operating_weight'], [__('common.applicable_carrier'), $applicable_carriers, 'applicable_carrier']] as $i => [$label, $options, $name])
                                     <div class="filter-category mb-3">
                                         <div class="filter-category-header" data-target="#filter-{{ $name }}">
                                             <label class="form-label fw-semibold mb-0"
