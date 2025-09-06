@@ -3103,7 +3103,8 @@
                         <a href="https://maps.app.goo.gl/3CeG29sE5xK5uTBp6" target="_blank"><p class="mb-1">{{ __('common.st_address') }}</p></a>
                         <a href="https://maps.app.goo.gl/3CeG29sE5xK5uTBp6" target="_blank"><p class="mb-1">{{ __('common.city_country') }}</p></a>
                         <a href="tel:+201112696961"><p class="mb-1">{{ __('common.contact_phone_number') }}</p></a>
-                        <a href="mailto:soosanegypt@madinagp.com"><p class="mb-1">{{ __('common.contact_email') }}</p></a>
+                        <a href="mailto:Info@soosanegypt.com"><p class="mb-1">{{ __('common.contact_email') }}</p></a>
+                        <a href="mailto:Support@soosanegypt.com"><p class="mb-1">{{ __('common.support_email') }}</p></a>
                     </div>
                 </div>
             </div>

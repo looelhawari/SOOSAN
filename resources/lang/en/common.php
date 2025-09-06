@@ -317,9 +317,12 @@ return [
     'contact_success' => 'Thank you for your message. We\'ll get back to you as soon as possible.',
     'st_address' => 'Nehro Str, Roxy Helioplis',
     'city_country' => 'Cairo, Egypt',
-    'contact_email' => 'Email: soosanegypt@madinagp.com',
+    'contact_email' => 'Email: Info@madinagp.com',
+    'support_email' => 'Support: Support@madinagp.com',
     'contact_phone_number' => 'Phone: +20 111 269 6961',
     'phone_no' => '+20 111 269 6961',
+
+
     // Support Page
     'expert_support_service' => 'Expert Support & Service',
     'comprehensive_support_solutions' => 'Comprehensive support solutions designed to maximize equipment performance and minimize downtime worldwide.',
@@ -431,6 +434,8 @@ return [
     'advanced_iot_monitoring_system' => 'Our advanced IoT monitoring system provides real-time equipment diagnostics, performance analytics, predictive maintenance alerts, and usage optimization insights through customizable dashboards.',
     'what_warranty_coverage_included' => 'What warranty coverage is included with equipment?',
     'all_equipment_comprehensive_warranty' => 'All equipment comes with comprehensive warranty coverage ranging from 12-24 months depending on the product. Extended warranty and total care protection plans are also available for additional coverage.',
+    'if_you_want_to_buy_email_us' => 'If you want to buy, email us at <a href="mailto:sales@soosanegypt.com">sales@soosanegypt.com</a>',
+
 
     // Profile Pages
     'profile_settings' => 'Profile Settings',
@@ -521,7 +526,7 @@ return [
     'previous' => 'Previous',
     'next_products' => 'Next Products',
     'previous_products' => 'Previous Products',
-    
+
     // Search Validation Messages
     'search_required' => 'Please enter a search term',
     'serial_required' => 'Please enter a serial number',

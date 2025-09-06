@@ -1228,10 +1228,11 @@
                         <h3 class="h5 fw-bold mb-3">{{ __('common.email_us') }}</h3>
                         <p class="text-muted mb-3">{{ __('common.send_detailed_inquiries') }}</p>
                         <div class="mb-3">
-                            <strong class="d-block">soosanegypt@madinagp.com</strong>
+                            <a href="mailto:Info@soosanegypt.com"><strong class="d-block">Info@soosanegypt.com</strong></a>
+                            <a href="mailto:Support@soosanegypt.com"><strong class="d-block">Support@soosanegypt.com</strong></a>
                             <small class="text-muted">{{ __('common.response_within_24_hours') }}</small>
                         </div>
-                        <a href="mailto:info@soosancebotics.com" class="method-action">
+                        <a href="mailto:Info@soosanegypt.com" class="method-action">
                             <i class="fas fa-envelope me-2"></i>{{ __('common.send_email') }}
                         </a>
                     </div>
@@ -1248,7 +1249,7 @@
                             <strong class="d-block">{{ __('common.phone_no') }}</strong>
                             <small class="text-muted">{{ __('common.mon_fri_8am_6pm') }}</small>
                         </div>
-                        <a href="https://wa.me/15551234567" class="method-action" target="_blank">
+                        <a href="https://wa.me/201112696961" class="method-action" target="_blank">
                             <i class="fab fa-whatsapp me-2"></i>{{ __('common.chat_now') }}
                         </a>
                     </div>
@@ -1414,6 +1415,9 @@
                                         <p class="text-center text-muted mt-3 mb-0">
                                             <i class="fas fa-shield-alt me-1"></i>
                                             {{ __('common.information_secure') }}
+                                        </p>
+                                        <p class="text-center text-muted mt-2">
+                                            {!! __('common.if_you_want_to_buy_email_us') !!}
                                         </p>
                                     </div>
                                 </div>

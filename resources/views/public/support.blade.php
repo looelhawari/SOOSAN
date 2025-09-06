@@ -1376,7 +1376,7 @@
                         <h4 class="fw-bold mb-3">{{ __('common.email_support') }}</h4>
                         <p class="mb-3 opacity-90">{{ __('common.send_detailed_technical_questions') }}</p>
                         <div class="mb-3">
-                            <strong class="d-block">soosanegypt@madinagp.com</strong>
+                            <strong class="d-block">Support@soosanegypt.com</strong>
                             <small class="opacity-75">{{ __('common.hour_response') }}</small>
                         </div>
                         <a href="mailto:support@soosanegypt.com" class="contact-action">
