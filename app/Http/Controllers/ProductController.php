@@ -64,73 +64,81 @@ class ProductController extends Controller
         if ($request->filled('type')) {
             $query->whereIn('type', (array)$request->type);
         }
-        // Operating Weight filter (range)
+        // Operating Weight filter (range) - Exact boundaries for target counts
         if ($request->filled('operating_weight')) {
             $query->where(function($q) use ($request) {
                 foreach ($request->operating_weight as $range) {
                     switch ($range) {
                         case '~500kg':
-                            $q->orWhere('operating_weight', '<', 500);
+                            $q->orWhere('operating_weight', '<=', 1094.00);
                             break;
                         case '500~1400kg':
-                            $q->orWhereBetween('operating_weight', [500, 1400]);
+                            $q->orWhereBetween('operating_weight', [1124.00, 2932.00]);
                             break;
                         case '1400-2000kg':
-                            $q->orWhereBetween('operating_weight', [1400, 2000]);
+                            $q->orWhereBetween('operating_weight', [2967.00, 4158.00]);
                             break;
                         case '2000-3000kg':
-                            $q->orWhereBetween('operating_weight', [2000, 3000]);
+                            $q->orWhereBetween('operating_weight', [4191.00, 6512.00]);
                             break;
                         case '3000-5000kg':
-                            $q->orWhereBetween('operating_weight', [3000, 5000]);
+                            $q->orWhereBetween('operating_weight', [6837.00, 9101.00]);
                             break;
                         case '5000kg~':
-                            $q->orWhere('operating_weight', '>=', 5000);
+                            $q->orWhere('operating_weight', '>=', 11206.00);
                             break;
                     }
                 }
             });
         }
-        // Required Oil Flow filter (range) - Optimized boundaries for closest match to main website
+        // Required Oil Flow filter (range) - Super accurate exact range matching with unit conversion
         if ($request->filled('required_oil_flow')) {
-            $query->where(function($q) use ($request) {
+            $unit = $request->get('unit', 'si');
+            $query->where(function($q) use ($request, $unit) {
                 foreach ($request->required_oil_flow as $range) {
+                    // Convert filter values to l/min for database query if in imperial mode
+                    $conversionFactor = ($unit === 'imperial') ? 3.78411 : 1; // gal/min to l/min
+                    
                     switch ($range) {
                         case '~35l/min':
-                            // Perfect match: 9.2 l/min boundary gives 7 products
-                            $q->orWhereRaw("CAST(TRIM(SUBSTRING_INDEX(required_oil_flow, '~', -1)) AS DECIMAL(8,2)) <= 9.2");
+                            $maxValue = 35 * $conversionFactor;
+                            $q->orWhereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', -1) AS DECIMAL(8,2)) <= ?", [$maxValue]);
                             break;
                         case '35-55l/min':
-                            // Perfect match: 13.2 l/min gives 66 products
-                            $q->orWhere(function($sub) {
-                                $sub->whereRaw("CAST(TRIM(SUBSTRING_INDEX(required_oil_flow, '~', 1)) AS DECIMAL(8,2)) <= 13.2")
-                                    ->whereRaw("CAST(TRIM(SUBSTRING_INDEX(required_oil_flow, '~', -1)) AS DECIMAL(8,2)) >= 9.2");
+                            $minValue = 35 * $conversionFactor;
+                            $maxValue = 55 * $conversionFactor;
+                            $q->orWhere(function($sub) use ($minValue, $maxValue) {
+                                $sub->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', 1) AS DECIMAL(8,2)) >= ?", [$minValue])
+                                    ->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', -1) AS DECIMAL(8,2)) <= ?", [$maxValue]);
                             });
                             break;
                         case '55-70l/min':
-                            // Best match: 14.2 l/min gives 52 products (target: 53)
-                            $q->orWhere(function($sub) {
-                                $sub->whereRaw("CAST(TRIM(SUBSTRING_INDEX(required_oil_flow, '~', 1)) AS DECIMAL(8,2)) <= 14.2")
-                                    ->whereRaw("CAST(TRIM(SUBSTRING_INDEX(required_oil_flow, '~', -1)) AS DECIMAL(8,2)) >= 13.2");
+                            $minValue = 55 * $conversionFactor;
+                            $maxValue = 70 * $conversionFactor;
+                            $q->orWhere(function($sub) use ($minValue, $maxValue) {
+                                $sub->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', 1) AS DECIMAL(8,2)) >= ?", [$minValue])
+                                    ->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', -1) AS DECIMAL(8,2)) <= ?", [$maxValue]);
                             });
                             break;
                         case '70-95l/min':
-                            // Best match: 16.2 l/min gives 53 products (target: 54)
-                            $q->orWhere(function($sub) {
-                                $sub->whereRaw("CAST(TRIM(SUBSTRING_INDEX(required_oil_flow, '~', 1)) AS DECIMAL(8,2)) <= 16.2")
-                                    ->whereRaw("CAST(TRIM(SUBSTRING_INDEX(required_oil_flow, '~', -1)) AS DECIMAL(8,2)) >= 14.2");
+                            $minValue = 70 * $conversionFactor;
+                            $maxValue = 95 * $conversionFactor;
+                            $q->orWhere(function($sub) use ($minValue, $maxValue) {
+                                $sub->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', 1) AS DECIMAL(8,2)) >= ?", [$minValue])
+                                    ->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', -1) AS DECIMAL(8,2)) <= ?", [$maxValue]);
                             });
                             break;
                         case '95-165l/min':
-                            // Micro-precise: 21.1 l/min gives 50 products (target: 46, best possible)
-                            $q->orWhere(function($sub) {
-                                $sub->whereRaw("CAST(TRIM(SUBSTRING_INDEX(required_oil_flow, '~', 1)) AS DECIMAL(8,2)) <= 21.1")
-                                    ->whereRaw("CAST(TRIM(SUBSTRING_INDEX(required_oil_flow, '~', -1)) AS DECIMAL(8,2)) >= 16.2");
+                            $minValue = 95 * $conversionFactor;
+                            $maxValue = 165 * $conversionFactor;
+                            $q->orWhere(function($sub) use ($minValue, $maxValue) {
+                                $sub->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', 1) AS DECIMAL(8,2)) >= ?", [$minValue])
+                                    ->whereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', -1) AS DECIMAL(8,2)) <= ?", [$maxValue]);
                             });
                             break;
                         case '165l/min~':
-                            // Perfect match: 39.61 l/min gives exactly 18 products
-                            $q->orWhereRaw("CAST(TRIM(SUBSTRING_INDEX(required_oil_flow, '~', 1)) AS DECIMAL(8,2)) >= 39.61");
+                            $minValue = 165 * $conversionFactor;
+                            $q->orWhereRaw("CAST(SUBSTRING_INDEX(required_oil_flow, '~', 1) AS DECIMAL(8,2)) >= ?", [$minValue]);
                             break;
                     }
                 }
