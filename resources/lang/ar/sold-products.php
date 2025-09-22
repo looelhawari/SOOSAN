@@ -39,6 +39,8 @@ return [
     'monthly_sales' => 'المبيعات الشهرية',
     'yearly_sales' => 'المبيعات السنوية',
     'average_sale_value' => 'متوسط قيمة البيع',
+    'currency' => 'جنيه',
+
 
     // Actions
     'add_new_sale' => 'إضافة بيع جديد',

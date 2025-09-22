@@ -302,7 +302,8 @@ return [
     'contact_success' => 'شكراً لك على رسالتك. سنتواصل معك في أقرب وقت ممكن.',
     'st_address' => '30 شارع نهرو، روكسي، مصر الجديدة',
     'city_country' => 'القاهرة، مصر',
-    'contact_email' => 'البريد الإلكتروني: soosanegypt@madinagp.com',
+    'contact_email' => 'البريد الإلكتروني: Info@soosanegypt.com',
+    'support_email' => 'الدعم: Support@soosanegypt.com',
     'contact_phone_number' => 'رقم الهاتف: ‎+20 111 269 6961',
     'phone_no' => '‎+20 111 269 6961',
 
@@ -419,6 +420,7 @@ return [
     'advanced_iot_monitoring_system' => 'نظام المراقبة المتقدم القائم على إنترنت الأشياء يوفر تشخيص المعدات في الوقت الفعلي وتحليلات الأداء وتنبيهات الصيانة التنبؤية ورؤى تحسين الاستخدام من خلال لوحات تحكم قابلة للتخصيص.',
     'what_warranty_coverage_included' => 'ما هي تغطية الضمان المشمولة مع المعدات؟',
     'all_equipment_comprehensive_warranty' => 'جميع المعدات تأتي مع تغطية ضمان شاملة تتراوح من 12-24 شهراً حسب المنتج. الضمان الممتد وطرازط الحماية الشاملة متوفرة أيضاً للتغطية الإضافية.',
+    'if_you_want_to_buy_email_us' => 'إذا كنت ترغب في الشراء، يرجى مراسلتنا عبر البريد الإلكتروني على <a href="mailto:sales@soosanegypt.com">sales@soosanegypt.com</a>',
 
     // Profile Pages
     'profile_settings' => 'إعدادات الملف الشخصي',
@@ -509,7 +511,7 @@ return [
     'previous' => 'السابق',
     'next_products' => 'المنتجات التالية',
     'previous_products' => 'المنتجات السابقة',
-    
+
     // Search Validation Messages
     'search_required' => 'يرجى إدخال مصطلح البحث',
     'serial_required' => 'يرجى إدخال الرقم التسلسلي',
