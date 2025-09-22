@@ -594,8 +594,12 @@
                         <a href="{{ route('admin.products.index') }}" class="btn btn-info btn-lg">
                             <i class="fas fa-box me-2"></i>{{ __('dashboard.view_products') }}
                         </a>
-                        <a href="{{ route('admin.contact-messages.index') }}" class="btn btn-warning btn-lg">
+                        {{-- Contact messages hidden - replaced with IMAP mail system --}}
+                        {{-- <a href="{{ route('admin.contact-messages.index') }}" class="btn btn-warning btn-lg">
                             <i class="fas fa-envelope me-2"></i>{{ __('dashboard.view_messages') }}
+                        </a> --}}
+                        <a href="{{ route('admin.mails.inbox') }}" class="btn btn-warning btn-lg">
+                            <i class="fas fa-inbox me-2"></i>Email Inbox
                         </a>
                     </div>
                 </div>

@@ -997,11 +997,18 @@
                     {{ __('admin.sold_products') }}
                 </a>
 
-                <!-- Contact Messages - view only for employees -->
-                <a href="{{ route('admin.contact-messages.index') }}"
+                <!-- Contact Messages - replaced with IMAP Mail System -->
+                {{-- <a href="{{ route('admin.contact-messages.index') }}"
                     class="nav-link {{ request()->routeIs('admin.contact-messages.*') ? 'active' : '' }}">
                     <i class="fas fa-envelope"></i>
                     {{ __('admin.contact_messages') }}
+                </a> --}}
+                
+                <!-- Email Inbox (IMAP) -->
+                <a href="{{ route('admin.mails.inbox') }}"
+                    class="nav-link {{ request()->routeIs('admin.mails.*') ? 'active' : '' }}">
+                    <i class="fas fa-inbox"></i>
+                    {{ __('admin.email_inbox') }}
                 </a>
 
                 @if (auth()->user()->isAdmin())

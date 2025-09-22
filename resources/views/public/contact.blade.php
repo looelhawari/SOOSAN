@@ -451,6 +451,42 @@
         box-shadow: 0 8px 24px rgba(176, 215, 1, 0.3);
     }
 
+    /* reCAPTCHA Styling */
+    .captcha-container {
+        padding: 1rem;
+        border-radius: var(--border-radius);
+        background: rgba(0, 84, 142, 0.02);
+        border: 2px dashed var(--border-color);
+        transition: all var(--transition-duration) ease;
+    }
+
+    .captcha-container:hover {
+        border-color: var(--primary-color);
+        background: rgba(0, 84, 142, 0.05);
+    }
+
+    /* Style the reCAPTCHA iframe */
+    .captcha-container iframe {
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 15px rgba(0, 84, 142, 0.1);
+        transition: all var(--transition-duration) ease;
+    }
+
+    .captcha-container iframe:hover {
+        box-shadow: 0 6px 25px rgba(0, 84, 142, 0.15);
+        transform: translateY(-1px);
+    }
+
+    /* Honeypot field (completely hidden) */
+    input[name="website"] {
+        position: absolute !important;
+        left: -9999px !important;
+        width: 0 !important;
+        height: 0 !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+    }
+
     /* Enhanced Departments */
     .departments-section {
         padding: 6rem 0;
@@ -1405,6 +1441,29 @@
                                             @enderror
                                         </div>
                                     </div>
+
+                                    <!-- reCAPTCHA v2 (Direct Google Implementation) -->
+                                    <div class="col-12">
+                                        <div class="form-group mb-4">
+                                            <div class="d-flex justify-content-center">
+                                                <div class="captcha-container">
+                                                    <div class="g-recaptcha" data-sitekey="{{ env('NOCAPTCHA_SITEKEY') }}" data-theme="light" data-size="normal"></div>
+                                                    @error('g-recaptcha-response')
+                                                        <div class="invalid-feedback d-block mt-2 text-center">
+                                                            <i class="fas fa-exclamation-triangle me-1"></i>
+                                                            {{ $message }}
+                                                        </div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Honeypot field (hidden) -->
+                                    <div class="d-none">
+                                        <input type="text" name="website" value="" autocomplete="off" tabindex="-1">
+                                    </div>
+
                                     <div class="col-12">
                                         <div class="d-grid">
                                             <button type="submit" class="btn py-3 send-message">
@@ -1530,7 +1589,7 @@
                                 <i class="fas fa-chevron-down"></i>
                             </button>
                             <div class="faq-answer">
-                                {{!! __('common.you_can_request_quote') !!}}
+                                {!! __('common.you_can_request_quote') !!}
                             </div>
                         </div>
                     </div>
@@ -1549,6 +1608,9 @@
 @endsection
 
 @push('scripts')
+<!-- Google reCAPTCHA Script -->
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 <script>
     // Enhanced FAQ Toggle
     function toggleFAQ(button) {

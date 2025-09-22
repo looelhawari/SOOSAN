@@ -28,6 +28,20 @@ Route::get('/serial-lookup', [SerialLookupController::class, 'index'])->name('se
 Route::post('/serial-lookup', [SerialLookupController::class, 'lookup'])->name('serial-lookup.lookup');
 Route::get('/serial-lookup/{id}/download-pdf', [SerialLookupController::class, 'downloadPdf'])->name('serial-lookup.downloadPdf');
 
+// IMAP Test Route (Temporary)
+Route::get('/imap-test', function(){
+    try{
+        $client = Webklex\IMAP\Facades\Client::account('default');
+        $client->connect();
+        $folder = $client->getFolder('INBOX');
+        $count = $folder->messages()->all()->count();
+        $client->disconnect();
+        return "IMAP Connected Successfully! INBOX count: $count messages";
+    } catch(\Exception $e){
+        return "IMAP Connection Error: " . $e->getMessage();
+    }
+})->name('imap.test');
+
 // Language switching route
 Route::get('/lang/{lang}', function ($lang) {
     if (in_array($lang, ['en', 'ar'])) {

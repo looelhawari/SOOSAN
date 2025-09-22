@@ -12,7 +12,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register NoCaptcha service properly
+        $this->app->singleton('NoCaptcha', function ($app) {
+            return new \Anhskohbo\NoCaptcha\NoCaptcha(
+                config('captcha.secret'),
+                config('captcha.sitekey'),
+                config('captcha.options', [])
+            );
+        });
     }
 
     /**
@@ -21,6 +28,17 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // URL::forceScheme('https');
+        
+        // Register reCAPTCHA validation rule
+        \Illuminate\Support\Facades\Validator::extend('captcha', function ($attribute, $value, $parameters, $validator) {
+            if (empty($value)) {
+                return false;
+            }
+            
+            $nocaptcha = app('NoCaptcha');
+            return $nocaptcha->verifyResponse($value, request()->ip());
+        });
+        
         // Register model observers
         \App\Models\ContactMessage::observe(\App\Observers\ContactMessageObserver::class);
         \App\Models\PendingChange::observe(\App\Observers\PendingChangeObserver::class);

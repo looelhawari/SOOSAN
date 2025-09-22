@@ -97,6 +97,17 @@ Route::prefix('admin')->name('admin.')->middleware(['web', 'prevent.back.after.l
             Route::delete('/empty-trash', [DeletedItemsController::class, 'emptyTrash'])->name('empty-trash');
         });
 
+        // Mail management (IMAP-based email system)
+        Route::prefix('mails')->name('mails.')->group(function () {
+            Route::get('/', [App\Http\Controllers\Admin\MailController::class, 'inbox'])->name('inbox');
+            Route::get('/inbox', [App\Http\Controllers\Admin\MailController::class, 'inbox'])->name('inbox');
+            Route::get('/{uid}', [App\Http\Controllers\Admin\MailController::class, 'show'])->name('show');
+            Route::post('/{uid}/mark-as-read', [App\Http\Controllers\Admin\MailController::class, 'markAsRead'])->name('markAsRead');
+            Route::post('/{uid}/mark-as-spam', [App\Http\Controllers\Admin\MailController::class, 'markAsSpam'])->name('markAsSpam');
+            Route::post('/{uid}/archive', [App\Http\Controllers\Admin\MailController::class, 'archive'])->name('archive');
+            Route::get('/{uid}/attachments/{attachmentId}/download', [App\Http\Controllers\Admin\MailController::class, 'downloadAttachment'])->name('downloadAttachment');
+        });
+
         // Reports management (Admin/CEO only)
         Route::prefix('reports')->name('reports.')->group(function () {
             Route::get('/', [ReportsController::class, 'index'])->name('index');
