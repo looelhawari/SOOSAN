@@ -15,20 +15,23 @@ class MailController extends Controller
     public function inbox(Request $request)
     {
         try {
+            $page = $request->get('page', 1);
+            $perPage = 10; // تحديد 10 رسائل في كل صفحة
+
             // استخدام cache لتحسين الأداء (30 ثانية)
             $cacheKey = 'imap_inbox_messages_' . now()->format('Y-m-d_H-i');
             $cacheTime = 30; // 30 seconds
-            
-            $data = Cache::remember($cacheKey, $cacheTime, function () {
+
+            $allData = Cache::remember($cacheKey, $cacheTime, function () {
                 // الاتصال بـ IMAP
                 $client = Client::account('default');
                 $client->connect();
 
                 // فتح صندوق الوارد
                 $folder = $client->getFolder('INBOX');
-                
-                // جلب آخر 20 رسالة (بدون حفظ في قاعدة البيانات)
-                $messages = $folder->messages()->all()->limit(20)->get();
+
+                // جلب جميع الرسائل (أو عدد أكبر لدعم التصفح)
+                $messages = $folder->messages()->all()->limit(100)->get();
 
                 $mailData = $messages->map(function($message) {
                     $isSeen = false;
@@ -38,7 +41,7 @@ class MailController extends Controller
                         // If flag checking fails, assume unread
                         $isSeen = false;
                     }
-                    
+
                     return [
                         'id' => $message->getMessageId(),
                         'uid' => $message->getUid(),
@@ -60,22 +63,42 @@ class MailController extends Controller
                 return $mailData;
             });
 
+            // تحويل البيانات إلى collection وتطبيق pagination
+            $totalMessages = $allData->count();
+            $offset = ($page - 1) * $perPage;
+            $paginatedMails = $allData->skip($offset)->take($perPage);
+
+            // إنشاء pagination instance
+            $pagination = new \Illuminate\Pagination\LengthAwarePaginator(
+                $paginatedMails->values(),
+                $totalMessages,
+                $perPage,
+                $page,
+                [
+                    'path' => $request->url(),
+                    'pageName' => 'page',
+                ]
+            );
+
+            // إضافة query parameters الموجودة
+            $pagination->appends($request->query());
+
             // إحصائيات للـ dashboard
             $stats = [
-                'total_messages' => $data->count(),
-                'unread_messages' => $data->where('is_seen', false)->count(),
-                'messages_with_attachments' => $data->where('has_attachments', true)->count(),
-                'today_messages' => $data->where('date', '>=', now()->startOfDay())->count(),
+                'total_messages' => $totalMessages,
+                'unread_messages' => $allData->where('is_seen', false)->count(),
+                'messages_with_attachments' => $allData->where('has_attachments', true)->count(),
+                'today_messages' => $allData->where('date', '>=', now()->startOfDay())->count(),
             ];
 
             return view('admin.mails.inbox', [
-                'mails' => $data,
+                'mails' => $pagination,
                 'stats' => $stats
             ]);
 
         } catch (\Exception $e) {
             Log::error('IMAP Connection Error: ' . $e->getMessage());
-            
+
             return back()->with('error', __('admin.connection_error') . ': ' . $e->getMessage());
         }
     }
@@ -87,11 +110,11 @@ class MailController extends Controller
             $client->connect();
 
             $folder = $client->getFolder('INBOX');
-            
+
             // Use the correct method to get message by UID
             $messages = $folder->messages()->all()->get();
             $message = null;
-            
+
             foreach ($messages as $msg) {
                 if ($msg->getUid() == $uid) {
                     $message = $msg;
@@ -146,10 +169,10 @@ class MailController extends Controller
             $client->connect();
 
             $folder = $client->getFolder('INBOX');
-            
+
             $messages = $folder->messages()->all()->get();
             $message = null;
-            
+
             foreach ($messages as $msg) {
                 if ($msg->getUid() == $uid) {
                     $message = $msg;
@@ -189,10 +212,10 @@ class MailController extends Controller
             $client->connect();
 
             $folder = $client->getFolder('INBOX');
-            
+
             $messages = $folder->messages()->all()->get();
             $message = null;
-            
+
             foreach ($messages as $msg) {
                 if ($msg->getUid() == $uid) {
                     $message = $msg;
@@ -232,10 +255,10 @@ class MailController extends Controller
             $client->connect();
 
             $folder = $client->getFolder('INBOX');
-            
+
             $messages = $folder->messages()->all()->get();
             $message = null;
-            
+
             foreach ($messages as $msg) {
                 if ($msg->getUid() == $uid) {
                     $message = $msg;
@@ -249,7 +272,7 @@ class MailController extends Controller
 
                 if ($attachment) {
                     $client->disconnect();
-                    
+
                     return response($attachment->getContent())
                         ->header('Content-Type', $attachment->getMimeType())
                         ->header('Content-Disposition', 'attachment; filename="' . $attachment->getName() . '"');
@@ -273,7 +296,7 @@ class MailController extends Controller
         try {
             // Check if auto-reply was already sent to this email today
             $cacheKey = 'auto_reply_sent_' . md5($senderEmail) . '_' . now()->format('Y-m-d');
-            
+
             if (Cache::has($cacheKey)) {
                 Log::info("Auto-reply already sent today to: {$senderEmail}");
                 return false;

@@ -1,8 +1,4 @@
-    // Employee Owner Reminder
-    'owner_reminder' => 'قبل إضافة عملية بيع، يجب عليك إنشاء واختيار مالك المنتج. إذا لم يكن المالك موجودًا، لا يمكنك تسجيل عملية البيع.',
-    'owner_create_link' => 'إذا لم تقم بإنشاء المالك بعد، <a href=":url" class="text-primary text-decoration-underline">أنشئ مالكًا جديدًا من هنا</a>.',
 <?php
-
 return [
     // Create Sale Employee Note
     'create_employee_note_title' => 'ملاحظة للموظفين:',

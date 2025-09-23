@@ -7,7 +7,7 @@ return [
     'welcome' => 'مرحباً',
     'overview' => 'نظرة عامة',
     'statistics' => 'الإحصائيات',
-    
+
     // Navigation
     'users' => 'الموظفون',
     'products' => 'المنتجات',
@@ -20,8 +20,9 @@ return [
     'logout' => 'تسجيل الخروج',
     'system_monitor' => 'مراقبة النظام',
     'activity_log' => 'سجل النشاطات',
+    'deleted_items' => 'العناصر المحذوفة',
     'view_website' => 'عرض الموقع',
-    
+
     // Statistics Cards
     'total_users' => 'إجمالي الموظفين',
     'total_products' => 'إجمالي المنتجات',
@@ -31,7 +32,7 @@ return [
     'unread_messages' => 'الرسائل غير المقروءة',
     'new_users_this_month' => 'الموظفون الجدد هذا الشهر',
     'messages_this_month' => 'الرسائل هذا الشهر',
-    
+
     // Actions
     'create' => 'إنشاء',
     'edit' => 'تعديل',
@@ -44,7 +45,7 @@ return [
     'export' => 'تصدير',
     'import' => 'استيراد',
     'refresh' => 'تحديث',
-    
+
     // Pending Changes
     'pending_changes' => 'التغييرات المعلقة',
     'pending_changes_management' => 'إدارة التغييرات المعلقة',
@@ -109,7 +110,7 @@ return [
     'admin_only_access' => 'يمكن للمديرين فقط الوصول إلى هذه الميزة.',
     'changes_submitted_for_approval' => 'تم إرسال تغييراتك للموافقة عليها من قبل الإدارة.',
     'deletion_submitted_for_approval' => 'تم إرسال طلب الحذف للموافقة عليه من قبل الإدارة.',
-    
+
     // User Management
     'user_management' => 'إدارة المستخدمين',
     'add_user' => 'إضافة مستخدم',
@@ -125,7 +126,7 @@ return [
     'inactive' => 'غير نشط',
     'admin' => 'مدير',
     'employee' => 'موظف',
-    
+
     // Product Management
     'product_management' => 'إدارة المنتجات',
     'add_product' => 'إضافة منتج',
@@ -139,7 +140,7 @@ return [
     'image' => 'الصورة',
     'featured' => 'مميز',
     'published' => 'منشور',
-    
+
     // Contact Messages
     'contact_messages' => 'رسائل التواصل',
     'message_details' => 'تفاصيل الرسالة',
@@ -150,12 +151,13 @@ return [
     'unread' => 'غير مقروءة',
     'mark_as_read' => 'وضع علامة كمقروءة',
     'reply' => 'رد',
-    
+
     // General
     'total' => 'المجموع',
     'showing' => 'عرض',
     'to' => 'إلى',
     'of' => 'من',
+    'messages' => 'رسائل',
     'results' => 'نتائج',
     'no_data' => 'لا توجد بيانات متاحة',
     'loading' => 'جاري التحميل...',
@@ -166,7 +168,7 @@ return [
     'info' => 'معلومات',
     'profile' => 'الملف الشخصي',
     'signed_in_as' => 'تم تسجيل الدخول باسم',
-    
+
     // Notifications
     'notifications' => 'الإشعارات',
     'no_notifications' => 'لا توجد إشعارات جديدة',
@@ -177,7 +179,7 @@ return [
     'notifications_help' => 'ستتلقى هنا إشعارات حول طلبات التغيير الخاصة بك.',
     'notification_sound' => 'تشغيل صوت الإشعار',
     'real_time_notifications' => 'تم تفعيل الإشعارات الفورية',
-    
+
     // Email System (IMAP)
     'email_inbox' => 'صندوق الوارد',
     'inbox' => 'الوارد',

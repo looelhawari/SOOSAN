@@ -7,7 +7,7 @@ return [
     'welcome' => 'Welcome',
     'overview' => 'Overview',
     'statistics' => 'Statistics',
-    
+
     // Navigation
     'users' => 'Staff',
     'products' => 'Products',
@@ -21,7 +21,8 @@ return [
     'system_monitor' => 'System Monitor',
     'activity_log' => 'Activity Log',
     'view_website' => 'View Website',
-    
+    'deleted_items' => 'Deleted Items',
+
     // Statistics Cards
     'total_users' => 'Total Staff',
     'total_products' => 'Total Products',
@@ -31,7 +32,7 @@ return [
     'unread_messages' => 'Unread Messages',
     'new_users_this_month' => 'New Staff This Month',
     'messages_this_month' => 'Messages This Month',
-    
+
     // Actions
     'create' => 'Create',
     'edit' => 'Edit',
@@ -44,7 +45,7 @@ return [
     'export' => 'Export',
     'import' => 'Import',
     'refresh' => 'Refresh',
-    
+
     // Pending Changes
     'pending_changes' => 'Pending Changes',
     'pending_changes_management' => 'Pending Changes Management',
@@ -109,7 +110,7 @@ return [
     'admin_only_access' => 'Only administrators can access this feature.',
     'changes_submitted_for_approval' => 'Your changes have been submitted for admin approval.',
     'deletion_submitted_for_approval' => 'Your deletion request has been submitted for admin approval.',
-    
+
     // User Management
     'user_management' => 'User Management',
     'add_user' => 'Add User',
@@ -125,7 +126,7 @@ return [
     'inactive' => 'Inactive',
     'admin' => 'Admin',
     'employee' => 'Employee',
-    
+
     // Product Management
     'product_management' => 'Product Management',
     'add_product' => 'Add Product',
@@ -139,7 +140,7 @@ return [
     'image' => 'Image',
     'featured' => 'Featured',
     'published' => 'Published',
-    
+
     // Contact Messages
     'contact_messages' => 'Contact Messages',
     'message_details' => 'Message Details',
@@ -150,7 +151,7 @@ return [
     'unread' => 'Unread',
     'mark_as_read' => 'Mark as Read',
     'reply' => 'Reply',
-    
+
     // General
     'total' => 'Total',
     'showing' => 'Showing',
@@ -164,7 +165,7 @@ return [
     'error' => 'An error occurred',
     'warning' => 'Warning',
     'info' => 'Information',
-    
+    'messages' => 'Messages',
     // Notifications
     'notifications' => 'Notifications',
     'no_notifications' => 'No new notifications',
@@ -188,7 +189,7 @@ return [
     'notifications_help' => 'You will receive notifications about your change requests here.',
     'notification_sound' => 'Play notification sound',
     'real_time_notifications' => 'Real-time notifications enabled',
-    
+
     // Email System (IMAP)
     'email_inbox' => 'Email Inbox',
     'inbox' => 'Inbox',
@@ -242,7 +243,7 @@ return [
     'refresh_now' => 'Refresh Now',
     'mark_spam_confirm' => 'Are you sure you want to mark this message as spam?',
     'search_validation' => 'Please enter a search term or select a filter.',
-    
+
     // User Dropdown
     'profile' => 'Profile',
     'signed_in_as' => 'Signed in as',

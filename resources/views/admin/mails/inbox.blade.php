@@ -238,7 +238,7 @@
         transform: translateY(-3px) rotate(180deg);
         box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
     }
-    
+
     /* Search and Filter Styles */
     .search-filter-section {
         background: white;
@@ -358,8 +358,8 @@
         <form method="GET" action="{{ route('admin.mails.inbox') }}" class="row g-3 align-items-end">
             <div class="col-md-4">
                 <label for="search" class="form-label fw-semibold">{{ __('admin.search_in_messages') }}</label>
-                <input type="text" id="search" name="search" class="form-control search-input" 
-                       placeholder="{{ __('admin.search_placeholder') }}" 
+                <input type="text" id="search" name="search" class="form-control search-input"
+                       placeholder="{{ __('admin.search_placeholder') }}"
                        value="{{ request('search') }}">
             </div>
             <div class="col-md-3">
@@ -399,7 +399,7 @@
                     <button type="button" class="action-btn border-success" onclick="refreshInbox()" title="{{ __('admin.refresh_inbox') }}">
                         <i class="fas fa-sync-alt"></i>
                     </button>
-                    <a href="{{ route('admin.mails.inbox', ['status' => 'unread']) }}" 
+                    <a href="{{ route('admin.mails.inbox', ['status' => 'unread']) }}"
                        class="action-btn border-warning" title="{{ __('admin.unread_messages_filter') }}">
                         <i class="fas fa-envelope"></i>
                     </a>
@@ -423,7 +423,7 @@
                         @foreach($mails as $mail)
                             <tr class="{{ $mail['is_seen'] ? '' : 'unread-mail' }}">
                                 <td>
-                                    <i class="fas fa-{{ $mail['is_seen'] ? 'envelope-open' : 'envelope' }} 
+                                    <i class="fas fa-{{ $mail['is_seen'] ? 'envelope-open' : 'envelope' }}
                                               {{ $mail['is_seen'] ? 'text-muted' : 'text-primary' }}"></i>
                                     @if($mail['has_attachments'])
                                         <i class="fas fa-paperclip mail-attachment ms-1" title="{{ __('admin.contains_attachments') }}"></i>
@@ -436,7 +436,7 @@
                                     <small class="text-muted">{{ $mail['from'] }}</small>
                                 </td>
                                 <td>
-                                    <a href="{{ route('admin.mails.show', $mail['uid']) }}" 
+                                    <a href="{{ route('admin.mails.show', $mail['uid']) }}"
                                        class="mail-subject">
                                         {{ Str::limit($mail['subject'], 60) }}
                                     </a>
@@ -454,28 +454,28 @@
                                 </td>
                                 <td>
                                     <div class="d-flex gap-1">
-                                        <a href="{{ route('admin.mails.show', $mail['uid']) }}" 
+                                        <a href="{{ route('admin.mails.show', $mail['uid']) }}"
                                            class="action-btn border-info text-info" title="{{ __('admin.view_message') }}">
                                             <i class="fas fa-eye"></i>
                                         </a>
-                                        
+
                                         @if(!$mail['is_seen'])
-                                            <form action="{{ route('admin.mails.markAsRead', $mail['uid']) }}" 
+                                            <form action="{{ route('admin.mails.markAsRead', $mail['uid']) }}"
                                                   method="POST" class="d-inline">
                                                 @csrf
-                                                <button type="submit" class="action-btn border-success text-success" 
+                                                <button type="submit" class="action-btn border-success text-success"
                                                         title="{{ __('admin.mark_as_read_action') }}">
                                                     <i class="fas fa-check"></i>
                                                 </button>
                                             </form>
                                         @endif
 
-                                        <form action="{{ route('admin.mails.markAsSpam', $mail['uid']) }}" 
+                                        <form action="{{ route('admin.mails.markAsSpam', $mail['uid']) }}"
                                               method="POST" class="d-inline">
                                             @csrf
-                                            <button type="submit" class="action-btn border-danger text-danger" 
+                                            <button type="submit" class="action-btn border-danger text-danger"
                                                     title="{{ __('admin.mark_as_spam_action') }}"
-                                                    onclick="return confirm('{{ __('admin.mark_spam_confirm') }}')">>
+                                                    onclick="return confirm('{{ __('admin.mark_spam_confirm') }}')">
                                                 <i class="fas fa-ban"></i>
                                             </button>
                                         </form>
@@ -487,7 +487,55 @@
                 </table>
             </div>
 
-            <!-- Pagination would go here if implementing pagination -->
+            <!-- Pagination Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <!-- Pagination Info -->
+                    <div class="text-center mb-3">
+                        <div class="pagination-info">
+                            <span class="badge badge-light-primary px-3 py-2">
+                                <i class="fas fa-info-circle me-2"></i>
+                                {{ __('admin.showing') }}
+                                <strong>{{ $mails->firstItem() ?? 0 }}</strong>
+                                {{ __('admin.to') }}
+                                <strong>{{ $mails->lastItem() ?? 0 }}</strong>
+                                {{ __('admin.of') }}
+                                <strong>{{ $mails->total() }}</strong>
+                                {{ __('admin.messages') }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Pagination Links -->
+                    <div class="pagination-wrapper">
+                        {{ $mails->links('custom.pagination') }}
+                    </div>
+                </div>
+            </div>
+
+            <style>
+                .pagination-info .badge-light-primary {
+                    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+                    color: #667eea;
+                    border: 1px solid rgba(102, 126, 234, 0.2);
+                    font-size: 0.875rem;
+                    font-weight: 500;
+                    border-radius: 25px;
+                }
+
+                .pagination-wrapper {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                @media (max-width: 768px) {
+                    .pagination-info .badge-light-primary {
+                        font-size: 0.8rem;
+                        padding: 0.5rem 1rem !important;
+                    }
+                }
+            </style>
         @else
             <div class="empty-state">
                 <i class="fas fa-inbox"></i>
@@ -514,11 +562,11 @@
     function refreshInbox() {
         const refreshBtn = document.querySelector('.refresh-btn');
         const icon = refreshBtn.querySelector('i');
-        
+
         // Add loading state
         icon.style.animation = 'spin 1s linear infinite';
         refreshBtn.disabled = true;
-        
+
         // Reload the page to fetch fresh emails
         setTimeout(() => {
             window.location.reload();
@@ -529,10 +577,10 @@
     setInterval(function() {
         const currentTime = new Date().getTime();
         const lastRefresh = localStorage.getItem('lastEmailRefresh');
-        
+
         if (!lastRefresh || currentTime - lastRefresh > 30000) {
             localStorage.setItem('lastEmailRefresh', currentTime);
-            
+
             // Subtle background refresh without full page reload
             fetch('{{ route("admin.mails.inbox") }}', {
                 headers: {
@@ -565,8 +613,8 @@
         if (searchForm) {
             searchForm.addEventListener('submit', function(e) {
                 const searchInput = this.querySelector('input[name="search"]');
-                if (searchInput && searchInput.value.trim() === '' && 
-                    !this.querySelector('select[name="folder"]').value && 
+                if (searchInput && searchInput.value.trim() === '' &&
+                    !this.querySelector('select[name="folder"]').value &&
                     !this.querySelector('select[name="status"]').value) {
                     e.preventDefault();
                     alert('{{ __('admin.search_validation') }}');
@@ -586,9 +634,9 @@
             ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         `;
-        
+
         document.body.appendChild(notification);
-        
+
         // Auto-remove after 5 seconds
         setTimeout(() => {
             if (notification.parentNode) {
