@@ -1,6 +1,3 @@
-    // Employee Owner Reminder
-    'owner_reminder' => 'قبل إضافة عملية بيع، يجب عليك إنشاء واختيار مالك المنتج. إذا لم يكن المالك موجودًا، لا يمكنك تسجيل عملية البيع.',
-    'owner_create_link' => 'إذا لم تقم بإنشاء المالك بعد، <a href=":url" class="text-primary text-decoration-underline">أنشئ مالكًا جديدًا من هنا</a>.',
 <?php
 
 return [
@@ -14,6 +11,9 @@ return [
     'owner_reminder_body' => 'قبل أن تتمكن من إضافة أو تحديث منتج مباع، يجب أولاً إضافة مالك المنتج. إذا لم يكن المالك موجودًا، يرجى إنشاء المالك أولاً.',
     'owner_reminder_update' => 'إذا تغير المالك ولم يكن المالك الجديد موجودًا، يجب إضافة المالك الجديد قبل تحديث عملية البيع.',
     'owner_create_link_text' => 'اضغط هنا لإضافة مالك جديد',
+    // Employee Owner Reminder
+    'owner_reminder' => 'قبل إضافة عملية بيع، يجب عليك إنشاء واختيار مالك المنتج. إذا لم يكن المالك موجودًا، لا يمكنك تسجيل عملية البيع.',
+    'owner_create_link' => 'إذا لم تقم بإنشاء المالك بعد، <a href=":url" class="text-primary text-decoration-underline">أنشئ مالكًا جديدًا من هنا</a>',
     // Sold Products Management
     'title' => 'المنتجات المباعة',
     'sold_products' => 'المنتجات المباعة',

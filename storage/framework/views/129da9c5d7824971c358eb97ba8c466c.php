@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" dir="{{ app()->isLocale('ar') ? 'rtl' : 'ltr' }}">
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>" dir="<?php echo e(app()->isLocale('ar') ? 'rtl' : 'ltr'); ?>">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/logo2.png') }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/logo2.png') }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ asset('images/logo2.png') }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('images/logo2.png') }}">
-    <link rel="icon" type="image/png" sizes="512x512" href="{{ asset('images/logo2.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?php echo e(asset('images/logo2.png')); ?>">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?php echo e(asset('images/logo2.png')); ?>">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?php echo e(asset('images/logo2.png')); ?>">
+    <link rel="icon" type="image/png" sizes="192x192" href="<?php echo e(asset('images/logo2.png')); ?>">
+    <link rel="icon" type="image/png" sizes="512x512" href="<?php echo e(asset('images/logo2.png')); ?>">
 
     <!-- SEO Meta Tags -->
-    <title>@yield('title', 'Admin Panel') - SOOSAN</title>
-    <meta name="description" content="@yield('description', 'SoosanEgypt Admin Dashboard - Manage drilling equipment, products, and business operations.')">
-    <meta name="keywords" content="@yield('keywords', 'admin dashboard, drilling equipment management, SoosanEgypt, business operations')">
+    <title><?php echo $__env->yieldContent('title', 'Admin Panel'); ?> - SOOSAN</title>
+    <meta name="description" content="<?php echo $__env->yieldContent('description', 'SoosanEgypt Admin Dashboard - Manage drilling equipment, products, and business operations.'); ?>">
+    <meta name="keywords" content="<?php echo $__env->yieldContent('keywords', 'admin dashboard, drilling equipment management, SoosanEgypt, business operations'); ?>">
     <meta name="robots" content="noindex, nofollow">
     <meta name="author" content="SoosanEgypt">
 
@@ -851,28 +851,28 @@
         }
 
         .dropdown-menu .dropdown-item {
-            @if (app()->getLocale() === 'ar')
+            <?php if(app()->getLocale() === 'ar'): ?>
                 text-align: right;
 
-            @else
+            <?php else: ?>
                 text-align: left;
-            @endif
+            <?php endif; ?>
         }
 
         .dropdown-menu .dropdown-item i {
-            @if (app()->getLocale() === 'ar')
+            <?php if(app()->getLocale() === 'ar'): ?>
                 margin-left: 10px;
-            @else
+            <?php else: ?>
                 margin-right: 10px;
-            @endif
+            <?php endif; ?>
         }
 
         .dropdown-menu .dropdown-item span {
-            @if (app()->getLocale() === 'ar')
+            <?php if(app()->getLocale() === 'ar'): ?>
                 margin-left: 10px;
-            @else
+            <?php else: ?>
                 margin-right: 10px;
-            @endif
+            <?php endif; ?>
         }
 
         .notification-dropdown-content {
@@ -936,11 +936,11 @@
             }
         }
     </style>
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 
 <body>
-    @if (!request()->routeIs('admin.login'))
+    <?php if(!request()->routeIs('admin.login')): ?>
         <!-- Sidebar Overlay for Mobile -->
         <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
@@ -949,137 +949,149 @@
             <div class="sidebar-brand">
                 <h4 class="mb-0">
                     <i class="fas fa-cogs me-2"></i>
-                    {{ __('admin.admin_panel') }}
+                    <?php echo e(__('admin.admin_panel')); ?>
+
                 </h4>
             </div>
 
             <nav class="sidebar-nav">
-                <a href="{{ route('admin.dashboard') }}"
-                    class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.dashboard')); ?>"
+                    class="nav-link <?php echo e(request()->routeIs('admin.dashboard') ? 'active' : ''); ?>">
                     <i class="fas fa-tachometer-alt"></i>
-                    {{ __('admin.dashboard') }}
+                    <?php echo e(__('admin.dashboard')); ?>
+
                 </a>
 
-                @if (auth()->user()->isAdmin())
-                    <a href="{{ route('admin.users.index') }}"
-                        class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                <?php if(auth()->user()->isAdmin()): ?>
+                    <a href="<?php echo e(route('admin.users.index')); ?>"
+                        class="nav-link <?php echo e(request()->routeIs('admin.users.*') ? 'active' : ''); ?>">
                         <i class="fas fa-users"></i>
-                        {{ __('admin.users') }}
+                        <?php echo e(__('admin.users')); ?>
+
                     </a>
-                @endif
+                <?php endif; ?>
 
                 <!-- Products - employees can create new and edit existing (with approval) -->
-                <a href="{{ route('admin.products.index') }}"
-                    class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.products.index')); ?>"
+                    class="nav-link <?php echo e(request()->routeIs('admin.products.*') ? 'active' : ''); ?>">
                     <i class="fas fa-box"></i>
-                    {{ __('admin.products') }}
+                    <?php echo e(__('admin.products')); ?>
+
                 </a>
 
-                @if (auth()->user()->isAdmin())
-                    <a href="{{ route('admin.product-categories.index') }}"
-                        class="nav-link {{ request()->routeIs('admin.product-categories.*') ? 'active' : '' }}">
+                <?php if(auth()->user()->isAdmin()): ?>
+                    <a href="<?php echo e(route('admin.product-categories.index')); ?>"
+                        class="nav-link <?php echo e(request()->routeIs('admin.product-categories.*') ? 'active' : ''); ?>">
                         <i class="fas fa-tags"></i>
-                        {{ __('admin.categories') }}
+                        <?php echo e(__('admin.categories')); ?>
+
                     </a>
-                @endif
+                <?php endif; ?>
 
                 <!-- Owners - employees can create new and edit existing (with approval) -->
-                <a href="{{ route('admin.owners.index') }}"
-                    class="nav-link {{ request()->routeIs('admin.owners.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.owners.index')); ?>"
+                    class="nav-link <?php echo e(request()->routeIs('admin.owners.*') ? 'active' : ''); ?>">
                     <i class="fas fa-user-tie"></i>
-                    {{ __('admin.owners') }}
+                    <?php echo e(__('admin.owners')); ?>
+
                 </a>
 
                 <!-- Sold Products - employees can create new and edit existing (with approval) -->
-                <a href="{{ route('admin.sold-products.index') }}"
-                    class="nav-link {{ request()->routeIs('admin.sold-products.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.sold-products.index')); ?>"
+                    class="nav-link <?php echo e(request()->routeIs('admin.sold-products.*') ? 'active' : ''); ?>">
                     <i class="fas fa-shopping-cart"></i>
-                    {{ __('admin.sold_products') }}
+                    <?php echo e(__('admin.sold_products')); ?>
+
                 </a>
 
-                {{-- <a href="{{ route('admin.contact-messages.index') }}"
-                    class="nav-link {{ request()->routeIs('admin.contact-messages.*') ? 'active' : '' }}">
-                    <i class="fas fa-envelope"></i>
-                    {{ __('admin.contact_messages') }}
-                </a> --}}
+                
                 
                 <!-- Email Inbox (IMAP) -->
-                <a href="{{ route('admin.mails.inbox') }}"
-                    class="nav-link {{ request()->routeIs('admin.mails.*') ? 'active' : '' }}">
+                <a href="<?php echo e(route('admin.mails.inbox')); ?>"
+                    class="nav-link <?php echo e(request()->routeIs('admin.mails.*') ? 'active' : ''); ?>">
                     <i class="fas fa-inbox"></i>
-                    {{ __('admin.email_inbox') }}
+                    <?php echo e(__('admin.email_inbox')); ?>
+
                 </a>
 
-                @if (auth()->user()->isAdmin())
+                <?php if(auth()->user()->isAdmin()): ?>
                     <!-- Pending Changes - admin only -->
-                    <a href="{{ route('admin.pending-changes.index') }}"
-                        class="nav-link {{ request()->routeIs('admin.pending-changes.*') ? 'active' : '' }}">
+                    <a href="<?php echo e(route('admin.pending-changes.index')); ?>"
+                        class="nav-link <?php echo e(request()->routeIs('admin.pending-changes.*') ? 'active' : ''); ?>">
                         <i class="fas fa-clock"></i>
-                        {{ __('admin.pending_changes') }}
-                        @php
+                        <?php echo e(__('admin.pending_changes')); ?>
+
+                        <?php
                             $pendingCount = \App\Models\PendingChange::where('status', 'pending')->count();
-                        @endphp
-                        @if ($pendingCount > 0)
-                            <span class="badge badge-warning ms-auto">{{ $pendingCount }}</span>
-                        @endif
+                        ?>
+                        <?php if($pendingCount > 0): ?>
+                            <span class="badge badge-warning ms-auto"><?php echo e($pendingCount); ?></span>
+                        <?php endif; ?>
                     </a>
 
                     <!-- Audit Logs - admin only -->
                     <div class="nav-item dropdown">
                         <a href="#"
-                            class="nav-link dropdown-toggle {{ request()->routeIs('admin.audit-logs.*') ? 'active' : '' }}"
+                            class="nav-link dropdown-toggle <?php echo e(request()->routeIs('admin.audit-logs.*') ? 'active' : ''); ?>"
                             data-bs-toggle="collapse" data-bs-target="#auditLogsSubmenu"
-                            aria-expanded="{{ request()->routeIs('admin.audit-logs.*') ? 'true' : 'false' }}">
+                            aria-expanded="<?php echo e(request()->routeIs('admin.audit-logs.*') ? 'true' : 'false'); ?>">
                             <i class="fas fa-eye"></i>
-                            {{ __('admin.system_monitor') }}
+                            <?php echo e(__('admin.system_monitor')); ?>
+
                         </a>
-                        <div class="collapse {{ request()->routeIs('admin.audit-logs.*') ? 'show' : '' }}"
+                        <div class="collapse <?php echo e(request()->routeIs('admin.audit-logs.*') ? 'show' : ''); ?>"
                             id="auditLogsSubmenu">
                             <div class="submenu">
-                                <a href="{{ route('admin.audit-logs.dashboard') }}"
-                                    class="nav-link submenu-link {{ request()->routeIs('admin.audit-logs.dashboard') ? 'active' : '' }}">
+                                <a href="<?php echo e(route('admin.audit-logs.dashboard')); ?>"
+                                    class="nav-link submenu-link <?php echo e(request()->routeIs('admin.audit-logs.dashboard') ? 'active' : ''); ?>">
                                     <i class="fas fa-chart-bar"></i>
-                                    {{ __('admin.dashboard') }}
+                                    <?php echo e(__('admin.dashboard')); ?>
+
                                 </a>
-                                <a href="{{ route('admin.audit-logs.index') }}"
-                                    class="nav-link submenu-link {{ request()->routeIs('admin.audit-logs.index') ? 'active' : '' }}">
+                                <a href="<?php echo e(route('admin.audit-logs.index')); ?>"
+                                    class="nav-link submenu-link <?php echo e(request()->routeIs('admin.audit-logs.index') ? 'active' : ''); ?>">
                                     <i class="fas fa-list"></i>
-                                    {{ __('admin.activity_log') }}
+                                    <?php echo e(__('admin.activity_log')); ?>
+
                                 </a>
                             </div>
                         </div>
                     </div>
 
                     <!-- Reports - admin/CEO only -->
-                    @if (auth()->user()->canAccessReports())
-                        <a href="{{ route('admin.reports.index') }}"
-                            class="nav-link {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
+                    <?php if(auth()->user()->canAccessReports()): ?>
+                        <a href="<?php echo e(route('admin.reports.index')); ?>"
+                            class="nav-link <?php echo e(request()->routeIs('admin.reports.*') ? 'active' : ''); ?>">
                             <i class="fas fa-chart-line"></i>
-                            {{ __('reports.reports') }}
+                            <?php echo e(__('reports.reports')); ?>
+
                         </a>
-                    @endif
+                    <?php endif; ?>
 
                     <!-- Deleted Items Management -->
-                    <a href="{{ route('admin.deleted-items.index') }}"
-                        class="nav-link {{ request()->routeIs('admin.deleted-items.*') ? 'active' : '' }}">
+                    <a href="<?php echo e(route('admin.deleted-items.index')); ?>"
+                        class="nav-link <?php echo e(request()->routeIs('admin.deleted-items.*') ? 'active' : ''); ?>">
                         <i class="fas fa-trash-restore"></i>
-                        {{ __('admin.deleted_items') }}
+                        <?php echo e(__('admin.deleted_items')); ?>
+
                     </a>
-                @endif
+                <?php endif; ?>
 
                 <hr class="border-secondary mx-3 my-3">
 
-                <a href="{{ route('homepage') }}" class="nav-link" target="_blank">
+                <a href="<?php echo e(route('homepage')); ?>" class="nav-link" target="_blank">
                     <i class="fas fa-external-link-alt"></i>
-                    {{ __('admin.view_website') }}
+                    <?php echo e(__('admin.view_website')); ?>
+
                 </a>
 
-                <form method="POST" action="{{ route('admin.logout') }}">
-                    @csrf
+                <form method="POST" action="<?php echo e(route('admin.logout')); ?>">
+                    <?php echo csrf_field(); ?>
                     <button type="submit" class="nav-link logout-btn"
                         style="width: 100%; text-align: left; border: none; background: none; color: rgba(255,255,255,0.8);">
                         <i class="fas fa-sign-out-alt"></i>
-                        {{ __('admin.logout') }}
+                        <?php echo e(__('admin.logout')); ?>
+
                     </button>
                 </form>
             </nav>
@@ -1103,19 +1115,19 @@
                             <button class="btn btn-sm dropdown-toggle d-flex align-items-center gap-2" type="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fas fa-globe"></i>
-                                <span class="mobile-hide">{{ app()->isLocale('ar') ? 'العربية' : 'English' }}</span>
+                                <span class="mobile-hide"><?php echo e(app()->isLocale('ar') ? 'العربية' : 'English'); ?></span>
                                 <i class="fas fa-chevron-down fs-xs ms-1"></i>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end language-switcher">
                                 <li>
-                                    <a class="dropdown-item d-flex align-items-center {{ app()->isLocale('en') ? 'active bg-light' : '' }}"
-                                        href="{{ url('/lang/en') }}">
+                                    <a class="dropdown-item d-flex align-items-center <?php echo e(app()->isLocale('en') ? 'active bg-light' : ''); ?>"
+                                        href="<?php echo e(url('/lang/en')); ?>">
                                         <span class="me-2" style="font-size:1.2em;">🇺🇸</span> English
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item d-flex align-items-center {{ app()->isLocale('ar') ? 'active bg-light' : '' }}"
-                                        href="{{ url('/lang/ar') }}">
+                                    <a class="dropdown-item d-flex align-items-center <?php echo e(app()->isLocale('ar') ? 'active bg-light' : ''); ?>"
+                                        href="<?php echo e(url('/lang/ar')); ?>">
                                         <span class="me-2" style="font-size:1.2em;">🇪🇬</span> العربية
                                     </a>
                                 </li>
@@ -1129,66 +1141,73 @@
                                 <i class="fas fa-bell fs-5 text-secondary"></i>
                                 <span
                                     class="notification-badge position-absolute top-0 start-100 translate-middle badge rounded-pill"
-                                    style="display: {{ auth()->user()->unreadNotifications->count() > 0 ? 'inline-block' : 'none' }};"
-                                    data-initial-count="{{ auth()->user()->unreadNotifications->count() }}">
-                                    {{ auth()->user()->unreadNotifications->count() > 0 ? auth()->user()->unreadNotifications->count() : '0' }}
+                                    style="display: <?php echo e(auth()->user()->unreadNotifications->count() > 0 ? 'inline-block' : 'none'); ?>;"
+                                    data-initial-count="<?php echo e(auth()->user()->unreadNotifications->count()); ?>">
+                                    <?php echo e(auth()->user()->unreadNotifications->count() > 0 ? auth()->user()->unreadNotifications->count() : '0'); ?>
+
                                 </span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end notification-dropdown-content"
                                 style="width: 350px; max-height: 400px; overflow-y: auto;">
                                 <li class="py-2 px-3 bg-light border-bottom">
                                     <div class="d-flex justify-content-between align-items-center">
-                                        <h6 class="mb-0 fw-semibold">{{ __('admin.notifications') }}</h6>
-                                        <a href="{{ route('notifications.index') }}"
-                                            class="text-decoration-none small">{{ __('admin.view_all') }}</a>
+                                        <h6 class="mb-0 fw-semibold"><?php echo e(__('admin.notifications')); ?></h6>
+                                        <a href="<?php echo e(route('notifications.index')); ?>"
+                                            class="text-decoration-none small"><?php echo e(__('admin.view_all')); ?></a>
                                     </div>
                                 </li>
-                                @forelse(auth()->user()->unreadNotifications->take(5) as $notification)
-                                    @php
+                                <?php $__empty_1 = true; $__currentLoopData = auth()->user()->unreadNotifications->take(5); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notification): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                                    <?php
                                         $redirectUrl = $notification->data['url'] ?? route('notifications.index');
-                                    @endphp
+                                    ?>
                                     <li>
-                                        <a class="dropdown-item notification-item {{ !$notification->read_at ? 'unread' : '' }}"
-                                            href="{{ $redirectUrl }}"
-                                            data-notification-id="{{ $notification->id }}">
+                                        <a class="dropdown-item notification-item <?php echo e(!$notification->read_at ? 'unread' : ''); ?>"
+                                            href="<?php echo e($redirectUrl); ?>"
+                                            data-notification-id="<?php echo e($notification->id); ?>">
                                             <div class="d-flex">
                                                 <div class="flex-shrink-0">
-                                                    <div class="notification-icon bg-light text-{{ $notification->data['color'] ?? 'warning' }} rounded-circle p-2 text-center"
+                                                    <div class="notification-icon bg-light text-<?php echo e($notification->data['color'] ?? 'warning'); ?> rounded-circle p-2 text-center"
                                                         style="width: 36px; height: 36px;">
                                                         <i
-                                                            class="{{ $notification->data['icon'] ?? 'fas fa-exclamation-triangle' }}"></i>
+                                                            class="<?php echo e($notification->data['icon'] ?? 'fas fa-exclamation-triangle'); ?>"></i>
                                                     </div>
                                                 </div>
                                                 <div class="flex-grow-1 ms-3">
                                                     <div class="fw-bold text-truncate">
-                                                        {{ $notification->data['title'] ?? __('admin.notifications') }}
+                                                        <?php echo e($notification->data['title'] ?? __('admin.notifications')); ?>
+
                                                     </div>
                                                     <div class="text-muted small text-truncate">
-                                                        {{ Str::limit($notification->data['message'] ?? '', 60) }}
+                                                        <?php echo e(Str::limit($notification->data['message'] ?? '', 60)); ?>
+
                                                     </div>
-                                                    @if (isset($notification->data['reason']) && $notification->data['reason'])
+                                                    <?php if(isset($notification->data['reason']) && $notification->data['reason']): ?>
                                                         <div class="text-danger small text-truncate">
-                                                            {{ Str::limit($notification->data['reason'], 80) }}
+                                                            <?php echo e(Str::limit($notification->data['reason'], 80)); ?>
+
                                                         </div>
-                                                    @endif
+                                                    <?php endif; ?>
                                                     <div class="text-muted small">
-                                                        {{ $notification->created_at->diffForHumans() }}
+                                                        <?php echo e($notification->created_at->diffForHumans()); ?>
+
                                                     </div>
                                                 </div>
                                             </div>
                                         </a>
                                     </li>
-                                @empty
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                                     <li>
                                         <span class="dropdown-item-text py-3 text-center text-muted">
-                                            {{ __('admin.no_notifications') }}
+                                            <?php echo e(__('admin.no_notifications')); ?>
+
                                         </span>
                                     </li>
-                                @endforelse
+                                <?php endif; ?>
                                 <li class="border-top">
                                     <a class="dropdown-item text-center py-2"
-                                        href="{{ route('notifications.index') }}">
-                                        {{ __('admin.view_all_notifications') }}
+                                        href="<?php echo e(route('notifications.index')); ?>">
+                                        <?php echo e(__('admin.view_all_notifications')); ?>
+
                                     </a>
                                 </li>
                             </ul>
@@ -1198,19 +1217,21 @@
                         <div class="dropdown">
                             <button class="btn dropdown-toggle d-flex align-items-center gap-2" type="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                @php $userImg = auth()->user()->image_url; @endphp
-                                @if ($userImg)
-                                    <img src="{{ asset($userImg) }}" alt="{{ auth()->user()->name }}"
+                                <?php $userImg = auth()->user()->image_url; ?>
+                                <?php if($userImg): ?>
+                                    <img src="<?php echo e(asset($userImg)); ?>" alt="<?php echo e(auth()->user()->name); ?>"
                                         class="rounded-circle" style="width: 40px; height: 40px; object-fit: cover;">
-                                @else
+                                <?php else: ?>
                                     <div class="avatar-circle">
-                                        {{ substr(auth()->user()->name, 0, 1) }}
+                                        <?php echo e(substr(auth()->user()->name, 0, 1)); ?>
+
                                     </div>
-                                @endif
+                                <?php endif; ?>
                                 <div class="d-none d-md-block text-start">
-                                    <div class="fw-semibold text-dark">{{ auth()->user()->name }}</div>
+                                    <div class="fw-semibold text-dark"><?php echo e(auth()->user()->name); ?></div>
                                     <div class="text-muted small">
-                                        {{ auth()->user()->roles && auth()->user()->roles->first() ? auth()->user()->roles->first()->name : 'User' }}
+                                        <?php echo e(auth()->user()->roles && auth()->user()->roles->first() ? auth()->user()->roles->first()->name : 'User'); ?>
+
                                     </div>
                                 </div>
                                 <i class="fas fa-chevron-down ms-1 text-muted fs-xs mobile-hide"></i>
@@ -1218,30 +1239,33 @@
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0"
                                 style="background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius: var(--border-radius);">
                                 <li class="dropdown-header">
-                                    <div class="text-muted small">{{ __('admin.signed_in_as') }}</div>
-                                    <div class="fw-semibold">{{ auth()->user()->email }}</div>
+                                    <div class="text-muted small"><?php echo e(__('admin.signed_in_as')); ?></div>
+                                    <div class="fw-semibold"><?php echo e(auth()->user()->email); ?></div>
                                 </li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('profile.edit') }}">
-                                        <i class="fas fa-user me-2 text-muted"></i>{{ __('admin.profile') }}
+                                    <a class="dropdown-item" href="<?php echo e(route('profile.edit')); ?>">
+                                        <i class="fas fa-user me-2 text-muted"></i><?php echo e(__('admin.profile')); ?>
+
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="{{ route('notifications.index') }}">
-                                        <i class="fas fa-bell me-2 text-muted"></i>{{ __('admin.notifications') }}
+                                    <a class="dropdown-item" href="<?php echo e(route('notifications.index')); ?>">
+                                        <i class="fas fa-bell me-2 text-muted"></i><?php echo e(__('admin.notifications')); ?>
+
                                     </a>
                                 </li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
                                 <li>
-                                    <form method="POST" action="{{ route('admin.logout') }}">
-                                        @csrf
+                                    <form method="POST" action="<?php echo e(route('admin.logout')); ?>">
+                                        <?php echo csrf_field(); ?>
                                         <button type="submit" class="dropdown-item text-danger">
-                                            <i class="fas fa-sign-out-alt me-2"></i>{{ __('admin.logout') }}
+                                            <i class="fas fa-sign-out-alt me-2"></i><?php echo e(__('admin.logout')); ?>
+
                                         </button>
                                     </form>
                                 </li>
@@ -1254,38 +1278,40 @@
             <!-- Page Content -->
             <div class="p-4">
                 <!-- Flash Messages -->
-                @if (session('success'))
+                <?php if(session('success')): ?>
                     <div class="alert alert-success alert-custom mb-4">
                         <i class="fas fa-check-circle me-2"></i>
-                        {{ session('success') }}
-                    </div>
-                @endif
+                        <?php echo e(session('success')); ?>
 
-                @if (session('error'))
+                    </div>
+                <?php endif; ?>
+
+                <?php if(session('error')): ?>
                     <div class="alert alert-danger alert-custom mb-4">
                         <i class="fas fa-exclamation-circle me-2"></i>
-                        {{ session('error') }}
-                    </div>
-                @endif
+                        <?php echo e(session('error')); ?>
 
-                @if ($errors->any())
+                    </div>
+                <?php endif; ?>
+
+                <?php if($errors->any()): ?>
                     <div class="alert alert-danger alert-custom mb-4">
                         <i class="fas fa-exclamation-triangle me-2"></i>
                         <strong>Please fix the following errors:</strong>
                         <ul class="mb-0 mt-2">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
+                            <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <li><?php echo e($error); ?></li>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                         </ul>
                     </div>
-                @endif
+                <?php endif; ?>
 
-                @yield('content')
+                <?php echo $__env->yieldContent('content'); ?>
             </div>
         </div>
-    @else
-        @yield('content')
-    @endif
+    <?php else: ?>
+        <?php echo $__env->yieldContent('content'); ?>
+    <?php endif; ?>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -1444,7 +1470,7 @@
             },
 
             checkSession: function() {
-                fetch('{{ route('admin.session.check') }}', {
+                fetch('<?php echo e(route('admin.session.check')); ?>', {
                     method: 'GET',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -1522,7 +1548,7 @@
 
             extendSession: function() {
                 // Make a simple request to extend session
-                fetch('{{ route('admin.dashboard') }}', {
+                fetch('<?php echo e(route('admin.dashboard')); ?>', {
                     method: 'GET',
                     headers: {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
@@ -1559,7 +1585,7 @@
                 this.showAlert('Your session has expired. Please login again.', 'danger');
 
                 setTimeout(() => {
-                    window.location.href = '{{ route('admin.login') }}';
+                    window.location.href = '<?php echo e(route('admin.login')); ?>';
                 }, 2000);
             },
 
@@ -1572,12 +1598,12 @@
                 // Submit logout form
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = '{{ route('admin.logout') }}';
+                form.action = '<?php echo e(route('admin.logout')); ?>';
 
                 const csrfToken = document.createElement('input');
                 csrfToken.type = 'hidden';
                 csrfToken.name = '_token';
-                csrfToken.value = '{{ csrf_token() }}';
+                csrfToken.value = '<?php echo e(csrf_token()); ?>';
                 form.appendChild(csrfToken);
 
                 // Mark for local storage cleanup
@@ -1626,12 +1652,12 @@
 
             checkSessionWarnings: function() {
                 // Check for session warnings from server
-                @if(session('session_warning'))
-                    const remaining = {{ session('session_remaining', 5) }};
+                <?php if(session('session_warning')): ?>
+                    const remaining = <?php echo e(session('session_remaining', 5)); ?>;
                     if (!this.warningShown) {
                         this.showSessionWarning(remaining);
                     }
-                @endif
+                <?php endif; ?>
             },
 
             showAlert: function(message, type = 'info') {
@@ -1666,10 +1692,11 @@
     </script>
 
     <!-- Real-time notifications -->
-    <script src="{{ asset('js/notifications.js') }}"></script>
+    <script src="<?php echo e(asset('js/notifications.js')); ?>"></script>
 
 
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 
 </html>
+<?php /**PATH C:\laragon\www\drilling-dashboard-listing\resources\views/layouts/admin.blade.php ENDPATH**/ ?>

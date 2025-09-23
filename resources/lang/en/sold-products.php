@@ -1,6 +1,3 @@
-    // Employee Owner Reminder
-    'owner_reminder' => 'Before adding a sale, you must create and select the owner of the product. If the owner does not exist, you cannot record the sale.',
-    'owner_create_link' => 'If you have not created the owner yet, <a href=":url" class="text-primary text-decoration-underline">create a new owner here</a>.',
 <?php
 
 return [
@@ -14,6 +11,9 @@ return [
     'owner_reminder_body' => 'Before you can add or update a sold product, you must first add the owner of the product. If the owner does not exist, please create the owner first.',
     'owner_reminder_update' => 'If the owner changes and the new owner does not exist, you must add the new owner before updating the sale.',
     'owner_create_link_text' => 'Click here to add a new owner',
+    // Employee Owner Reminder
+    'owner_reminder' => 'Before adding a sale, you must create and select the owner of the product. If the owner does not exist, you cannot record the sale.',
+    'owner_create_link' => 'If you have not created the owner yet, <a href=":url" class="text-primary text-decoration-underline">create a new owner here</a>.',
     // Sold Products Management
     'title' => 'Sold Products',
     'sold_products' => 'Sold Products',
