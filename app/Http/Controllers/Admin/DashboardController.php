@@ -342,6 +342,11 @@ class DashboardController extends Controller
      */
     public function getRealTimeData(Request $request)
     {
+        // If not an AJAX request, redirect to dashboard
+        if (!$request->ajax()) {
+            return redirect()->route('admin.dashboard');
+        }
+        
         $type = $request->get('type', 'all');
         
         switch ($type) {

@@ -1,9 +1,7 @@
-@extends('layouts.admin')
+<?php $__env->startSection('title', __('dashboard.title')); ?>
+<?php $__env->startSection('page-title', __('dashboard.dashboard')); ?>
 
-@section('title', __('dashboard.title'))
-@section('page-title', __('dashboard.dashboard'))
-
-@push('styles')
+<?php $__env->startPush('styles'); ?>
 <style>
     .dashboard-card {
         border: none;
@@ -136,18 +134,19 @@
         100% { box-shadow: 0 0 0 0 rgba(72, 187, 120, 0); }
     }
 </style>
-@endpush
+<?php $__env->stopPush(); ?>
 
-@section('content')
+<?php $__env->startSection('content'); ?>
 <!-- Real-time Status Bar -->
 <div class="alert alert-info border-0 rounded-3 mb-4" style="background: linear-gradient(90deg, #e3f2fd 0%, #f3e5f5 100%);">
     <div class="d-flex align-items-center">
         <span class="real-time-indicator"></span>
-        <strong>{{ __('dashboard.live_dashboard') }}</strong>
-        <span class="ms-2 text-muted">{{ __('dashboard.last_updated') }}: <span id="lastUpdate">{{ now()->format('H:i:s') }}</span></span>
+        <strong><?php echo e(__('dashboard.live_dashboard')); ?></strong>
+        <span class="ms-2 text-muted"><?php echo e(__('dashboard.last_updated')); ?>: <span id="lastUpdate"><?php echo e(now()->format('H:i:s')); ?></span></span>
         <div class="ms-auto">
             <button class="btn btn-sm btn-outline-primary" onclick="refreshDashboard()">
-                <i class="fas fa-sync-alt me-1"></i> {{ __('dashboard.refresh') }}
+                <i class="fas fa-sync-alt me-1"></i> <?php echo e(__('dashboard.refresh')); ?>
+
             </button>
         </div>
     </div>
@@ -155,25 +154,26 @@
 
 <!-- Stats Cards -->
 <div class="row g-4 mb-4">
-    @if(auth()->user()->isAdmin())
+    <?php if(auth()->user()->isAdmin()): ?>
         <!-- Admin Stats -->
         <div class="col-lg-3 col-md-6">
             <div class="stats-card primary">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div>
-                        <h2 class="mb-0" data-counter="{{ $stats['total_users'] }}">{{ number_format($stats['total_users']) }}</h2>
-                        <p class="mb-0 opacity-75">{{ __('dashboard.total_staff') }}</p>
+                        <h2 class="mb-0" data-counter="<?php echo e($stats['total_users']); ?>"><?php echo e(number_format($stats['total_users'])); ?></h2>
+                        <p class="mb-0 opacity-75"><?php echo e(__('dashboard.total_staff')); ?></p>
                     </div>
                     <div class="opacity-75">
                         <i class="fas fa-users fa-2x"></i>
                     </div>
                 </div>
-                @if(isset($analytics['growth_metrics']))
-                <div class="growth-indicator {{ $analytics['growth_metrics']['sales_growth'] >= 0 ? 'positive' : 'negative' }}">
-                    <i class="fas fa-{{ $analytics['growth_metrics']['sales_growth'] >= 0 ? 'arrow-up' : 'arrow-down' }} me-1"></i>
-                    {{ number_format(abs($analytics['growth_metrics']['sales_growth']), 1) }}% {{ __('dashboard.from_last_month') }}
+                <?php if(isset($analytics['growth_metrics'])): ?>
+                <div class="growth-indicator <?php echo e($analytics['growth_metrics']['sales_growth'] >= 0 ? 'positive' : 'negative'); ?>">
+                    <i class="fas fa-<?php echo e($analytics['growth_metrics']['sales_growth'] >= 0 ? 'arrow-up' : 'arrow-down'); ?> me-1"></i>
+                    <?php echo e(number_format(abs($analytics['growth_metrics']['sales_growth']), 1)); ?>% <?php echo e(__('dashboard.from_last_month')); ?>
+
                 </div>
-                @endif
+                <?php endif; ?>
             </div>
         </div>
 
@@ -181,8 +181,8 @@
             <div class="stats-card success">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div>
-                        <h2 class="mb-0" data-counter="{{ $stats['total_products'] }}">{{ number_format($stats['total_products']) }}</h2>
-                        <p class="mb-0 opacity-75">{{ __('dashboard.total_products') }}</p>
+                        <h2 class="mb-0" data-counter="<?php echo e($stats['total_products']); ?>"><?php echo e(number_format($stats['total_products'])); ?></h2>
+                        <p class="mb-0 opacity-75"><?php echo e(__('dashboard.total_products')); ?></p>
                     </div>
                     <div class="opacity-75">
                         <i class="fas fa-box fa-2x"></i>
@@ -190,7 +190,8 @@
                 </div>
                 <div class="opacity-75">
                     <i class="fas fa-eye me-1"></i>
-                    {{ number_format($stats['active_products']) }} {{ __('dashboard.active_products') }}
+                    <?php echo e(number_format($stats['active_products'])); ?> <?php echo e(__('dashboard.active_products')); ?>
+
                 </div>
             </div>
         </div>
@@ -199,15 +200,16 @@
             <div class="stats-card warning">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div>
-                        <h2 class="mb-0" data-counter="{{ $stats['total_sold_products'] }}">{{ number_format($stats['total_sold_products']) }}</h2>
-                        <p class="mb-0 opacity-75">{{ __('dashboard.total_sales') }}</p>
+                        <h2 class="mb-0" data-counter="<?php echo e($stats['total_sold_products']); ?>"><?php echo e(number_format($stats['total_sold_products'])); ?></h2>
+                        <p class="mb-0 opacity-75"><?php echo e(__('dashboard.total_sales')); ?></p>
                     </div>
                     <div class="opacity-75">
                         <i class="fas fa-shopping-cart fa-2x"></i>
                     </div>
                 </div>
                 <div class="opacity-75">
-                    {{ number_format($stats['total_revenue'] ?? 0, 2) }} {{ __('sold-products.currency') }}
+                    <?php echo e(number_format($stats['total_revenue'] ?? 0, 2)); ?> <?php echo e(__('sold-products.currency')); ?>
+
                 </div>
             </div>
         </div>
@@ -216,8 +218,8 @@
             <div class="stats-card danger">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div>
-                        <h2 class="mb-0" data-counter="{{ $stats['unread_messages'] }}">{{ number_format($stats['unread_messages']) }}</h2>
-                        <p class="mb-0 opacity-75">{{ __('dashboard.unread_messages') }}</p>
+                        <h2 class="mb-0" data-counter="<?php echo e($stats['unread_messages']); ?>"><?php echo e(number_format($stats['unread_messages'])); ?></h2>
+                        <p class="mb-0 opacity-75"><?php echo e(__('dashboard.unread_messages')); ?></p>
                     </div>
                     <div class="opacity-75">
                         <i class="fas fa-envelope fa-2x"></i>
@@ -225,18 +227,19 @@
                 </div>
                 <div class="opacity-75">
                     <i class="fas fa-clock me-1"></i>
-                    {{ __('dashboard.needs_attention') }}
+                    <?php echo e(__('dashboard.needs_attention')); ?>
+
                 </div>
             </div>
         </div>
-    @else
+    <?php else: ?>
         <!-- Employee Stats -->
         <div class="col-lg-3 col-md-6">
             <div class="stats-card primary">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div>
-                        <h2 class="mb-0" data-counter="{{ $stats['my_today_sales'] ?? 0 }}">{{ number_format($stats['my_today_sales'] ?? 0) }}</h2>
-                        <p class="mb-0 opacity-75">{{ __('dashboard.my_sales_today') }}</p>
+                        <h2 class="mb-0" data-counter="<?php echo e($stats['my_today_sales'] ?? 0); ?>"><?php echo e(number_format($stats['my_today_sales'] ?? 0)); ?></h2>
+                        <p class="mb-0 opacity-75"><?php echo e(__('dashboard.my_sales_today')); ?></p>
                     </div>
                     <div class="opacity-75">
                         <i class="fas fa-calendar-day fa-2x"></i>
@@ -244,7 +247,8 @@
                 </div>
                 <div class="opacity-75">
                     <i class="fas fa-user me-1"></i>
-                    {{ __('dashboard.your_performance') }}
+                    <?php echo e(__('dashboard.your_performance')); ?>
+
                 </div>
             </div>
         </div>
@@ -253,8 +257,8 @@
             <div class="stats-card success">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div>
-                        <h2 class="mb-0" data-counter="{{ $stats['my_this_month_sales'] ?? 0 }}">{{ number_format($stats['my_this_month_sales'] ?? 0) }}</h2>
-                        <p class="mb-0 opacity-75">{{ __('dashboard.monthly_sales') }}</p>
+                        <h2 class="mb-0" data-counter="<?php echo e($stats['my_this_month_sales'] ?? 0); ?>"><?php echo e(number_format($stats['my_this_month_sales'] ?? 0)); ?></h2>
+                        <p class="mb-0 opacity-75"><?php echo e(__('dashboard.monthly_sales')); ?></p>
                     </div>
                     <div class="opacity-75">
                         <i class="fas fa-chart-line fa-2x"></i>
@@ -262,7 +266,8 @@
                 </div>
                 <div class="opacity-75">
                     <i class="fas fa-calendar me-1"></i>
-                    {{ __('dashboard.this_month') }}
+                    <?php echo e(__('dashboard.this_month')); ?>
+
                 </div>
             </div>
         </div>
@@ -271,8 +276,8 @@
             <div class="stats-card warning">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div>
-                        <h2 class="mb-0" data-counter="{{ $stats['my_total_sales'] ?? 0 }}">{{ number_format($stats['my_total_sales'] ?? 0) }}</h2>
-                        <p class="mb-0 opacity-75">{{ __('dashboard.total_sales') }}</p>
+                        <h2 class="mb-0" data-counter="<?php echo e($stats['my_total_sales'] ?? 0); ?>"><?php echo e(number_format($stats['my_total_sales'] ?? 0)); ?></h2>
+                        <p class="mb-0 opacity-75"><?php echo e(__('dashboard.total_sales')); ?></p>
                     </div>
                     <div class="opacity-75">
                         <i class="fas fa-trophy fa-2x"></i>
@@ -280,7 +285,8 @@
                 </div>
                 <div class="opacity-75">
                     <i class="fas fa-star me-1"></i>
-                    {{ __('dashboard.career_total') }}
+                    <?php echo e(__('dashboard.career_total')); ?>
+
                 </div>
             </div>
         </div>
@@ -289,8 +295,8 @@
             <div class="stats-card info">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div>
-                        <h2 class="mb-0" data-counter="{{ $stats['my_total_revenue'] ?? 0 }}">{{ number_format($stats['my_total_revenue'] ?? 0) }}</h2>
-                        <p class="mb-0 opacity-75">{{ __('dashboard.my_revenue') }}</p>
+                        <h2 class="mb-0" data-counter="<?php echo e($stats['my_total_revenue'] ?? 0); ?>"><?php echo e(number_format($stats['my_total_revenue'] ?? 0)); ?></h2>
+                        <p class="mb-0 opacity-75"><?php echo e(__('dashboard.my_revenue')); ?></p>
                     </div>
                     <div class="opacity-75">
                         <i class="fas fa-dollar-sign fa-2x"></i>
@@ -298,14 +304,15 @@
                 </div>
                 <div class="opacity-75">
                     <i class="fas fa-coins me-1"></i>
-                    {{ __('dashboard.total_earned') }}
+                    <?php echo e(__('dashboard.total_earned')); ?>
+
                 </div>
             </div>
         </div>
-    @endif
+    <?php endif; ?>
 </div>
 
-@if(auth()->user()->isAdmin())
+<?php if(auth()->user()->isAdmin()): ?>
     <!-- Advanced Analytics Charts -->
     <div class="row g-4 mb-4">
         <!-- Sales Overview Chart -->
@@ -315,17 +322,18 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">
                             <i class="fas fa-chart-line me-2 text-primary"></i>
-                            {{ __('dashboard.sales_revenue_overview') }}
+                            <?php echo e(__('dashboard.sales_revenue_overview')); ?>
+
                         </h5>
                         <div class="btn-group" role="group">
                             <input type="radio" class="btn-check" name="salesPeriod" id="daily" checked>
-                            <label class="btn btn-outline-primary btn-sm" for="daily">{{ __('dashboard.daily') }}</label>
+                            <label class="btn btn-outline-primary btn-sm" for="daily"><?php echo e(__('dashboard.daily')); ?></label>
 
                             <input type="radio" class="btn-check" name="salesPeriod" id="weekly">
-                            <label class="btn btn-outline-primary btn-sm" for="weekly">{{ __('dashboard.weekly') }}</label>
+                            <label class="btn btn-outline-primary btn-sm" for="weekly"><?php echo e(__('dashboard.weekly')); ?></label>
 
                             <input type="radio" class="btn-check" name="salesPeriod" id="monthly">
-                            <label class="btn btn-outline-primary btn-sm" for="monthly">{{ __('dashboard.monthly') }}</label>
+                            <label class="btn btn-outline-primary btn-sm" for="monthly"><?php echo e(__('dashboard.monthly')); ?></label>
                         </div>
                     </div>
                 </div>
@@ -340,39 +348,42 @@
             <div class="dashboard-card h-100">
                 <div class="card-header bg-transparent border-0 p-4">
                     <h5 class="mb-0">
-                    {{ __('dashboard.revenue_metrics') }} {{ __('sold-products.currency') }}
+                    <?php echo e(__('dashboard.revenue_metrics')); ?> <?php echo e(__('sold-products.currency')); ?>
+
                     </h5>
                 </div>
                 <div class="card-body p-4">
                     <div class="metric-card mb-3">
-                        <h3 class="text-success mb-1" data-counter="{{ $realtime['today_revenue'] ?? 0 }}">
-                            {{ number_format($realtime['today_revenue'] ?? 0, 2) }} {{ __('sold-products.currency') }}
+                        <h3 class="text-success mb-1" data-counter="<?php echo e($realtime['today_revenue'] ?? 0); ?>">
+                            <?php echo e(number_format($realtime['today_revenue'] ?? 0, 2)); ?> <?php echo e(__('sold-products.currency')); ?>
+
                         </h3>
-                        <p class="text-muted mb-0">{{ __('dashboard.todays_revenue') }}</p>
+                        <p class="text-muted mb-0"><?php echo e(__('dashboard.todays_revenue')); ?></p>
                     </div>
 
                     <div class="metric-card mb-3">
                         <h4 class="text-primary mb-1">
-                            {{ number_format($stats['avg_sale_price'] ?? 0, 2) }} {{ __('sold-products.currency') }}
+                            <?php echo e(number_format($stats['avg_sale_price'] ?? 0, 2)); ?> <?php echo e(__('sold-products.currency')); ?>
+
                         </h4>
-                        <p class="text-muted mb-0">{{ __('dashboard.average_sale_price') }}</p>
+                        <p class="text-muted mb-0"><?php echo e(__('dashboard.average_sale_price')); ?></p>
                     </div>
 
-                    @if(isset($analytics['growth_metrics']))
+                    <?php if(isset($analytics['growth_metrics'])): ?>
                     <div class="metric-card">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h4 class="mb-0 {{ $analytics['growth_metrics']['revenue_growth'] >= 0 ? 'text-success' : 'text-danger' }}">
-                                    {{ number_format($analytics['growth_metrics']['revenue_growth'], 1) }}%
+                                <h4 class="mb-0 <?php echo e($analytics['growth_metrics']['revenue_growth'] >= 0 ? 'text-success' : 'text-danger'); ?>">
+                                    <?php echo e(number_format($analytics['growth_metrics']['revenue_growth'], 1)); ?>%
                                 </h4>
-                                <p class="text-muted mb-0">{{ __('dashboard.revenue_growth') }}</p>
+                                <p class="text-muted mb-0"><?php echo e(__('dashboard.revenue_growth')); ?></p>
                             </div>
-                            <div class="text-{{ $analytics['growth_metrics']['revenue_growth'] >= 0 ? 'success' : 'danger' }}">
-                                <i class="fas fa-{{ $analytics['growth_metrics']['revenue_growth'] >= 0 ? 'arrow-up' : 'arrow-down' }} fa-2x"></i>
+                            <div class="text-<?php echo e($analytics['growth_metrics']['revenue_growth'] >= 0 ? 'success' : 'danger'); ?>">
+                                <i class="fas fa-<?php echo e($analytics['growth_metrics']['revenue_growth'] >= 0 ? 'arrow-up' : 'arrow-down'); ?> fa-2x"></i>
                             </div>
                         </div>
                     </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -386,7 +397,8 @@
                 <div class="card-header bg-transparent border-0 p-4">
                     <h5 class="mb-0">
                         <i class="fas fa-trophy me-2 text-warning"></i>
-                        {{ __('dashboard.top_performing_products') }}
+                        <?php echo e(__('dashboard.top_performing_products')); ?>
+
                     </h5>
                 </div>
                 <div class="chart-container small">
@@ -401,7 +413,8 @@
                 <div class="card-header bg-transparent border-0 p-4">
                     <h5 class="mb-0">
                         <i class="fas fa-users me-2 text-info"></i>
-                        {{ __('dashboard.team_performance') }}
+                        <?php echo e(__('dashboard.team_performance')); ?>
+
                     </h5>
                 </div>
                 <div class="chart-container small">
@@ -419,7 +432,8 @@
                 <div class="card-header bg-transparent border-0 p-4">
                     <h5 class="mb-0">
                         <i class="fas fa-globe me-2 text-primary"></i>
-                        {{ __('dashboard.sales_by_region') }}
+                        <?php echo e(__('dashboard.sales_by_region')); ?>
+
                     </h5>
                 </div>
                 <div class="chart-container small">
@@ -434,7 +448,8 @@
                 <div class="card-header bg-transparent border-0 p-4">
                     <h5 class="mb-0">
                         <i class="fas fa-tags me-2 text-success"></i>
-                        {{ __('dashboard.product_categories') }}
+                        <?php echo e(__('dashboard.product_categories')); ?>
+
                     </h5>
                 </div>
                 <div class="chart-container small">
@@ -453,46 +468,50 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">
                             <i class="fas fa-stream me-2 text-primary"></i>
-                            {{ __('dashboard.real_time_activity_feed') }}
+                            <?php echo e(__('dashboard.real_time_activity_feed')); ?>
+
                         </h5>
-                        <a href="{{ route('admin.audit-logs.index') }}" class="btn btn-sm btn-outline-primary">
+                        <a href="<?php echo e(route('admin.audit-logs.index')); ?>" class="btn btn-sm btn-outline-primary">
                             <i class="fas fa-external-link-alt me-1"></i>
-                            {{ __('dashboard.view_all_logs') }}
+                            <?php echo e(__('dashboard.view_all_logs')); ?>
+
                         </a>
                     </div>
                 </div>
                 <div class="card-body p-0">
                     <div class="activity-feed" id="activityFeed">
-                        @if(isset($analytics['recent_activity']) && $analytics['recent_activity']->count() > 0)
-                            @foreach($analytics['recent_activity'] as $activity)
+                        <?php if(isset($analytics['recent_activity']) && $analytics['recent_activity']->count() > 0): ?>
+                            <?php $__currentLoopData = $analytics['recent_activity']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $activity): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div class="activity-item">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div class="flex-grow-1">
                                             <div class="d-flex align-items-center mb-1">
-                                                <strong class="me-2">{{ $activity->user->name ?? __('dashboard.system') }}</strong>
-                                                <span class="badge bg-{{ $activity->event === 'created' ? 'success' : ($activity->event === 'updated' ? 'warning' : 'danger') }} me-2">
-                                                    {{ ucfirst($activity->event) }}
+                                                <strong class="me-2"><?php echo e($activity->user->name ?? __('dashboard.system')); ?></strong>
+                                                <span class="badge bg-<?php echo e($activity->event === 'created' ? 'success' : ($activity->event === 'updated' ? 'warning' : 'danger')); ?> me-2">
+                                                    <?php echo e(ucfirst($activity->event)); ?>
+
                                                 </span>
-                                                <span class="text-muted">{{ class_basename($activity->auditable_type) }}</span>
+                                                <span class="text-muted"><?php echo e(class_basename($activity->auditable_type)); ?></span>
                                             </div>
-                                            <p class="mb-1 text-muted">{{ $activity->description ?? $activity->event . ' ' . class_basename($activity->auditable_type) }}</p>
+                                            <p class="mb-1 text-muted"><?php echo e($activity->description ?? $activity->event . ' ' . class_basename($activity->auditable_type)); ?></p>
                                             <small class="text-muted">
                                                 <i class="fas fa-clock me-1"></i>
-                                                {{ $activity->created_at->diffForHumans() }}
+                                                <?php echo e($activity->created_at->diffForHumans()); ?>
+
                                             </small>
                                         </div>
                                         <div class="text-muted">
-                                            <i class="fas fa-{{ $activity->event === 'created' ? 'plus' : ($activity->event === 'updated' ? 'edit' : 'trash') }}"></i>
+                                            <i class="fas fa-<?php echo e($activity->event === 'created' ? 'plus' : ($activity->event === 'updated' ? 'edit' : 'trash')); ?>"></i>
                                         </div>
                                     </div>
                                 </div>
-                            @endforeach
-                        @else
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php else: ?>
                             <div class="p-4 text-center text-muted">
                                 <i class="fas fa-stream fa-3x mb-3 opacity-25"></i>
-                                <p>{{ __('dashboard.no_recent_activity') }}</p>
+                                <p><?php echo e(__('dashboard.no_recent_activity')); ?></p>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -504,16 +523,17 @@
                 <div class="card-header bg-transparent border-0 p-4">
                     <h5 class="mb-0">
                         <i class="fas fa-heartbeat me-2 text-danger"></i>
-                        {{ __('dashboard.system_health') }}
+                        <?php echo e(__('dashboard.system_health')); ?>
+
                     </h5>
                 </div>
                 <div class="card-body p-4">
-                    @if(isset($realtime['system_health']))
+                    <?php if(isset($realtime['system_health'])): ?>
                     <div class="metric-card mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h4 class="text-primary mb-0">{{ $realtime['system_health']['database_size'] }} MB</h4>
-                                <p class="text-muted mb-0">{{ __('dashboard.database_size') }}</p>
+                                <h4 class="text-primary mb-0"><?php echo e($realtime['system_health']['database_size']); ?> MB</h4>
+                                <p class="text-muted mb-0"><?php echo e(__('dashboard.database_size')); ?></p>
                             </div>
                             <i class="fas fa-database text-primary fa-2x"></i>
                         </div>
@@ -522,8 +542,8 @@
                     <div class="metric-card mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h4 class="text-success mb-0">{{ number_format($realtime['system_health']['total_records']) }}</h4>
-                                <p class="text-muted mb-0">{{ __('dashboard.total_records') }}</p>
+                                <h4 class="text-success mb-0"><?php echo e(number_format($realtime['system_health']['total_records'])); ?></h4>
+                                <p class="text-muted mb-0"><?php echo e(__('dashboard.total_records')); ?></p>
                             </div>
                             <i class="fas fa-table text-success fa-2x"></i>
                         </div>
@@ -532,8 +552,8 @@
                     <div class="metric-card mb-3">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h4 class="text-warning mb-0">{{ number_format($realtime['system_health']['audit_logs_count']) }}</h4>
-                                <p class="text-muted mb-0">{{ __('dashboard.audit_logs') }}</p>
+                                <h4 class="text-warning mb-0"><?php echo e(number_format($realtime['system_health']['audit_logs_count'])); ?></h4>
+                                <p class="text-muted mb-0"><?php echo e(__('dashboard.audit_logs')); ?></p>
                             </div>
                             <i class="fas fa-file-alt text-warning fa-2x"></i>
                         </div>
@@ -542,19 +562,19 @@
                     <div class="metric-card">
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <h4 class="text-info mb-0">{{ $realtime['system_health']['system_uptime'] }}</h4>
-                                <p class="text-muted mb-0">{{ __('dashboard.system_uptime') }}</p>
+                                <h4 class="text-info mb-0"><?php echo e($realtime['system_health']['system_uptime']); ?></h4>
+                                <p class="text-muted mb-0"><?php echo e(__('dashboard.system_uptime')); ?></p>
                             </div>
                             <i class="fas fa-server text-info fa-2x"></i>
                         </div>
                     </div>
-                    @endif
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 
-@else
+<?php else: ?>
     <!-- Employee Dashboard -->
     <div class="row g-4 mb-4">
         <!-- My Performance Chart -->
@@ -563,7 +583,8 @@
                 <div class="card-header bg-transparent border-0 p-4">
                     <h5 class="mb-0">
                         <i class="fas fa-chart-area me-2 text-primary"></i>
-                        {{ __('dashboard.my_sales_performance') }}
+                        <?php echo e(__('dashboard.my_sales_performance')); ?>
+
                     </h5>
                 </div>
                 <div class="chart-container">
@@ -578,21 +599,25 @@
                 <div class="card-header bg-transparent border-0 p-4">
                     <h5 class="mb-0">
                         <i class="fas fa-bolt me-2 text-warning"></i>
-                        {{ __('dashboard.quick_actions') }}
+                        <?php echo e(__('dashboard.quick_actions')); ?>
+
                     </h5>
                 </div>
                 <div class="card-body p-4">
                     <div class="d-grid gap-3">
-                        <a href="{{ route('admin.sold-products.create') }}" class="btn btn-primary btn-lg">
-                            <i class="fas fa-plus me-2"></i>{{ __('dashboard.create_new_sale') }}
+                        <a href="<?php echo e(route('admin.sold-products.create')); ?>" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus me-2"></i><?php echo e(__('dashboard.create_new_sale')); ?>
+
                         </a>
-                        <a href="{{ route('admin.owners.create') }}" class="btn btn-success btn-lg">
-                            <i class="fas fa-user-plus me-2"></i>{{ __('dashboard.add_new_owner') }}
+                        <a href="<?php echo e(route('admin.owners.create')); ?>" class="btn btn-success btn-lg">
+                            <i class="fas fa-user-plus me-2"></i><?php echo e(__('dashboard.add_new_owner')); ?>
+
                         </a>
-                        <a href="{{ route('admin.products.index') }}" class="btn btn-info btn-lg">
-                            <i class="fas fa-box me-2"></i>{{ __('dashboard.view_products') }}
+                        <a href="<?php echo e(route('admin.products.index')); ?>" class="btn btn-info btn-lg">
+                            <i class="fas fa-box me-2"></i><?php echo e(__('dashboard.view_products')); ?>
+
                         </a>
-                        <a href="{{ route('admin.mails.inbox') }}" class="btn btn-warning btn-lg">
+                        <a href="<?php echo e(route('admin.mails.inbox')); ?>" class="btn btn-warning btn-lg">
                             <i class="fas fa-inbox me-2"></i>Email Inbox
                         </a>
                     </div>
@@ -608,46 +633,49 @@
                 <div class="card-header bg-transparent border-0 p-4">
                     <h5 class="mb-0">
                         <i class="fas fa-history me-2 text-primary"></i>
-                        {{ __('dashboard.my_recent_activity') }}
+                        <?php echo e(__('dashboard.my_recent_activity')); ?>
+
                     </h5>
                 </div>
                 <div class="card-body p-0">
                     <div class="activity-feed">
-                        @if(isset($analytics['recent_activity']) && $analytics['recent_activity']->count() > 0)
-                            @foreach($analytics['recent_activity'] as $activity)
+                        <?php if(isset($analytics['recent_activity']) && $analytics['recent_activity']->count() > 0): ?>
+                            <?php $__currentLoopData = $analytics['recent_activity']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $activity): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div class="activity-item">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div class="flex-grow-1">
                                             <div class="d-flex align-items-center mb-1">
-                                                <span class="badge bg-{{ $activity->event === 'created' ? 'success' : ($activity->event === 'updated' ? 'warning' : 'danger') }} me-2">
-                                                    {{ ucfirst($activity->event) }}
+                                                <span class="badge bg-<?php echo e($activity->event === 'created' ? 'success' : ($activity->event === 'updated' ? 'warning' : 'danger')); ?> me-2">
+                                                    <?php echo e(ucfirst($activity->event)); ?>
+
                                                 </span>
-                                                <span class="text-muted">{{ class_basename($activity->auditable_type) }}</span>
+                                                <span class="text-muted"><?php echo e(class_basename($activity->auditable_type)); ?></span>
                                             </div>
-                                            <p class="mb-1 text-muted">{{ $activity->description ?? $activity->event . ' ' . class_basename($activity->auditable_type) }}</p>
+                                            <p class="mb-1 text-muted"><?php echo e($activity->description ?? $activity->event . ' ' . class_basename($activity->auditable_type)); ?></p>
                                             <small class="text-muted">
                                                 <i class="fas fa-clock me-1"></i>
-                                                {{ $activity->created_at->diffForHumans() }}
+                                                <?php echo e($activity->created_at->diffForHumans()); ?>
+
                                             </small>
                                         </div>
                                     </div>
                                 </div>
-                            @endforeach
-                        @else
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <?php else: ?>
                             <div class="p-4 text-center text-muted">
                                 <i class="fas fa-history fa-3x mb-3 opacity-25"></i>
-                                <p>{{ __('dashboard.no_recent_activity') }}</p>
+                                <p><?php echo e(__('dashboard.no_recent_activity')); ?></p>
                             </div>
-                        @endif
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-@endif
-@endsection
+<?php endif; ?>
+<?php $__env->stopSection(); ?>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
@@ -655,10 +683,10 @@
 <script>
 // Translation variables
 const dashboardTranslations = {
-    salesCount: @json(__('dashboard.sales_count')),
-    revenueAmount: @json(__('dashboard.revenue_amount')),
-    salesCountAxis: @json(__('dashboard.sales_count_axis')),
-    revenueAxis: @json(__('dashboard.revenue_axis'))
+    salesCount: <?php echo json_encode(__('dashboard.sales_count'), 15, 512) ?>,
+    revenueAmount: <?php echo json_encode(__('dashboard.revenue_amount'), 15, 512) ?>,
+    salesCountAxis: <?php echo json_encode(__('dashboard.sales_count_axis'), 15, 512) ?>,
+    revenueAxis: <?php echo json_encode(__('dashboard.revenue_axis'), 15, 512) ?>
 };
 
 // Global Chart.js configuration
@@ -691,7 +719,7 @@ function createGradient(ctx, color1, color2) {
     return gradient;
 }
 
-@if(auth()->user()->isAdmin())
+<?php if(auth()->user()->isAdmin()): ?>
 // Admin Dashboard Charts
 document.addEventListener('DOMContentLoaded', function() {
     // Sales Overview Chart
@@ -700,10 +728,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const salesChart = new Chart(salesCtx, {
             type: 'line',
             data: {
-                labels: @json(collect($analytics['daily_sales'] ?? [])->pluck('date')),
+                labels: <?php echo json_encode(collect($analytics['daily_sales'] ?? [])->pluck('date'), 15, 512) ?>,
                 datasets: [{
                     label: dashboardTranslations.salesCount,
-                    data: @json(collect($analytics['daily_sales'] ?? [])->pluck('sales')),
+                    data: <?php echo json_encode(collect($analytics['daily_sales'] ?? [])->pluck('sales'), 15, 512) ?>,
                     borderColor: colors.primary,
                     backgroundColor: createGradient(salesCtx.getContext('2d'), 'rgba(102, 126, 234, 0.2)', 'rgba(102, 126, 234, 0.02)'),
                     fill: true,
@@ -715,7 +743,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     pointHoverRadius: 8
                 }, {
                     label: dashboardTranslations.revenueAmount,
-                    data: @json(collect($analytics['daily_sales'] ?? [])->pluck('revenue')),
+                    data: <?php echo json_encode(collect($analytics['daily_sales'] ?? [])->pluck('revenue'), 15, 512) ?>,
                     borderColor: colors.success,
                     backgroundColor: createGradient(salesCtx.getContext('2d'), 'rgba(72, 187, 120, 0.2)', 'rgba(72, 187, 120, 0.02)'),
                     fill: false,
@@ -814,9 +842,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const productChart = new Chart(productCtx, {
             type: 'doughnut',
             data: {
-                labels: @json(collect($analytics['product_performance'] ?? [])->pluck('model_name')),
+                labels: <?php echo json_encode(collect($analytics['product_performance'] ?? [])->pluck('model_name'), 15, 512) ?>,
                 datasets: [{
-                    data: @json(collect($analytics['product_performance'] ?? [])->pluck('sales_count')),
+                    data: <?php echo json_encode(collect($analytics['product_performance'] ?? [])->pluck('sales_count'), 15, 512) ?>,
                     backgroundColor: [
                         colors.primary,
                         colors.success,
@@ -887,10 +915,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const teamChart = new Chart(teamCtx, {
             type: 'bar',
             data: {
-                labels: @json(collect($analytics['user_activity'] ?? [])->pluck('name')),
+                labels: <?php echo json_encode(collect($analytics['user_activity'] ?? [])->pluck('name'), 15, 512) ?>,
                 datasets: [{
                     label: 'Sales Count',
-                    data: @json(collect($analytics['user_activity'] ?? [])->pluck('sales_count')),
+                    data: <?php echo json_encode(collect($analytics['user_activity'] ?? [])->pluck('sales_count'), 15, 512) ?>,
                     backgroundColor: colors.primary,
                     borderColor: colors.primary,
                     borderWidth: 0,
@@ -898,7 +926,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     borderSkipped: false,
                 }, {
                     label: 'Revenue ($)',
-                    data: @json(collect($analytics['user_activity'] ?? [])->pluck('total_revenue')),
+                    data: <?php echo json_encode(collect($analytics['user_activity'] ?? [])->pluck('total_revenue'), 15, 512) ?>,
                     backgroundColor: colors.success,
                     borderColor: colors.success,
                     borderWidth: 0,
@@ -974,9 +1002,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const regionChart = new Chart(regionCtx, {
             type: 'polarArea',
             data: {
-                labels: @json(collect($analytics['sales_by_region'] ?? [])->pluck('country')),
+                labels: <?php echo json_encode(collect($analytics['sales_by_region'] ?? [])->pluck('country'), 15, 512) ?>,
                 datasets: [{
-                    data: @json(collect($analytics['sales_by_region'] ?? [])->pluck('sales_count')),
+                    data: <?php echo json_encode(collect($analytics['sales_by_region'] ?? [])->pluck('sales_count'), 15, 512) ?>,
                     backgroundColor: [
                         'rgba(102, 126, 234, 0.7)',
                         'rgba(72, 187, 120, 0.7)',
@@ -1029,10 +1057,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const categoryChart = new Chart(categoryCtx, {
             type: 'bar',
             data: {
-                labels: @json(collect($analytics['product_categories'] ?? [])->pluck('name')),
+                labels: <?php echo json_encode(collect($analytics['product_categories'] ?? [])->pluck('name'), 15, 512) ?>,
                 datasets: [{
                     label: 'Sales Count',
-                    data: @json(collect($analytics['product_categories'] ?? [])->pluck('sales_count')),
+                    data: <?php echo json_encode(collect($analytics['product_categories'] ?? [])->pluck('sales_count'), 15, 512) ?>,
                     backgroundColor: createGradient(categoryCtx.getContext('2d'), colors.success, 'rgba(72, 187, 120, 0.3)'),
                     borderColor: colors.success,
                     borderWidth: 2,
@@ -1067,7 +1095,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-@else
+<?php else: ?>
 // Employee Dashboard Charts
 document.addEventListener('DOMContentLoaded', function() {
     // My Performance Chart
@@ -1076,10 +1104,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const myPerformanceChart = new Chart(myPerformanceCtx, {
             type: 'line',
             data: {
-                labels: @json(collect($analytics['my_daily_sales'] ?? [])->pluck('date')),
+                labels: <?php echo json_encode(collect($analytics['my_daily_sales'] ?? [])->pluck('date'), 15, 512) ?>,
                 datasets: [{
                     label: 'My Daily Sales',
-                    data: @json(collect($analytics['my_daily_sales'] ?? [])->pluck('sales')),
+                    data: <?php echo json_encode(collect($analytics['my_daily_sales'] ?? [])->pluck('sales'), 15, 512) ?>,
                     borderColor: colors.primary,
                     backgroundColor: createGradient(myPerformanceCtx.getContext('2d'), 'rgba(102, 126, 234, 0.2)', 'rgba(102, 126, 234, 0.02)'),
                     fill: true,
@@ -1132,13 +1160,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-@endif
+<?php endif; ?>
 
 // Real-time data updates
 function refreshDashboard() {
     const lastUpdateEl = document.getElementById('lastUpdate');
 
-    fetch('{{ route("admin.dashboard.realtime") }}')
+    fetch('<?php echo e(route("admin.dashboard.realtime")); ?>')
         .then(response => response.json())
         .then(data => {
             // Update stats with animation
@@ -1199,7 +1227,7 @@ setInterval(refreshDashboard, 300000);
 
 // Refresh activity feed
 function refreshActivityFeed() {
-    fetch('{{ route("admin.dashboard.realtime") }}?type=activity')
+    fetch('<?php echo e(route("admin.dashboard.realtime")); ?>?type=activity')
         .then(response => response.json())
         .then(data => {
             // Update activity feed if needed
@@ -1237,7 +1265,7 @@ function createActivityItem(activity) {
         <div class="d-flex justify-content-between align-items-start">
             <div class="flex-grow-1">
                 <div class="d-flex align-items-center mb-1">
-                    <strong class="me-2">${activity.user ? activity.user.name : '{{ __("dashboard.system") }}'}</strong>
+                    <strong class="me-2">${activity.user ? activity.user.name : '<?php echo e(__("dashboard.system")); ?>'}</strong>
                     <span class="badge bg-${eventClass} me-2">${activity.event.charAt(0).toUpperCase() + activity.event.slice(1)}</span>
                     <span class="text-muted">${activity.auditable_type.split('\\').pop()}</span>
                 </div>
@@ -1273,4 +1301,6 @@ function formatTimeAgo(dateString) {
 // Auto-refresh activity every 30 seconds
 setInterval(refreshActivityFeed, 30000);
 </script>
-@endpush
+<?php $__env->stopPush(); ?>
+
+<?php echo $__env->make('layouts.admin', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\laragon\www\drilling-dashboard-listing\resources\views/admin/dashboard.blade.php ENDPATH**/ ?>
