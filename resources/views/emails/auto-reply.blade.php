@@ -74,7 +74,9 @@
                                         
                                         <p style="margin-bottom: 10px; font-size: 14px; color: #555;">
                                             <span style="display: inline-block; width: 20px; text-align: center; margin-right: 8px;">🏢</span>
-                                            <strong>Office:</strong> Industrial Zone, New Cairo, Cairo, Egypt
+                                            <strong>Office:</strong>Nehro Str, Roxy Helioplis
+                                            <br>
+                                            Cairo, Egypt
                                         </p>
                                         
                                         <p style="margin-bottom: 10px; font-size: 14px; color: #555;">
